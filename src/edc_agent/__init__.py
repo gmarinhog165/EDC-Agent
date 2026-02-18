@@ -1,5 +1,3 @@
-from .agents.agent import Agent
-from .clients.ollama_client import OllamaClient
-from .manager import PipelineManager
+"""EDC Agent package."""
 
-__all__ = ["Agent", "OllamaClient", "PipelineManager"]
+__all__: list[str] = []

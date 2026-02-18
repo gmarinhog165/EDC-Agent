@@ -34,7 +34,7 @@ class SearchCatalogTool(BaseTool):
         }
 
         filtered_list = self._semantic_search(
-            semantic_search_list, query, "nomic-embed-text"
+            semantic_search_list, query, os.getenv("EMBEDDING_MODEL", "")
         )
 
         available_dataplanes = set(check_available_dataplanes() or [])
@@ -67,7 +67,7 @@ class SearchCatalogTool(BaseTool):
         self, semantic_search_list: list[dict[str, Any]], query: str, model: str
     ) -> list[str]:
         embedding_url = (
-            f"{os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434').rstrip('/')}"
+            f"{os.getenv('LLM_BASE_URL', 'http://localhost:11434').rstrip('/')}"
             "/api/embeddings"
         )
 

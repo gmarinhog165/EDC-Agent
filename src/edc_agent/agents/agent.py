@@ -2,18 +2,29 @@ import logging
 from typing import Protocol
 
 from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
+from langchain_core.tools import BaseTool
 
 logger = logging.getLogger(__name__)
 
 class LLMClient(Protocol):
     def generate_response(self, messages: list[BaseMessage]) -> str: ...
+    def generate_response_with_tools(
+        self, messages: list[BaseMessage], tools: list[BaseTool]
+    ) -> str: ...
 
 
 class Agent:
-    def __init__(self, name: str, llm_client: LLMClient, system_prompt: str):
+    def __init__(
+        self,
+        name: str,
+        llm_client: LLMClient,
+        system_prompt: str,
+        tools: list[BaseTool] | None = None,
+    ):
         self.name = name
         self.llm_client = llm_client
         self.system_prompt = system_prompt
+        self.tools = tools or []
         self._done_markers = ("<DONE>",)
     
     # Retorna a resposta do agente e um booleano indicando se a conversa deve ser encerrada
@@ -31,7 +42,12 @@ class Agent:
         messages = self._build_messages(user_message, history)
 
         # Chama o modelo para gerar a resposta, infere se a conversa deve ser encerrada e limpa os marcadores de done da resposta
-        raw_response = self.llm_client.generate_response(messages)
+        if self.tools:
+            raw_response = self.llm_client.generate_response_with_tools(
+                messages, self.tools
+            )
+        else:
+            raw_response = self.llm_client.generate_response(messages)
 
         # Verifica se a resposta contém algum marcador de done (em self._done_markers
         is_done = self._infer_is_done(raw_response)
