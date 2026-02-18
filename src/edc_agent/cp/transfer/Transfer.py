@@ -1,11 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Dict, List, Any
 import json
-import os
-from edc_agent.cp.env_loader import load_cp_env
-
-# Carregar variáveis do arquivo .env
-load_cp_env()
 
 @dataclass
 class Transfer:
@@ -13,8 +8,8 @@ class Transfer:
     type: str = "TransferRequestDto"
     context: List[str] = field(default_factory=lambda: ["https://w3id.org/edc/connector/management/v0.0.1"])
     asset_id: str = ""
-    counter_party_address: str = field(default_factory=lambda: f"{os.getenv('PROVIDER_DSP_URL', '')}/api/dsp")
-    connector_id: str = field(default_factory=lambda: os.getenv("PROVIDER_ID", ""))
+    counter_party_address: str = ""
+    connector_id: str = ""
     contract_id: str = ""
     data_destination: Dict[str, Any] = field(default_factory=dict)
     protocol: str = "dataspace-protocol-http"
