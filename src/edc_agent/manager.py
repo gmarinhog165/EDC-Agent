@@ -19,8 +19,6 @@ class PipelineManager:
         logger.info("Starting conversation with search-catalog agent")
         initial_prompt = "Start the conversation with a short greeting and ask how you can help."
         response, is_done = self.search_catalog_agent.generate_response(initial_prompt, self.chat_history)
-        self.chat_history.append(AIMessage(content=response))
-        logger.debug("Initial response stored in chat history size=%d", len(self.chat_history))
         return response, is_done
 
     # Resolver o agente correto com base na rota identificada pelo router agent
