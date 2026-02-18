@@ -1,5 +1,3 @@
-from typing import List
-import uuid
 from edc_agent.cp.transfer.Transfer import Transfer
 from edc_agent.cp.transfer.DataDestinationBuilder import DataDestinationBuilder
 
@@ -18,6 +16,16 @@ class TransferBuilder:
     def with_contract_id(self, contract_id) -> 'TransferBuilder':
         """Define o id do contrato."""
         self._trasfer.contract_id = contract_id
+        return self
+
+    def with_counter_party_address(self, counter_party_address: str) -> "TransferBuilder":
+        """Define o endereço DSP da contraparte."""
+        self._trasfer.counter_party_address = counter_party_address
+        return self
+
+    def with_connector_id(self, connector_id: str) -> "TransferBuilder":
+        """Define o connectorId da contraparte."""
+        self._trasfer.connector_id = connector_id
         return self
     
     def with_data_destination(self, data_destination_builder: DataDestinationBuilder) -> 'TransferBuilder':
