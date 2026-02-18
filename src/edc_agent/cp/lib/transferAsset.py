@@ -28,13 +28,21 @@ def get_catalog() -> Dict[str, str]: # retorna um dicionário com asset_id e pol
     return response
 
 
-def negotiate_contract(asset_id: str, policy_id: str, max_retries: int = 10, 
-                      retry_interval: int = 2) -> Optional[str]:
+def negotiate_contract(
+    asset_id: str,
+    policy: Dict[str, Any],
+    counter_party_address: str,
+    counter_party_id: str,
+    max_retries: int = 10,
+    retry_interval: int = 2,
+) -> Optional[str]:
 
     # Create negotiation object
     nego = NegotiationBuilder()\
+        .with_policy(policy)\
+        .with_counter_party_address(counter_party_address)\
+        .with_counter_party_id(counter_party_id)\
         .with_asset_id(asset_id)\
-        .with_policy_id(policy_id)\
         .build()
     
     print(nego.to_json())
@@ -91,9 +99,16 @@ def negotiate_contract(asset_id: str, policy_id: str, max_retries: int = 10,
     return contract_agreement_id
 
 
-def transfer_to_http(asset_id: str, contract_id: str, max_retries: int = 10, 
-                    retry_interval: int = 2):
+def transfer_to_http(
+    asset_id: str,
+    contract_id: str,
+    counter_party_address: str,
+    connector_id: str,
+    max_retries: int = 10,
+    retry_interval: int = 2,
+):
     http_transfer = TransferBuilder().with_asset_id(asset_id).with_contract_id(contract_id) \
+        .with_counter_party_address(counter_party_address).with_connector_id(connector_id) \
         .with_transfer_type("HttpData-PULL") \
         .with_data_destination(
             HTTPDataDestinationBuilder() \
@@ -140,10 +155,12 @@ def http_download_data(transfer_id):
     
 
 
-def transfer_to_mongo(asset_id: str, contract_id: str, filename: str, 
+def transfer_to_mongo(asset_id: str, contract_id: str, filename: str,
                      connection_string: str, collection: str, database: str,
+                     counter_party_address: str, connector_id: str,
                      max_retries: int = 10, retry_interval: int = 2):
     mongo_transfer = TransferBuilder().with_asset_id(asset_id).with_contract_id(contract_id) \
+        .with_counter_party_address(counter_party_address).with_connector_id(connector_id) \
         .with_transfer_type("MongoDB-PUSH") \
         .with_data_destination(
             MongoDataDestinationBuilder().with_connection_string(connection_string)\
@@ -169,8 +186,9 @@ def transfer_to_mongo(asset_id: str, contract_id: str, filename: str,
     return wait_for_transfer_completion(transfer_id, max_retries, retry_interval)
 
 
-def transfer_to_s3(asset_id: str, contract_id: str, filename: str, 
-                  region: str, bucket_name: str, endpoint_override: str = None,
+def transfer_to_s3(asset_id: str, contract_id: str, filename: str,
+                  region: str, bucket_name: str, counter_party_address: str,
+                  connector_id: str, endpoint_override: str = None,
                   max_retries: int = 10, retry_interval: int = 2):
     s3_builder = AmazonS3DataDestinationBuilder()\
         .with_region(region)\
@@ -181,6 +199,7 @@ def transfer_to_s3(asset_id: str, contract_id: str, filename: str,
         s3_builder.with_endpoint_override(endpoint_override)
         
     s3_transfer = TransferBuilder().with_asset_id(asset_id).with_contract_id(contract_id) \
+        .with_counter_party_address(counter_party_address).with_connector_id(connector_id) \
         .with_transfer_type("AmazonS3-PUSH") \
         .with_data_destination(s3_builder) \
         .build()
