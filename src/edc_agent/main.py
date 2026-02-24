@@ -40,8 +40,6 @@ def run_cli(model_name: str, temperature: int) -> None:
     logger.info("Starting CLI model=%s temperature=%s", model_name, temperature)
     manager = build_manager(model_name=model_name, temperature=temperature)
 
-    print("EDC Agent pronto. Escreve a tua mensagem.")
-    print("Comandos: /reset para limpar contexto, /exit para sair.")
     initial_response, initial_done = manager.start_conversation()
     print(f"\nAgente: {initial_response}")
     if initial_done:

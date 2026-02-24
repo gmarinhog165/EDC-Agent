@@ -16,10 +16,8 @@ class PipelineManager:
 
     # Prompt inicial para ser o Agente a iniciar conversa com o user (TODO verificar se é a melhor prática assim)
     def start_conversation(self) -> tuple[str, bool]:
-        logger.info("Starting conversation with search-catalog agent")
-        initial_prompt = "Start the conversation with a short greeting and ask how you can help."
-        response, is_done = self.search_catalog_agent.generate_response(initial_prompt, self.chat_history)
-        return response, is_done
+        logger.info("Starting conversation with static greeting")
+        return "Olá! Como te posso ajudar hoje?", False
 
     # Resolver o agente correto com base na rota identificada pelo router agent
     def _resolve_agent(self, route: str) -> Agent:
@@ -40,7 +38,7 @@ class PipelineManager:
         logger.debug("Processing user message len=%d", len(user_message))
 
         # Primeira mensagem para o router agent, assim ele saberá escolher o agente adequado
-        router_output, _ = self.router_agent.generate_response(user_message, self.chat_history)
+        router_output, _, _ = self.router_agent.generate_response(user_message, self.chat_history)
         logger.debug("Router output=%s", router_output.strip())
 
         # Resposta do router que aponta para o agente adequado
@@ -56,11 +54,15 @@ class PipelineManager:
         logger.info("Routing message route=%s selected_agent=%s", route, selected_agent.name)
 
         # O Agente vai processar a mensagem do user
-        agent_response, is_done = selected_agent.generate_response(user_message, self.chat_history)
+        agent_response, is_done, execution_messages = selected_agent.generate_response(user_message, self.chat_history)
 
-        # Atualizar o histórico de mensagens com a mensagem do user e a resposta do agente
+        # Atualizar o histórico com a mensagem do user e as mensagens geradas no fluxo.
+        # Se não houver mensagens de execução, mantém o fallback com a resposta final do agente.
         self.chat_history.append(HumanMessage(content=user_message))
-        self.chat_history.append(AIMessage(content=agent_response))
+        if execution_messages:
+            self.chat_history.extend(execution_messages)
+        else:
+            self.chat_history.append(AIMessage(content=agent_response))
         logger.debug("Chat history updated size=%d is_done=%s", len(self.chat_history), is_done)
         
         # Retorna a resposta e se já acabou o processamento
