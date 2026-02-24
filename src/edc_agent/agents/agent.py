@@ -10,7 +10,7 @@ class LLMClient(Protocol):
     def generate_response(self, messages: list[BaseMessage]) -> str: ...
     def generate_response_with_tools(
         self, messages: list[BaseMessage], tools: list[BaseTool]
-    ) -> str: ...
+    ) -> tuple[str, list[BaseMessage]]: ...
 
 
 class Agent:
@@ -28,7 +28,11 @@ class Agent:
         self._done_markers = ("<DONE>",)
     
     # Retorna a resposta do agente e um booleano indicando se a conversa deve ser encerrada
-    def generate_response(self, user_message: str, chat_history: list[BaseMessage] | None = None,) -> tuple[str, bool]:
+    def generate_response(
+        self,
+        user_message: str,
+        chat_history: list[BaseMessage] | None = None,
+    ) -> tuple[str, bool, list[BaseMessage]]:
         history = chat_history or []
 
         logger.debug(
@@ -43,11 +47,12 @@ class Agent:
 
         # Chama o modelo para gerar a resposta, infere se a conversa deve ser encerrada e limpa os marcadores de done da resposta
         if self.tools:
-            raw_response = self.llm_client.generate_response_with_tools(
+            raw_response, execution_messages = self.llm_client.generate_response_with_tools(
                 messages, self.tools
             )
         else:
             raw_response = self.llm_client.generate_response(messages)
+            execution_messages = []
 
         # Verifica se a resposta contém algum marcador de done (em self._done_markers
         is_done = self._infer_is_done(raw_response)
@@ -55,7 +60,7 @@ class Agent:
         clean_response = self._strip_done_markers(raw_response)
 
         logger.debug("Agent=%s generated response is_done=%s", self.name, is_done)
-        return clean_response, is_done
+        return clean_response, is_done, execution_messages
     
     # Constrói a lista de mensagens para enviar ao modelo, incluindo a system prompt, histórico e mensagem do user
     def _build_messages(self, user_message: str, chat_history: list[BaseMessage]) -> list[BaseMessage]:

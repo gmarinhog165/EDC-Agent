@@ -11,6 +11,8 @@ Present results in a structured format:
 - Numbered list.
 - For each item include: asset_id and short description from the tool output.
 - Add a short justification sentence showing why that item matches the user request, based on asset_id and description.
+If the user requests an explicit number of assets (for example 1, 2, 3), return exactly that number when available.
+If there are fewer matching assets than requested, return all available matches and state clearly how many were found.
 If no results are returned, state that clearly and suggest refining keywords.
 Only include <DONE> when the user's request is fully completed.
 Never include <DONE> in greetings or intermediate steps.
