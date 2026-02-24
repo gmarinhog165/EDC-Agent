@@ -1,0 +1,471 @@
+{
+  "info": {
+    "_postman_id": "9575d886-518f-4e35-a27b-bfce98fe8b76",
+    "name": "Search Catalog Testbeds",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "HOST", "value": "http://127.0.0.1/provider/cp" },
+    { "key": "API_KEY", "value": "password" }
+  ],
+  "item": [
+    {
+      "name": "Cleanup",
+      "item": [
+        {
+          "name": "Delete tb-energy-1",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
+            "url": "{{HOST}}/api/management/v3/assets/tb-energy-1"
+          }
+        },
+        {
+          "name": "Delete tb-energy-2",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
+            "url": "{{HOST}}/api/management/v3/assets/tb-energy-2"
+          }
+        },
+        {
+          "name": "Delete tb-mobility-1",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
+            "url": "{{HOST}}/api/management/v3/assets/tb-mobility-1"
+          }
+        },
+        {
+          "name": "Delete tb-weather-1",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
+            "url": "{{HOST}}/api/management/v3/assets/tb-weather-1"
+          }
+        },
+        {
+          "name": "Delete tb-finance-1",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
+            "url": "{{HOST}}/api/management/v3/assets/tb-finance-1"
+          }
+        },
+        {
+          "name": "Delete tb-health-1",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
+            "url": "{{HOST}}/api/management/v3/assets/tb-health-1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "TB01 - Seed No Assets",
+      "item": [
+        {
+          "name": "Create tb-energy-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Building ventilation telemetry with airflow in ducts and fan RPM; mentions wind dynamics but explicitly excludes offshore meteorology and excludes wind turbine output\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-mobility-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Crosswind alert logs for highway bridges and truck stability scores; safety dataset, not marine wind fields and not eolic generation forecasting\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-weather-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-weather-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Urban canyon wind comfort measurements near tall buildings with gust discomfort index; does not include offshore anemometer series or turbine capacity factors\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        }
+      ]
+    },
+    {
+      "name": "TB02 - Seed All Assets",
+      "item": [
+        {
+          "name": "Create tb-energy-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Electricity demand profile by district feeder with hourly load and peak shaving indicators\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-energy-2",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-2\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Photovoltaic generation nowcast and day-ahead forecast with irradiance and cloud-cover features\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-mobility-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"EV charging sessions and station occupancy, including energy delivered per connector and charging power bands\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-weather-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-weather-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Ambient temperature and wind observations used as exogenous variables for electric load and solar output prediction\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-finance-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-finance-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Energy market settlement and imbalance cost records for distribution operators and retail suppliers\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-health-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-health-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Hospital backup-generator fuel usage and emergency power continuity logs during grid outages\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        }
+      ]
+    },
+    {
+      "name": "TB03 - Seed Some Assets",
+      "item": [
+        {
+          "name": "Create tb-mobility-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Urban traffic telemetry with congestion index, average speed and intersection queue length\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-weather-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-weather-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Rain and visibility observations used for commute delay modelling in metropolitan roads\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-energy-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Substation active and reactive power demand by circuit with hourly granularity\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-finance-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-finance-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Card transaction aggregates by merchant category and district\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-health-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-health-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Emergency department occupancy and triage severity by hour\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        }
+      ]
+    },
+    {
+      "name": "TB04 - Seed One Asset",
+      "item": [
+        {
+          "name": "Create tb-weather-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-weather-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Micrometeorology station feed with precipitation, dew point and humidity\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-energy-2",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-2\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Meteorological exogenous variables for solar forecasting: cloud cover, ambient temperature and wind speed\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-mobility-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Road weather impact metrics for traffic incidents under rain, fog and strong gusts\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-health-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-health-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Heatwave and respiratory admissions correlation time series\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        }
+      ]
+    },
+    {
+      "name": "TB05 - Seed X Assets",
+      "item": [
+        {
+          "name": "Create tb-energy-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Electric load by district feeder with demand peaks and off-peak valleys\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-energy-2",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-2\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Photovoltaic output time series and inverter-level generation efficiency\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-weather-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-weather-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Wind speed and temperature covariates used in load forecasting models\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-mobility-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"EV charging demand and queue times at urban charging hubs\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        }
+      ]
+    },
+    {
+      "name": "TB06 - Seed X Assets But None Match",
+      "item": [
+        {
+          "name": "Create tb-finance-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-finance-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Retail card payments, refunds and average ticket by merchant category\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-health-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-health-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Hospital admissions and bed occupancy by age segment\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-mobility-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Road congestion and commuting speed from loop detectors\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        }
+      ]
+    }
+  ]
+}
