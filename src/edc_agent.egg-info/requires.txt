@@ -1,2 +1,6 @@
+langchain
 langchain-ollama
+pydantic
 python-dotenv
+sentence-transformers>=2.7.0
+transformers>=4.51.0
