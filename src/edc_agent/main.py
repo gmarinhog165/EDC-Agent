@@ -9,6 +9,7 @@ from .manager import PipelineManager
 from .prompts.fetch_data_prompt import FETCH_DATA_PROMPT
 from .prompts.router_prompt import ROUTER_PROMPT
 from .prompts.search_catalog_prompt import SEARCH_CATALOG_PROMPT
+from .tools.definitions import fetch_item_data_tool, search_catalog_tool
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +21,13 @@ def build_manager(model_name: str, temperature: int) -> PipelineManager:
         name="search-catalog",
         llm_client=llm_client,
         system_prompt=SEARCH_CATALOG_PROMPT.strip(),
+        tools=[search_catalog_tool],
     )
     fetch_data_agent = Agent(
         name="fetch-data",
         llm_client=llm_client,
         system_prompt=FETCH_DATA_PROMPT.strip(),
+        tools=[fetch_item_data_tool],
     )
     return PipelineManager(
         router_agent=router_agent,
@@ -37,14 +40,10 @@ def run_cli(model_name: str, temperature: int) -> None:
     logger.info("Starting CLI model=%s temperature=%s", model_name, temperature)
     manager = build_manager(model_name=model_name, temperature=temperature)
 
-    print("EDC Agent pronto. Escreve a tua mensagem.")
-    print("Comandos: /reset para limpar contexto, /exit para sair.")
     initial_response, initial_done = manager.start_conversation()
     print(f"\nAgente: {initial_response}")
     if initial_done:
         print("Tarefa marcada como concluída pelo agente.")
-    print("\nChat history:")
-    print(manager.formatted_chat_history())
 
     while True:
         try:
