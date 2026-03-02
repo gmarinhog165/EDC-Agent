@@ -56,31 +56,42 @@ class OllamaClient(LLMClient):
         generated_messages.append(ai_response)
         last_text_response = str(ai_response.content or "").strip()
 
-        tool_call = ai_response.tool_calls[0] or None
+        logger.debug(
+            "Model=%s returned response with tool calls: %s",
+            self.model_name,
+            ai_response.tool_calls,
+        )
 
-        if not tool_call:
+        tool_calls = ai_response.tool_calls or []
+        if not tool_calls:
             return last_text_response, generated_messages
 
-        tool_name = tool_call.get("name", "")
-        tool_args = tool_call.get("args", {})
-        tool_call_id = tool_call.get("id", tool_name)
-        selected_tool = tool_map.get(tool_name)
+        for tool_call in tool_calls:
+            tool_name = tool_call.get("name", "")
+            tool_args = tool_call.get("args", {})
+            tool_call_id = tool_call.get("id", tool_name)
+            selected_tool = tool_map.get(tool_name)
 
-        if selected_tool is None:
-            tool_output = {"error": f"Tool '{tool_name}' is not available."}
-        else:
-            try:
-                args = tool_args if isinstance(tool_args, dict) else {}
-                tool_output = selected_tool.invoke(args)
-            except Exception as exc:  # pragma: no cover
-                tool_output = {"error": f"Tool '{tool_name}' failed: {exc}"}
+            if selected_tool is None:
+                tool_output = {"error": f"Tool '{tool_name}' is not available."}
+            else:
+                try:
+                    args = tool_args if isinstance(tool_args, dict) else {}
+                    tool_output = selected_tool.invoke(args)
+                except Exception as exc:  # pragma: no cover
+                    tool_output = {"error": f"Tool '{tool_name}' failed: {exc}"}
 
-        tool_message = ToolMessage(
-            content=self._serialize_tool_output(tool_output),
-            tool_call_id=tool_call_id,
-        )
-        running_messages.append(tool_message)
-        generated_messages.append(tool_message)
+            tool_message = ToolMessage(
+                content=self._serialize_tool_output(tool_output),
+                tool_call_id=tool_call_id,
+            )
+            running_messages.append(tool_message)
+            generated_messages.append(tool_message)
+
+        final_response: AIMessage = tool_model.invoke(running_messages)
+        running_messages.append(final_response)
+        generated_messages.append(final_response)
+        last_text_response = str(final_response.content or "").strip()
 
         return last_text_response, generated_messages
 

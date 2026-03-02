@@ -1,14 +1,13 @@
 import argparse
 import logging
+import os
 from dotenv import load_dotenv
 
 from .agents.agent import Agent
 from .clients.ollama_client import OllamaClient
 from .logging_config import setup_logging
 from .manager import PipelineManager
-from .prompts.fetch_data_prompt import FETCH_DATA_PROMPT
-from .prompts.router_prompt import ROUTER_PROMPT
-from .prompts.search_catalog_prompt import SEARCH_CATALOG_PROMPT
+from .prompts.prompt_registry import get_prompt
 from .tools.definitions import fetch_item_data_tool, search_catalog_tool
 
 logger = logging.getLogger(__name__)
@@ -16,17 +15,21 @@ logger = logging.getLogger(__name__)
 
 def build_manager(model_name: str, temperature: int) -> PipelineManager:
     llm_client = OllamaClient(model_name=model_name, temperature=temperature)
-    router_agent = Agent(name="router", llm_client=llm_client, system_prompt=ROUTER_PROMPT.strip())
+    router_agent = Agent(
+        name="router",
+        llm_client=llm_client,
+        system_prompt=get_prompt(agent_name="router", model_name=model_name),
+    )
     search_catalog_agent = Agent(
         name="search-catalog",
         llm_client=llm_client,
-        system_prompt=SEARCH_CATALOG_PROMPT.strip(),
+        system_prompt=get_prompt(agent_name="search-catalog", model_name=model_name),
         tools=[search_catalog_tool],
     )
     fetch_data_agent = Agent(
         name="fetch-data",
         llm_client=llm_client,
-        system_prompt=FETCH_DATA_PROMPT.strip(),
+        system_prompt=get_prompt(agent_name="fetch-data", model_name=model_name),
         tools=[fetch_item_data_tool],
     )
     return PipelineManager(
@@ -87,7 +90,7 @@ def run_cli(model_name: str, temperature: int) -> None:
 def main() -> None:
     load_dotenv()
     parser = argparse.ArgumentParser(description="Run the EDC Agent CLI.")
-    parser.add_argument("--model", default="llama3.1:8b", help="Ollama model name.")
+    parser.add_argument("--model", default=os.getenv("LLM_MODEL", ""), help="Ollama model name.")
     parser.add_argument("--temperature", type=int, default=0, help="Model temperature.") # temperatura serve para controlar a aleatoriedade das respostas do modelo. Valores mais baixos (ex: 0) tornam as respostas mais determinísticas, enquanto valores mais altos (ex: 1) aumentam a criatividade e variedade das respostas.
     parser.add_argument("--log-level", default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR).")
     parser.add_argument("--log-file", default=None, help="Optional log file path.")

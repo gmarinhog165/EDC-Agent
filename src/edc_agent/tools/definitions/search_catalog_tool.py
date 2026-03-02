@@ -6,7 +6,6 @@ from typing import Any
 import requests
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
-from sklearn.metrics.pairwise import cosine_similarity
 
 from edc_agent.cp.lib.transferAsset import (
     check_available_dataplanes,
@@ -77,35 +76,87 @@ class SearchCatalogTool(BaseTool):
     def _semantic_search(
         self, semantic_search_list: list[dict[str, Any]], keywords: list[str], model: str
     ) -> list[str]:
-        embedding_url = (
-            f"{os.getenv('LLM_BASE_URL', 'http://localhost:11434').rstrip('/')}"
-            "/api/embeddings"
+        if not semantic_search_list or not keywords:
+            return []
+        if not model:
+            raise ValueError("EMBEDDING_MODEL must be configured for semantic search.")
+        if ":" not in model:
+            raise ValueError(
+                "EMBEDDING_MODEL must use Ollama format 'name:tag' "
+                "(example: qwen3-embedding:0.6b)."
+            )
+
+        descriptions = [item.get("description", "") for item in semantic_search_list]
+        query_embeddings = self._encode_with_ollama(
+            model=model,
+            texts=keywords,
+            is_query=True,
+        )
+        document_embeddings = self._encode_with_ollama(
+            model=model,
+            texts=descriptions,
+            is_query=False,
+        )
+        max_similarities = self._max_cosine_similarities(
+            query_embeddings=query_embeddings,
+            document_embeddings=document_embeddings,
         )
 
-        def _get_embedding(text: str) -> list[float]:
-            payload = {"model": model, "prompt": text}
-            response = requests.post(embedding_url, json=payload, timeout=10)
-            response.raise_for_status()
-            return response.json()["embedding"]
+        return [
+            item.get("asset_id")
+            for item, score in zip(semantic_search_list, max_similarities, strict=False)
+            if float(score) > 0.5
+        ]
 
-        keyword_embeddings = [_get_embedding(keyword) for keyword in keywords]
+    def _encode_with_ollama(
+        self, model: str, texts: list[str], is_query: bool
+    ) -> list[list[float]]:
+        base_url = os.getenv("OLLAMA_BASE_URL") or os.getenv(
+            "LLM_BASE_URL", "http://localhost:11434"
+        )
+        endpoint = f"{base_url.rstrip('/')}/api/embed"
+        # Approximation of query/document prompts for embedding models that benefit from query framing.
+        inputs = [f"query: {text}" for text in texts] if is_query else texts
+        response = requests.post(
+            endpoint,
+            json={"model": model, "input": inputs},
+            timeout=30,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        embeddings = payload.get("embeddings", [])
+        if len(embeddings) != len(texts):
+            raise ValueError("Ollama embedding response size mismatch.")
+        return embeddings
 
-        filtered_items: list[str] = []
-        for item in semantic_search_list:
-            cached_embedding = item.get("embedding")
-            if cached_embedding is None:
-                cached_embedding = _get_embedding(item.get("description", ""))
-                item["embedding"] = cached_embedding
-
-            is_match = any(
-                float(cosine_similarity([cached_embedding], [keyword_embedding])[0][0])
-                > 0.5
-                for keyword_embedding in keyword_embeddings
+    def _max_cosine_similarities(
+        self, query_embeddings: list[list[float]], document_embeddings: list[list[float]]
+    ) -> list[float]:
+        max_scores: list[float] = []
+        for document_embedding in document_embeddings:
+            best_score = max(
+                self._cosine_similarity(query_embedding, document_embedding)
+                for query_embedding in query_embeddings
             )
-            if is_match:
-                filtered_items.append(item.get("asset_id"))
+            max_scores.append(float(best_score))
+        return max_scores
 
-        return filtered_items
+    def _cosine_similarity(self, left: list[float], right: list[float]) -> float:
+        if len(left) != len(right):
+            raise ValueError("Embedding dimensions do not match.")
+
+        dot = 0.0
+        left_norm = 0.0
+        right_norm = 0.0
+        for left_value, right_value in zip(left, right, strict=False):
+            dot += left_value * right_value
+            left_norm += left_value * left_value
+            right_norm += right_value * right_value
+
+        if left_norm == 0.0 or right_norm == 0.0:
+            return 0.0
+
+        return dot / ((left_norm ** 0.5) * (right_norm ** 0.5))
 
     def _prepare_keywords(self, keywords: list[str]) -> list[str]:
         unique_keywords: list[str] = []
