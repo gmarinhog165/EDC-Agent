@@ -1,7 +1,7 @@
 import logging
 from typing import Protocol
 
-from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langchain_core.tools import BaseTool
 
 logger = logging.getLogger(__name__)
@@ -58,9 +58,10 @@ class Agent:
         is_done = self._infer_is_done(raw_response)
         # Remove os marcadores de done da resposta para retornar apenas o conteúdo relevante
         clean_response = self._strip_done_markers(raw_response)
+        clean_execution_messages = self._strip_done_markers_from_messages(execution_messages)
 
         logger.debug("Agent=%s generated response is_done=%s", self.name, is_done)
-        return clean_response, is_done, execution_messages
+        return clean_response, is_done, clean_execution_messages
     
     # Constrói a lista de mensagens para enviar ao modelo, incluindo a system prompt, histórico e mensagem do user
     def _build_messages(self, user_message: str, chat_history: list[BaseMessage]) -> list[BaseMessage]:
@@ -83,3 +84,18 @@ class Agent:
         for marker in self._done_markers:
             cleaned = cleaned.replace(marker, "")
         return cleaned.strip()
+
+    def _strip_done_markers_from_messages(
+        self, messages: list[BaseMessage]
+    ) -> list[BaseMessage]:
+        cleaned_messages: list[BaseMessage] = []
+        for message in messages:
+            if isinstance(message, AIMessage) and isinstance(message.content, str):
+                cleaned_messages.append(
+                    message.model_copy(
+                        update={"content": self._strip_done_markers(message.content)}
+                    )
+                )
+                continue
+            cleaned_messages.append(message)
+        return cleaned_messages

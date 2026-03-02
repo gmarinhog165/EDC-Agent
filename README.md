@@ -1,22 +1,28 @@
 # EDC-Agent
 
-O EDC-Agent é um assistente de linha de comandos, leve e multiagente, desenvolvido em Python.
-Utiliza um LLM com Ollama e encaminha os pedidos do utilizador entre agentes especializados.
+O EDC-Agent é um assistente CLI multiagente desenvolvido em Python.
+Corre totalmente com modelos locais no Ollama e encaminha pedidos do utilizador entre agentes especializados.
 
 ## Funcionalidades
 
-- Pipeline multiagente com um router dedicado.
-- Dois agentes de tarefa:
-  - `search-catalog`: ajuda o utilizador a procurar e filtrar opções no catálogo.
-  - `fetch-data`: obtém informação detalhada sobre um item selecionado.
-- Suporte para histórico de conversa e limpeza de contexto.
-- Modelo, temperatura e logs configuráveis via CLI.
+- Pipeline multiagente com agente `router` dedicado.
+- Agentes de tarefa:
+  - `search-catalog` (usa a tool `search_catalog`)
+  - `fetch-data` (usa a tool `fetch_item_data`)
+- Fluxo de tool-calling com geração de resposta final:
+  - primeira chamada ao modelo decide as tool calls
+  - as tools são executadas
+  - segunda chamada ao modelo produz a resposta final em linguagem natural
+- Gestão de histórico com `/reset`.
+- Marcadores `<DONE>` são removidos das respostas visíveis e também limpos nas `execution_messages` antes de irem para o histórico.
 
 ## Requisitos
 
 - Python `>=3.10`
 - Ollama em execução local (predefinição: `http://localhost:11434`)
-- Um modelo Ollama já descarregado (predefinição na CLI: `llama3.1:8b`)
+- Modelos Ollama descarregados localmente:
+  - modelo de chat, por exemplo `qwen3:8b`
+  - modelo de embeddings, por exemplo `qwen3-embedding:0.6b`
 
 ## Instalação
 
@@ -28,29 +34,31 @@ pip install -e .
 
 ## Configuração
 
-Variáveis de ambiente:
+Variáveis de ambiente (podem ser definidas no `.env`):
 
-- `OLLAMA_BASE_URL`: opcional. Por predefinição usa `http://localhost:11434`.
+- `LLM_MODEL`: nome do modelo de chat usado como default da CLI.
+- `OLLAMA_BASE_URL`: URL base do Ollama (predefinição: `http://localhost:11434`).
+- `EMBEDDING_MODEL`: modelo de embeddings usado por `search_catalog`.
+  - deve estar no formato Ollama `name:tag`
+  - exemplo: `qwen3-embedding:0.6b`
 
-Também é suportado um ficheiro `.env` (carregado automaticamente no arranque).
+Exemplo de `.env`:
+
+```env
+LLM_MODEL=qwen3:8b
+OLLAMA_BASE_URL=http://localhost:11434
+EMBEDDING_MODEL=qwen3-embedding:0.6b
+```
 
 ## Execução
-
-Usando o entrypoint do módulo:
 
 ```bash
 python -m edc_agent
 ```
 
-Ou após a instalação:
-
-```bash
-edc-agent
-```
-
 Opções da CLI:
 
-- `--model` (predefinição: `llama3.1:8b`)
+- `--model` (predefinição: valor de `LLM_MODEL`)
 - `--temperature` (predefinição: `0`)
 - `--log-level` (predefinição: `INFO`)
 - `--log-file` (predefinição: desativado)
@@ -58,38 +66,33 @@ Opções da CLI:
 Exemplo:
 
 ```bash
-python -m edc_agent --model llama3.1:8b --temperature 0 --log-level DEBUG
+python -m edc_agent --model qwen3:8b --temperature 0 --log-level DEBUG
 ```
 
 ## Comandos da CLI
 
-Durante a sessão interativa:
+- `/reset`: limpa o histórico e inicia uma sessão nova.
+- `/exit`, `exit`, `quit`: termina a CLI.
 
-- `/reset`: limpa o histórico de conversa e reinicia a sessão.
-- `/exit`: termina a sessão.
+## Pesquisa Semântica (`search_catalog`)
+
+A filtragem semântica do `search_catalog` é apenas com Ollama:
+
+- os embeddings são gerados via `POST /api/embed`
+- as keywords da query são enviadas com prefixo `query: `
+- as descrições dos documentos são embeddadas como estão
+- a similaridade de cosseno é calculada no processo
+- assets com score `> 0.5` são mantidos antes dos filtros de dataplane/policy
 
 ## Estrutura do Projeto
 
 ```text
 src/edc_agent/
-  main.py                  # Entrada da CLI e ligação do pipeline
-  manager.py               # Encaminhamento e estado da conversa
-  logging_config.py        # Configuração de logging
-  agents/agent.py          # Abstração genérica de agente
-  clients/ollama_client.py # Wrapper do cliente Ollama
-  prompts/                 # Prompts do router e dos agentes de tarefa
+  main.py                           # Entry point da CLI e ligação do pipeline
+  manager.py                        # Seleção de rota e estado da conversa
+  agents/agent.py                   # Abstração de agente e limpeza de <DONE>
+  clients/ollama_client.py          # Cliente de chat Ollama + ciclo de execução de tools
+  tools/definitions/search_catalog_tool.py
+  tools/definitions/fetch_item_data_tool.py
+  prompts/                          # Prompts do router e dos agentes de tarefa
 ```
-
-## Como Funciona o Encaminhamento
-
-1. A mensagem do utilizador é enviada para o agente `router`.
-2. O router devolve uma rota: `search-catalog` ou `fetch-data`.
-3. O agente de tarefa selecionado gera a resposta final.
-4. O histórico da conversa é atualizado com as mensagens do utilizador e do assistente.
-
-Os agentes de tarefa podem marcar conclusão com `<DONE>`, que é removido da resposta visível e exposto como sinal interno de conclusão.
-
-## Notas
-
-- Este projeto privilegia atualmente simplicidade de routing e iteração rápida.
-- Pode ser reforçado de forma incremental com retries, validação mais rica e lógica de routing mais avançada.
