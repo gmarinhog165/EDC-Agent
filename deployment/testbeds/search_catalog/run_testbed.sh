@@ -20,7 +20,7 @@ API_KEY_VALUE="${API_KEY:-password}"
 if [ "$#" -gt 0 ]; then
   HOSTS=("$@")
 else
-  HOSTS=("http://127.0.0.1/provider/cp")
+  HOSTS=("http://192.168.112.126/provider/cp")
 fi
 
 echo
@@ -34,8 +34,15 @@ for host in "${HOSTS[@]}"; do
   echo "-> Host: ${host}"
   newman run \
     --folder "Cleanup" \
-    --folder "${FOLDER_NAME}" \
     --env-var "HOST=${host}" \
     --env-var "API_KEY=${API_KEY_VALUE}" \
     "${COLLECTION}"
+
+  if [ "${FOLDER_NAME}" != "Cleanup" ]; then
+    newman run \
+      --folder "${FOLDER_NAME}" \
+      --env-var "HOST=${host}" \
+      --env-var "API_KEY=${API_KEY_VALUE}" \
+      "${COLLECTION}"
+  fi
 done
