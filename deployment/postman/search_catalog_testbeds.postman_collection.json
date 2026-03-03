@@ -5,7 +5,7 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "HOST", "value": "http://127.0.0.1/provider/cp" },
+    { "key": "HOST", "value": "http://192.168.112.126/provider/cp" },
     { "key": "API_KEY", "value": "password" }
   ],
   "item": [
@@ -13,52 +13,87 @@
       "name": "Cleanup",
       "item": [
         {
-          "name": "Delete tb-energy-1",
+          "name": "List Contract Definitions",
           "request": {
-            "method": "DELETE",
-            "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
-            "url": "{{HOST}}/api/management/v3/assets/tb-energy-1"
-          }
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n   \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions/request"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const negotiations = pm.response.json();",
+                  "const items = Array.isArray(negotiations) ? negotiations : [];",
+                  "pm.collectionVariables.set('cleanupContractNegotiations', JSON.stringify(items));",
+                  "pm.collectionVariables.set('cleanupContractNegotiationIndex', '0');",
+                  "if (items.length > 0) {",
+                  "  postman.setNextRequest('Delete Contract Definition (loop)');",
+                  "} else {",
+                  "  postman.setNextRequest(null);",
+                  "}"
+                ]
+              }
+            }
+          ]
         },
         {
-          "name": "Delete tb-energy-2",
+          "name": "Delete Contract Definition (loop)",
           "request": {
             "method": "DELETE",
             "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
-            "url": "{{HOST}}/api/management/v3/assets/tb-energy-2"
-          }
-        },
-        {
-          "name": "Delete tb-mobility-1",
-          "request": {
-            "method": "DELETE",
-            "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
-            "url": "{{HOST}}/api/management/v3/assets/tb-mobility-1"
-          }
-        },
-        {
-          "name": "Delete tb-weather-1",
-          "request": {
-            "method": "DELETE",
-            "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
-            "url": "{{HOST}}/api/management/v3/assets/tb-weather-1"
-          }
-        },
-        {
-          "name": "Delete tb-finance-1",
-          "request": {
-            "method": "DELETE",
-            "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
-            "url": "{{HOST}}/api/management/v3/assets/tb-finance-1"
-          }
-        },
-        {
-          "name": "Delete tb-health-1",
-          "request": {
-            "method": "DELETE",
-            "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
-            "url": "{{HOST}}/api/management/v3/assets/tb-health-1"
-          }
+            "url": "{{HOST}}/api/management/v3/contractdefinitions/{{cleanupContractNegotiationId}}"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const negotiations = JSON.parse(pm.collectionVariables.get('cleanupContractNegotiations') || '[]');",
+                  "const index = Number(pm.collectionVariables.get('cleanupContractNegotiationIndex') || '0');",
+                  "if (index >= negotiations.length) {",
+                  "  postman.setNextRequest(null);",
+                  "  pm.execution.skipRequest();",
+                  "}",
+                  "const negotiation = negotiations[index] || {};",
+                  "const id = negotiation['@id'] || negotiation.id;",
+                  "if (!id) {",
+                  "  pm.collectionVariables.set('cleanupContractNegotiationIndex', String(index + 1));",
+                  "  postman.setNextRequest('Delete Contract Definition (loop)');",
+                  "  pm.execution.skipRequest();",
+                  "}",
+                  "pm.collectionVariables.set('cleanupContractNegotiationId', id);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const negotiations = JSON.parse(pm.collectionVariables.get('cleanupContractNegotiations') || '[]');",
+                  "const index = Number(pm.collectionVariables.get('cleanupContractNegotiationIndex') || '0');",
+                  "const nextIndex = index + 1;",
+                  "pm.collectionVariables.set('cleanupContractNegotiationIndex', String(nextIndex));",
+                  "if (nextIndex < negotiations.length) {",
+                  "  postman.setNextRequest('Delete Contract Definition (loop)');",
+                  "} else {",
+                  "  postman.setNextRequest(null);",
+                  "}"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -108,6 +143,81 @@
               "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-weather-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Urban canyon wind comfort measurements near tall buildings with gust discomfort index; does not include offshore anemometer series or turbine capacity factors\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
             },
             "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create Membership Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-membership\",\"policy\":{\"@type\":\"Set\",\"permission\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"MembershipCredential\",\"operator\":\"eq\",\"rightOperand\":\"active\"}}]}}"
+            },
+            "url": "{{HOST}}/api/management/v3/policydefinitions"
+          }
+        },
+        {
+          "name": "Create DataProcessor Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-dataprocessor\",\"policy\":{\"@type\":\"Set\",\"obligation\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"DataAccess.level\",\"operator\":\"eq\",\"rightOperand\":\"processing\"}}]}}"
+            },
+            "url": "{{HOST}}/api/management/v3/policydefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-energy-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-mobility-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-mobility-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-mobility-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-weather-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-weather-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-weather-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         }
       ]
@@ -204,6 +314,126 @@
             },
             "url": "{{HOST}}/api/management/v3/assets"
           }
+        },
+        {
+          "name": "Create Membership Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-membership\",\"policy\":{\"@type\":\"Set\",\"permission\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"MembershipCredential\",\"operator\":\"eq\",\"rightOperand\":\"active\"}}]}}"
+            },
+            "url": "{{HOST}}/api/management/v3/policydefinitions"
+          }
+        },
+        {
+          "name": "Create DataProcessor Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-dataprocessor\",\"policy\":{\"@type\":\"Set\",\"obligation\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"DataAccess.level\",\"operator\":\"eq\",\"rightOperand\":\"processing\"}}]}}"
+            },
+            "url": "{{HOST}}/api/management/v3/policydefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-energy-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-energy-2",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-2\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-2\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-mobility-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-mobility-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-mobility-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-weather-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-weather-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-weather-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-finance-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-finance-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-finance-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-health-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-health-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-health-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
         }
       ]
     },
@@ -284,6 +514,111 @@
             },
             "url": "{{HOST}}/api/management/v3/assets"
           }
+        },
+        {
+          "name": "Create Membership Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-membership\",\"policy\":{\"@type\":\"Set\",\"permission\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"MembershipCredential\",\"operator\":\"eq\",\"rightOperand\":\"active\"}}]}}"
+            },
+            "url": "{{HOST}}/api/management/v3/policydefinitions"
+          }
+        },
+        {
+          "name": "Create DataProcessor Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-dataprocessor\",\"policy\":{\"@type\":\"Set\",\"obligation\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"DataAccess.level\",\"operator\":\"eq\",\"rightOperand\":\"processing\"}}]}}"
+            },
+            "url": "{{HOST}}/api/management/v3/policydefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-energy-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-mobility-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-mobility-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-mobility-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-weather-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-weather-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-weather-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-finance-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-finance-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-finance-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-health-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-health-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-health-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
         }
       ]
     },
@@ -349,6 +684,96 @@
             },
             "url": "{{HOST}}/api/management/v3/assets"
           }
+        },
+        {
+          "name": "Create Membership Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-membership\",\"policy\":{\"@type\":\"Set\",\"permission\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"MembershipCredential\",\"operator\":\"eq\",\"rightOperand\":\"active\"}}]}}"
+            },
+            "url": "{{HOST}}/api/management/v3/policydefinitions"
+          }
+        },
+        {
+          "name": "Create DataProcessor Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-dataprocessor\",\"policy\":{\"@type\":\"Set\",\"obligation\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"DataAccess.level\",\"operator\":\"eq\",\"rightOperand\":\"processing\"}}]}}"
+            },
+            "url": "{{HOST}}/api/management/v3/policydefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-weather-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-weather-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-weather-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-energy-2",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-2\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-2\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-mobility-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-mobility-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-mobility-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-health-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-health-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-health-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
         }
       ]
     },
@@ -365,7 +790,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Electric load by district feeder with demand peaks and off-peak valleys\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Electric energy load by district feeder with demand peaks and off-peak valleys\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
             },
             "url": "{{HOST}}/api/management/v3/assets"
           }
@@ -413,6 +838,96 @@
               "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"EV charging demand and queue times at urban charging hubs\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
             },
             "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create Membership Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-membership\",\"policy\":{\"@type\":\"Set\",\"permission\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"MembershipCredential\",\"operator\":\"eq\",\"rightOperand\":\"active\"}}]}}"
+            },
+            "url": "{{HOST}}/api/management/v3/policydefinitions"
+          }
+        },
+        {
+          "name": "Create DataProcessor Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-dataprocessor\",\"policy\":{\"@type\":\"Set\",\"obligation\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"DataAccess.level\",\"operator\":\"eq\",\"rightOperand\":\"processing\"}}]}}"
+            },
+            "url": "{{HOST}}/api/management/v3/policydefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-energy-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-energy-2",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-2\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-2\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-weather-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-weather-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-weather-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-mobility-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-mobility-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-mobility-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         }
       ]
@@ -463,6 +978,81 @@
               "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Road congestion and commuting speed from loop detectors\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
             },
             "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create Membership Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-membership\",\"policy\":{\"@type\":\"Set\",\"permission\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"MembershipCredential\",\"operator\":\"eq\",\"rightOperand\":\"active\"}}]}}"
+            },
+            "url": "{{HOST}}/api/management/v3/policydefinitions"
+          }
+        },
+        {
+          "name": "Create DataProcessor Policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-dataprocessor\",\"policy\":{\"@type\":\"Set\",\"obligation\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"DataAccess.level\",\"operator\":\"eq\",\"rightOperand\":\"processing\"}}]}}"
+            },
+            "url": "{{HOST}}/api/management/v3/policydefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-finance-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-finance-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-finance-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-health-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-health-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-health-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
+          }
+        },
+        {
+          "name": "Create Contract tb-mobility-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-mobility-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-mobility-1\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         }
       ]
