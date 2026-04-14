@@ -1,3 +1,4 @@
+import logging
 from time import time
 import os
 from langchain_core.tools import BaseTool
@@ -8,6 +9,8 @@ from edc_agent.cp.lib.transferAsset import (
     negotiate_contract,
     transfer_to_s3
 )
+
+logger = logging.getLogger(__name__)
 
 
 class FetchItemDataArgs(BaseModel):

@@ -12,6 +12,8 @@ dependencies = [
   "langchain-ollama",
   "pydantic",
   "python-dotenv",
+  "requests",
+  "scikit-learn",
 ]
 
 [tool.setuptools]

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import logging
 import os
 from typing import Any
 
 import requests
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
+from sklearn.metrics.pairwise import cosine_similarity
 
 from edc_agent.cp.lib.transferAsset import (
     check_available_dataplanes,
@@ -13,30 +15,59 @@ from edc_agent.cp.lib.transferAsset import (
     get_catalog,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class SearchCatalogArgs(BaseModel):
-    keywords: list[str] = Field(
+    query: str = Field(
         description=(
-            "List where the first element is the main topic from the user query, "
-            "followed by up to 5 related keywords." # LLM gera isto
+            "Primary natural-language query capturing the user's core search intent. "
+            "Must be a complete, well-formed sentence or concise phrase."
         ),
         min_length=1,
-        max_length=6,
+    )
+
+    expansions: list[str] = Field(
+        default_factory=list,
+        description=(
+            "0 to 5 short alternative phrasings of the SAME search intent. "
+            "Each expansion must:\n"
+            "- Preserve the original meaning\n"
+            "- Not introduce new topics\n"
+            "- Be under 12 words\n"
+            "- Be a single phrase (no explanations)\n"
+            "- Not repeat the original query verbatim\n"
+            "Return an empty list if no meaningful variations exist."
+        ),
+        max_length=5,
     )
 
 
 class SearchCatalogTool(BaseTool):
     name: str = "search_catalog"
-    description: str = "Search catalog assets by topic + related keywords."
+    description: str = "Search catalog assets by query + semantic expansions."
     args_schema: type[BaseModel] = SearchCatalogArgs
 
-    def _run(self, keywords: list[str]) -> list[dict[str, str]]:
-        prepared_keywords = self._prepare_keywords(keywords)
-        if not prepared_keywords:
+    def _run(
+        self,
+        query: str,
+        expansions: list[str] | None = None,
+        keywords: list[str] | None = None,
+    ) -> list[dict[str, str]]:
+        prepared_queries = self._prepare_query_expansions(
+            query=query,
+            expansions=expansions,
+            keywords=keywords,
+        )
+        if not prepared_queries:
             return []
+
+        logger.info(f"Prepared query expansions for search: {prepared_queries}")
 
         catalog = get_catalog()
         semantic_search_list, dataplane_list, policy_list = self._filter_catalog(catalog)
+
+        logger.info(f"Semantic search list: {semantic_search_list}")
 
         description_map = {
             item["asset_id"]: item.get("description", "")
@@ -44,7 +75,7 @@ class SearchCatalogTool(BaseTool):
         }
 
         filtered_list = self._semantic_search(
-            semantic_search_list, prepared_keywords, os.getenv("EMBEDDING_MODEL", "")
+            semantic_search_list, prepared_queries, os.getenv("EMBEDDING_MODEL", "")
         )
 
         available_dataplanes = set(check_available_dataplanes() or [])
@@ -74,9 +105,9 @@ class SearchCatalogTool(BaseTool):
         ]
 
     def _semantic_search(
-        self, semantic_search_list: list[dict[str, Any]], keywords: list[str], model: str
+        self, semantic_search_list: list[dict[str, Any]], queries: list[str], model: str
     ) -> list[str]:
-        if not semantic_search_list or not keywords:
+        if not semantic_search_list or not queries:
             return []
         if not model:
             raise ValueError("EMBEDDING_MODEL must be configured for semantic search.")
@@ -89,7 +120,7 @@ class SearchCatalogTool(BaseTool):
         descriptions = [item.get("description", "") for item in semantic_search_list]
         query_embeddings = self._encode_with_ollama(
             model=model,
-            texts=keywords,
+            texts=queries,
             is_query=True,
         )
         document_embeddings = self._encode_with_ollama(
@@ -132,51 +163,44 @@ class SearchCatalogTool(BaseTool):
     def _max_cosine_similarities(
         self, query_embeddings: list[list[float]], document_embeddings: list[list[float]]
     ) -> list[float]:
-        max_scores: list[float] = []
-        for document_embedding in document_embeddings:
-            best_score = max(
-                self._cosine_similarity(query_embedding, document_embedding)
-                for query_embedding in query_embeddings
-            )
-            max_scores.append(float(best_score))
-        return max_scores
+        if not query_embeddings or not document_embeddings:
+            return []
+        similarity_matrix = cosine_similarity(document_embeddings, query_embeddings)
+        return [float(max(row)) for row in similarity_matrix]
 
-    def _cosine_similarity(self, left: list[float], right: list[float]) -> float:
-        if len(left) != len(right):
-            raise ValueError("Embedding dimensions do not match.")
+    def _prepare_query_expansions(
+        self,
+        query: str | None,
+        expansions: list[str] | None,
+        keywords: list[str] | None,
+    ) -> list[str]:
+        # Backward compatibility:
+        # if legacy `keywords` is sent, first item is treated as `query`
+        # and the next items as expansions.
+        raw_query = query or ""
+        raw_expansions = expansions or []
+        if (not raw_query.strip()) and keywords:
+            raw_query = str(keywords[0])
+            raw_expansions = [str(item) for item in keywords[1:]]
 
-        dot = 0.0
-        left_norm = 0.0
-        right_norm = 0.0
-        for left_value, right_value in zip(left, right, strict=False):
-            dot += left_value * right_value
-            left_norm += left_value * left_value
-            right_norm += right_value * right_value
-
-        if left_norm == 0.0 or right_norm == 0.0:
-            return 0.0
-
-        return dot / ((left_norm ** 0.5) * (right_norm ** 0.5))
-
-    def _prepare_keywords(self, keywords: list[str]) -> list[str]:
-        unique_keywords: list[str] = []
+        unique_queries: list[str] = []
         seen: set[str] = set()
 
-        for raw_keyword in keywords:
-            keyword = str(raw_keyword).strip()
-            if not keyword:
+        for raw_text in [raw_query, *raw_expansions]:
+            text = str(raw_text).strip()
+            if not text:
                 continue
 
-            lowered_keyword = keyword.lower()
-            if lowered_keyword in seen:
+            lowered = text.lower()
+            if lowered in seen:
                 continue
 
-            seen.add(lowered_keyword)
-            unique_keywords.append(keyword)
-            if len(unique_keywords) >= 6:
+            seen.add(lowered)
+            unique_queries.append(text)
+            if len(unique_queries) >= 6:
                 break
 
-        return unique_keywords
+        return unique_queries
 
     def _filter_catalog(
         self, catalog: list[dict[str, Any]]
@@ -211,6 +235,16 @@ class SearchCatalogTool(BaseTool):
 search_catalog_tool = SearchCatalogTool()
 
 
-def search_catalog(keywords: list[str]) -> list[dict[str, str]]:
+def search_catalog(
+    query: str | list[str], expansions: list[str] | None = None
+) -> list[dict[str, str]]:
     """Compatibility helper for direct calls outside LangChain tool execution."""
-    return search_catalog_tool._run(keywords=keywords)
+    if isinstance(query, list):
+        legacy_keywords = query
+        if not legacy_keywords:
+            return []
+        return search_catalog_tool._run(
+            query=str(legacy_keywords[0]),
+            expansions=[str(item) for item in legacy_keywords[1:]],
+        )
+    return search_catalog_tool._run(query=query, expansions=expansions)

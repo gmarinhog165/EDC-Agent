@@ -12,7 +12,7 @@ Nota: as tools de `cp/lib` dependem das libs desse modulo (ex: `python-dotenv`).
 ## Teste rapido
 
 ```bash
-python src/edc_agent/tools/sandbox.py search_catalog '{"keywords":["mouse","peripheral","usb","gaming"]}'
+python src/edc_agent/tools/sandbox.py search_catalog '{"query":"gaming mouse","expansions":["usb peripheral","high dpi mouse","esports pointer"]}'
 python src/edc_agent/tools/sandbox.py fetch_item_data '{"item_id":"KBM-001"}'
 ```
 

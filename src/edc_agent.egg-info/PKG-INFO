@@ -8,6 +8,6 @@ Requires-Dist: langchain
 Requires-Dist: langchain-ollama
 Requires-Dist: pydantic
 Requires-Dist: python-dotenv
-Requires-Dist: sentence-transformers>=2.7.0
-Requires-Dist: transformers>=4.51.0
+Requires-Dist: requests
+Requires-Dist: scikit-learn
 Dynamic: license-file
