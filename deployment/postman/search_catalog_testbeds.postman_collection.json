@@ -5,8 +5,14 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "HOST", "value": "http://192.168.112.126/provider/cp" },
-    { "key": "API_KEY", "value": "password" }
+    {
+      "key": "HOST",
+      "value": "http://192.168.112.126/provider/cp"
+    },
+    {
+      "key": "API_KEY",
+      "value": "password"
+    }
   ],
   "item": [
     {
@@ -17,8 +23,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -50,7 +62,12 @@
           "name": "Delete Contract Definition (loop)",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "X-Api-Key", "value": "{{API_KEY}}" }],
+            "header": [
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
             "url": "{{HOST}}/api/management/v3/contractdefinitions/{{cleanupContractNegotiationId}}"
           },
           "event": [
@@ -98,219 +115,382 @@
       ]
     },
     {
-      "name": "TB01 - Seed No Assets",
-      "item": [
-        {
-          "name": "Create tb-energy-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Building ventilation telemetry with airflow in ducts and fan RPM; mentions wind dynamics but explicitly excludes offshore meteorology and excludes wind turbine output\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-mobility-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Crosswind alert logs for highway bridges and truck stability scores; safety dataset, not marine wind fields and not eolic generation forecasting\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-weather-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-weather-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Urban canyon wind comfort measurements near tall buildings with gust discomfort index; does not include offshore anemometer series or turbine capacity factors\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create Membership Policy",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-membership\",\"policy\":{\"@type\":\"Set\",\"permission\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"MembershipCredential\",\"operator\":\"eq\",\"rightOperand\":\"active\"}}]}}"
-            },
-            "url": "{{HOST}}/api/management/v3/policydefinitions"
-          }
-        },
-        {
-          "name": "Create DataProcessor Policy",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-dataprocessor\",\"policy\":{\"@type\":\"Set\",\"obligation\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"DataAccess.level\",\"operator\":\"eq\",\"rightOperand\":\"processing\"}}]}}"
-            },
-            "url": "{{HOST}}/api/management/v3/policydefinitions"
-          }
-        },
-        {
-          "name": "Create Contract tb-energy-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-1\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/contractdefinitions"
-          }
-        },
-        {
-          "name": "Create Contract tb-mobility-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-mobility-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-mobility-1\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/contractdefinitions"
-          }
-        },
-        {
-          "name": "Create Contract tb-weather-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-weather-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-weather-1\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/contractdefinitions"
-          }
-        }
-      ]
-    },
-    {
       "name": "TB02 - Seed All Assets",
       "item": [
         {
-          "name": "Create tb-energy-1",
+          "name": "Create tb-solar-1",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Electricity demand profile by district feeder with hourly load and peak shaving indicators\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-solar-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Irradiancia Solar - Portugal Continental. Dataset com medicoes horarias de irradiancia global horizontal (GHI) e irradiancia direta normal (DNI) para 42 estacoes meteorologicas em Portugal Continental, cobrindo o periodo 2015-2023. Inclui metadados de localizacao, altitude e cobertura de nuvens. Disponivel em formato Parquet.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
             },
             "url": "{{HOST}}/api/management/v3/assets"
           }
         },
         {
-          "name": "Create tb-energy-2",
+          "name": "Create tb-solar-2",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-2\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Photovoltaic generation nowcast and day-ahead forecast with irradiance and cloud-cover features\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-solar-2\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Producao Fotovoltaica - Parques >1MW. Registos de producao horaria agregada de 38 parques fotovoltaicos com potencia instalada superior a 1 MW, operados na rede nacional entre 2019 e 2023. Nao inclui dados de autoconsumo nem instalacoes residenciais. Os dados de irradiancia nao estao presentes neste asset.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
             },
             "url": "{{HOST}}/api/management/v3/assets"
           }
         },
         {
-          "name": "Create tb-mobility-1",
+          "name": "Create tb-solar-3",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"EV charging sessions and station occupancy, including energy delivered per connector and charging power bands\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-solar-3\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto de resultados de benchmarking de 12 modelos de previsao de geracao solar (ARIMA, LSTM, XGBoost, Transformer) avaliados em horizontes de 1h, 6h e 24h. Inclui metricas MAE, RMSE e intervalos de confianca. Este asset nao contem series temporais de producao real.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
             },
             "url": "{{HOST}}/api/management/v3/assets"
           }
         },
         {
-          "name": "Create tb-weather-1",
+          "name": "Create tb-solar-4",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-weather-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Ambient temperature and wind observations used as exogenous variables for electric load and solar output prediction\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-solar-4\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Inventario de Paineis Solares Instalados - Municipios. Base de dados georreferenciada com o numero de instalacoes fotovoltaicas por municipio, tipologia (residencial, comercial, industrial), potencia total instalada e ano de instalacao. Cobre os 308 municipios portugueses com dados ate 2022.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
             },
             "url": "{{HOST}}/api/management/v3/assets"
           }
         },
         {
-          "name": "Create tb-finance-1",
+          "name": "Create tb-solar-5",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-finance-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Energy market settlement and imbalance cost records for distribution operators and retail suppliers\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-solar-5\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Impacto de Parques Solares na Biodiversidade e Uso do Solo. Estudo de avaliacao de impacto ambiental de 19 parques fotovoltaicos de grande escala em Portugal, com analise de alteracao do uso do solo, fragmentacao de habitats e efeitos sobre especies protegidas. Inclui comparacao antes/depois da instalacao com imagens de satelite Sentinel-2. Este asset foca exclusivamente impacto ambiental - nao contem dados de producao energetica, irradiancia, nem geracao fotovoltaica de qualquer tipo.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
             },
             "url": "{{HOST}}/api/management/v3/assets"
           }
         },
         {
-          "name": "Create tb-health-1",
+          "name": "Create tb-wind-1",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-health-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Hospital backup-generator fuel usage and emergency power continuity logs during grid outages\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-wind-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Velocidade e Direcao do Vento - Offshore. Medicoes de anemometros a 10m, 80m e 120m de altura em 6 pontos de monitorizacao offshore na costa portuguesa (Atlantico Norte). Dados em formato CSV com resolucao de 10 minutos, cobrindo 2018-2023. Inclui temperatura do ar e pressao atmosferica.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-wind-2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-wind-2\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha tecnica de 91 parques eolicos onshore em Portugal: coordenadas, numero de turbinas, fabricante, modelo, potencia unitaria, altura do cubo e data de inicio de operacao. Este asset exclui explicitamente parques offshore e qualquer dado de producao ou medicao de vento.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-wind-3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-wind-3\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas de potencia certificadas (IEC 61400-12) de 24 modelos de turbinas instaladas em Portugal, com dados de densidade do ar corrigida. Formato JSON. Nao inclui dados historicos de producao nem localizacao de parques.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-wind-4",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-wind-4\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Previsao de Vento NWP - ECMWF Downscaling. Resultados de downscaling estatistico de previsoes NWP (ECMWF ERA5) para Portugal, com resolucao espacial de 5km e temporal de 1 hora. Horizonte de previsao ate 72 horas. Cobre o periodo 2020-2023. Inclui variaveis de vento a 100m e temperatura.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-wind-5",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-wind-5\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acustica. Dataset de medicoes acusticas e de vibracao recolhidas em 8 parques eolicos onshore, com dados de nivel de pressao sonora (dB) a diferentes distancias, espectros de frequencia e correlacao com velocidade do vento. Inclui perfis de vento a 80m e 120m usados como variavel independente nas analises. Este asset nao contem dados de producao eletrica, curvas de potencia nem series de energia gerada.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-hydro-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-hydro-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Caudais Fluviais - Bacias Hidrograficas Nacionais. Series historicas de caudais diarios medidos em 78 estacoes hidrometricas das principais bacias hidrograficas portuguesas (Douro, Tejo, Guadiana, Minho, Lima), cobrindo 1980-2022. Inclui dados de cheias e periodos de seca. Formato NetCDF.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-hydro-2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-hydro-2\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Producao Hidrica - Grandes Albufeiras. Producao diaria de energia hidrica de 23 grandes albufeiras com capacidade superior a 100 GWh, geridas pela REN, entre 2010 e 2023. Inclui volume armazenado, cota da albufeira e energia turbinada vs. bombagem. Nao contem dados de caudais afluentes nem de meteorologia.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-hydro-3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-hydro-3\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de potencial hidrico para instalacao de mini-hidricas (<10 MW) em trocos fluviais sem aproveitamento. Inclui estimativas de producao anual, caudal de dimensionamento e classificacao ambiental dos trocos. Este asset nao inclui dados de producao existente nem series de caudais.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-hydro-4",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-hydro-4\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Eventos de Seca - Indice PDSI Portugal. Series mensais do indice de seca PDSI (Palmer Drought Severity Index) para Portugal Continental, calculadas com base em dados de temperatura e precipitacao de 1950 a 2023. Inclui classificacao de severidade e extensao geografica dos eventos.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-biomass-1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-biomass-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Inventario Florestal - Biomassa Disponivel. Estimativas de biomassa florestal disponivel para valorizacao energetica por NUT III, com dados do Inventario Florestal Nacional (IFN6). Inclui tipologia de especies (eucalipto, pinheiro, sobreiro), volume de residuos e sazonalidade de disponibilidade.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-biomass-2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-biomass-2\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Centrais de Biomassa - Consumo e Producao. Dados anuais de 14 centrais de biomassa ligadas a rede: consumo de combustivel (t/ano), producao eletrica (MWh), eficiencia e regime de operacao. Cobre 2015-2022. Este asset exclui unidades de cogeracao a gas natural e biogas - apenas biomassa solida.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-biomass-3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-biomass-3\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Biogas - Producao em ETAR e Aterros. Dados de producao de biogas em estacoes de tratamento de aguas residuais (ETAR) e aterros sanitarios em Portugal, com desagregacao por instalacao e destino energetico (eletricidade, calor, injecao na rede). Periodo 2017-2022. Nao inclui biomassa solida nem culturas energeticas.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
+            },
+            "url": "{{HOST}}/api/management/v3/assets"
+          }
+        },
+        {
+          "name": "Create tb-biomass-4",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-biomass-4\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Precos de Biomassa Florestal - Mercado Nacional. Series trimestrais de precos de mercado de pellets, estilha e rolaria para uso energetico em Portugal, desagregados por regiao e tipologia de comprador (central, industrial, residencial). Inclui comparacao com precos do gas natural. Periodo 2016-2023.\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
             },
             "url": "{{HOST}}/api/management/v3/assets"
           }
@@ -320,8 +500,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -335,8 +521,14 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -346,711 +538,379 @@
           }
         },
         {
-          "name": "Create Contract tb-energy-1",
+          "name": "Create Contract tb-solar-1",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-solar-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-solar-1\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-energy-2",
+          "name": "Create Contract tb-solar-2",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-2\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-2\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-solar-2\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-solar-2\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-mobility-1",
+          "name": "Create Contract tb-solar-3",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-mobility-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-mobility-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-solar-3\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-solar-3\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-weather-1",
+          "name": "Create Contract tb-solar-4",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-weather-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-weather-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-solar-4\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-solar-4\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-finance-1",
+          "name": "Create Contract tb-solar-5",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-finance-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-finance-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-solar-5\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-solar-5\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-health-1",
+          "name": "Create Contract tb-wind-1",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-health-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-health-1\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/contractdefinitions"
-          }
-        }
-      ]
-    },
-    {
-      "name": "TB03 - Seed Some Assets",
-      "item": [
-        {
-          "name": "Create tb-mobility-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Urban traffic telemetry with congestion index, average speed and intersection queue length\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-weather-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-weather-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Rain and visibility observations used for commute delay modelling in metropolitan roads\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-energy-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Substation active and reactive power demand by circuit with hourly granularity\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-finance-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-finance-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Card transaction aggregates by merchant category and district\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-health-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-health-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Emergency department occupancy and triage severity by hour\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create Membership Policy",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-membership\",\"policy\":{\"@type\":\"Set\",\"permission\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"MembershipCredential\",\"operator\":\"eq\",\"rightOperand\":\"active\"}}]}}"
-            },
-            "url": "{{HOST}}/api/management/v3/policydefinitions"
-          }
-        },
-        {
-          "name": "Create DataProcessor Policy",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-dataprocessor\",\"policy\":{\"@type\":\"Set\",\"obligation\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"DataAccess.level\",\"operator\":\"eq\",\"rightOperand\":\"processing\"}}]}}"
-            },
-            "url": "{{HOST}}/api/management/v3/policydefinitions"
-          }
-        },
-        {
-          "name": "Create Contract tb-energy-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-wind-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-wind-1\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-mobility-1",
+          "name": "Create Contract tb-wind-2",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-mobility-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-mobility-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-wind-2\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-wind-2\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-weather-1",
+          "name": "Create Contract tb-wind-3",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-weather-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-weather-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-wind-3\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-wind-3\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-finance-1",
+          "name": "Create Contract tb-wind-4",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-finance-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-finance-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-wind-4\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-wind-4\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-health-1",
+          "name": "Create Contract tb-wind-5",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-health-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-health-1\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/contractdefinitions"
-          }
-        }
-      ]
-    },
-    {
-      "name": "TB04 - Seed One Asset",
-      "item": [
-        {
-          "name": "Create tb-weather-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-weather-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Micrometeorology station feed with precipitation, dew point and humidity\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-energy-2",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-2\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Meteorological exogenous variables for solar forecasting: cloud cover, ambient temperature and wind speed\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-mobility-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Road weather impact metrics for traffic incidents under rain, fog and strong gusts\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-health-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-health-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Heatwave and respiratory admissions correlation time series\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create Membership Policy",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-membership\",\"policy\":{\"@type\":\"Set\",\"permission\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"MembershipCredential\",\"operator\":\"eq\",\"rightOperand\":\"active\"}}]}}"
-            },
-            "url": "{{HOST}}/api/management/v3/policydefinitions"
-          }
-        },
-        {
-          "name": "Create DataProcessor Policy",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-dataprocessor\",\"policy\":{\"@type\":\"Set\",\"obligation\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"DataAccess.level\",\"operator\":\"eq\",\"rightOperand\":\"processing\"}}]}}"
-            },
-            "url": "{{HOST}}/api/management/v3/policydefinitions"
-          }
-        },
-        {
-          "name": "Create Contract tb-weather-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-weather-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-weather-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-wind-5\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-wind-5\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-energy-2",
+          "name": "Create Contract tb-hydro-1",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-2\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-2\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-hydro-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-hydro-1\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-mobility-1",
+          "name": "Create Contract tb-hydro-2",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-mobility-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-mobility-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-hydro-2\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-hydro-2\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-health-1",
+          "name": "Create Contract tb-hydro-3",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-health-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-health-1\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/contractdefinitions"
-          }
-        }
-      ]
-    },
-    {
-      "name": "TB05 - Seed X Assets",
-      "item": [
-        {
-          "name": "Create tb-energy-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Electric energy load by district feeder with demand peaks and off-peak valleys\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-energy-2",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-energy-2\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Photovoltaic output time series and inverter-level generation efficiency\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-weather-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-weather-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Wind speed and temperature covariates used in load forecasting models\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-mobility-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"EV charging demand and queue times at urban charging hubs\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create Membership Policy",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-membership\",\"policy\":{\"@type\":\"Set\",\"permission\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"MembershipCredential\",\"operator\":\"eq\",\"rightOperand\":\"active\"}}]}}"
-            },
-            "url": "{{HOST}}/api/management/v3/policydefinitions"
-          }
-        },
-        {
-          "name": "Create DataProcessor Policy",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-dataprocessor\",\"policy\":{\"@type\":\"Set\",\"obligation\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"DataAccess.level\",\"operator\":\"eq\",\"rightOperand\":\"processing\"}}]}}"
-            },
-            "url": "{{HOST}}/api/management/v3/policydefinitions"
-          }
-        },
-        {
-          "name": "Create Contract tb-energy-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-hydro-3\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-hydro-3\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-energy-2",
+          "name": "Create Contract tb-hydro-4",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-energy-2\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-energy-2\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-hydro-4\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-hydro-4\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-weather-1",
+          "name": "Create Contract tb-biomass-1",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-weather-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-weather-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-biomass-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-biomass-1\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-mobility-1",
+          "name": "Create Contract tb-biomass-2",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-mobility-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-mobility-1\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/contractdefinitions"
-          }
-        }
-      ]
-    },
-    {
-      "name": "TB06 - Seed X Assets But None Match",
-      "item": [
-        {
-          "name": "Create tb-finance-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-finance-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Retail card payments, refunds and average ticket by merchant category\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-health-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-health-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Hospital admissions and bed occupancy by age segment\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create tb-mobility-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-mobility-1\",\"@type\":\"Asset\",\"properties\":{\"description\":\"Road congestion and commuting speed from loop detectors\"},\"dataAddress\":{\"@type\":\"DataAddress\",\"type\":\"HttpData\",\"baseUrl\":\"https://jsonplaceholder.typicode.com/todos\",\"proxyPath\":\"true\",\"proxyQueryParams\":\"true\"}}"
-            },
-            "url": "{{HOST}}/api/management/v3/assets"
-          }
-        },
-        {
-          "name": "Create Membership Policy",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-membership\",\"policy\":{\"@type\":\"Set\",\"permission\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"MembershipCredential\",\"operator\":\"eq\",\"rightOperand\":\"active\"}}]}}"
-            },
-            "url": "{{HOST}}/api/management/v3/policydefinitions"
-          }
-        },
-        {
-          "name": "Create DataProcessor Policy",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@type\":\"PolicyDefinition\",\"@id\":\"tb-require-dataprocessor\",\"policy\":{\"@type\":\"Set\",\"obligation\":[{\"action\":\"use\",\"constraint\":{\"leftOperand\":\"DataAccess.level\",\"operator\":\"eq\",\"rightOperand\":\"processing\"}}]}}"
-            },
-            "url": "{{HOST}}/api/management/v3/policydefinitions"
-          }
-        },
-        {
-          "name": "Create Contract tb-finance-1",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-finance-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-finance-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-biomass-2\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-biomass-2\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-health-1",
+          "name": "Create Contract tb-biomass-3",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-health-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-health-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-biomass-3\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-biomass-3\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }
         },
         {
-          "name": "Create Contract tb-mobility-1",
+          "name": "Create Contract tb-biomass-4",
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "X-Api-Key", "value": "{{API_KEY}}" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{API_KEY}}"
+              }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-mobility-1\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-mobility-1\"}}"
+              "raw": "{\"@context\":[\"https://w3id.org/edc/connector/management/v0.0.1\"],\"@id\":\"tb-contract-tb-biomass-4\",\"@type\":\"ContractDefinition\",\"accessPolicyId\":\"tb-require-membership\",\"contractPolicyId\":\"tb-require-dataprocessor\",\"assetsSelector\":{\"@type\":\"Criterion\",\"operandLeft\":\"https://w3id.org/edc/v0.0.1/ns/id\",\"operator\":\"=\",\"operandRight\":\"tb-biomass-4\"}}"
             },
             "url": "{{HOST}}/api/management/v3/contractdefinitions"
           }

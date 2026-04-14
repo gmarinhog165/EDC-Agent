@@ -1,0 +1,250 @@
+{
+  "use_cases": [
+    {
+      "id": "no_results",
+      "title": "Nao devolve nenhum",
+      "tests": [
+        {
+          "id": "no_results_1",
+          "query": "Preciso de dados sobre emissoes de CO2 do setor da aviacao comercial europeia.",
+          "expected_count": 0
+        },
+        {
+          "id": "no_results_2",
+          "query": "Quero informacao sobre tarifas de importacao de paineis solares na Uniao Europeia.",
+          "expected_count": 0
+        },
+        {
+          "id": "no_results_3",
+          "query": "Looking for datasets on electric vehicle charging infrastructure in Portugal.",
+          "expected_count": 0
+        }
+      ]
+    },
+    {
+      "id": "return_all",
+      "title": "Devolve todos",
+      "tests": [
+        {
+          "id": "return_all_1",
+          "query": "Quero explorar todos os datasets de energias renovaveis que tens disponiveis.",
+          "expected_count": 18
+        },
+        {
+          "id": "return_all_2",
+          "query": "Que dados existem sobre producao, recursos e impacto das fontes renovaveis em Portugal?",
+          "expected_count": 18
+        },
+        {
+          "id": "return_all_3",
+          "query": "I need an overview of all available renewable energy data for Portugal.",
+          "expected_count": 18
+        }
+      ]
+    },
+    {
+      "id": "specific_n",
+      "title": "Devolve N especifico",
+      "tests": [
+        {
+          "id": "specific_n_1",
+          "query": "Da-me 3 datasets sobre energia solar.",
+          "expected_count": 3,
+          "expected_present": ["tb-solar-1", "tb-solar-2", "tb-solar-4"]
+        },
+        {
+          "id": "specific_n_2",
+          "query": "Preciso de exactamente 2 fontes de dados sobre vento para um relatorio.",
+          "expected_count": 2,
+          "expected_present": ["tb-wind-1", "tb-wind-4"]
+        },
+        {
+          "id": "specific_n_3",
+          "query": "Show me 4 datasets related to hydrological or water resources.",
+          "expected_count": 4,
+          "expected_present": ["tb-hydro-1", "tb-hydro-2", "tb-hydro-3", "tb-hydro-4"]
+        }
+      ]
+    },
+    {
+      "id": "contextual",
+      "title": "Devolve por contexto",
+      "tests": [
+        {
+          "id": "contextual_1",
+          "query": "Estou a desenvolver um modelo de previsao de geracao solar para horizonte de 24h. Que dados me sao uteis?",
+          "expected_present": ["tb-solar-1", "tb-wind-4"],
+          "expected_absent": ["tb-solar-3"]
+        },
+        {
+          "id": "contextual_2",
+          "query": "Quero perceber o impacto ambiental e territorial das renovaveis em Portugal.",
+          "expected_present": ["tb-solar-5", "tb-hydro-3"],
+          "expected_absent": ["tb-solar-1", "tb-wind-1"]
+        },
+        {
+          "id": "contextual_3",
+          "query": "I need to assess water availability for hydropower planning during drought years.",
+          "expected_present": ["tb-hydro-1", "tb-hydro-4"],
+          "expected_absent": ["tb-hydro-2", "tb-hydro-3"]
+        }
+      ]
+    },
+    {
+      "id": "explicit_exclusion",
+      "title": "Exclusao explicita",
+      "tests": [
+        {
+          "id": "explicit_exclusion_1",
+          "query": "Preciso de dados de irradiancia solar em Portugal para calibrar sensores.",
+          "expected_present": ["tb-solar-1"],
+          "expected_absent": ["tb-solar-2", "tb-solar-3"]
+        },
+        {
+          "id": "explicit_exclusion_2",
+          "query": "Quero dados de producao eletrica de parques eolicos onshore.",
+          "expected_present": ["tb-wind-2"],
+          "expected_absent": ["tb-wind-3", "tb-wind-5"]
+        },
+        {
+          "id": "explicit_exclusion_3",
+          "query": "Estou a procura de series temporais de biomassa solida consumida em centrais.",
+          "expected_present": ["tb-biomass-2"],
+          "expected_absent": ["tb-biomass-3"]
+        }
+      ]
+    },
+    {
+      "id": "requested_zero_found",
+      "title": "X pedido, 0 encontrados",
+      "tests": [
+        {
+          "id": "requested_zero_found_1",
+          "query": "Preciso de dados de geracao solar em tempo real com resolucao inferior a 1 minuto.",
+          "expected_count": 0
+        },
+        {
+          "id": "requested_zero_found_2",
+          "query": "Quero benchmarks de modelos de previsao para energia hidrica.",
+          "expected_count": 0
+        },
+        {
+          "id": "requested_zero_found_3",
+          "query": "Looking for offshore wind power generation time series.",
+          "expected_count": 0
+        }
+      ]
+    },
+    {
+      "id": "semantic_ambiguity",
+      "title": "Ambiguidade Semantica",
+      "tests": [
+        {
+          "id": "semantic_ambiguity_1",
+          "query": "Quero dados para otimizar o despacho de energia renovavel na rede.",
+          "expected_present": ["tb-hydro-2", "tb-wind-4", "tb-solar-2"]
+        },
+        {
+          "id": "semantic_ambiguity_2",
+          "query": "Preciso de dados historicos de producao renovavel para um modelo de machine learning.",
+          "expected_present": ["tb-solar-2", "tb-wind-1", "tb-hydro-1", "tb-biomass-2"]
+        },
+        {
+          "id": "semantic_ambiguity_3",
+          "query": "What weather and climate data is available for renewable energy analysis?",
+          "expected_present": ["tb-solar-1", "tb-wind-4", "tb-hydro-4", "tb-wind-1"]
+        }
+      ]
+    },
+    {
+      "id": "synonyms",
+      "title": "Sinonimos terminologia",
+      "tests": [
+        {
+          "id": "synonyms_1",
+          "query": "Quero dados de radiacao solar quanto sol bate em cada zona de Portugal.",
+          "expected_present": ["tb-solar-1", "tb-solar-4"]
+        },
+        {
+          "id": "synonyms_2",
+          "query": "I need woodchip and pellet price data for biomass energy.",
+          "expected_present": ["tb-biomass-4"]
+        },
+        {
+          "id": "synonyms_3",
+          "query": "Quero previsoes numericas de vento NWP ou similar para Portugal.",
+          "expected_present": ["tb-wind-4"]
+        }
+      ]
+    },
+    {
+      "id": "partial_satisfaction",
+      "title": "Satisfacao parcial",
+      "tests": [
+        {
+          "id": "partial_satisfaction_1",
+          "query": "Preciso de um dataset que tenha ao mesmo tempo perfis verticais de vento e curvas de potencia de turbinas.",
+          "expected_present": ["tb-wind-1", "tb-wind-3"]
+        },
+        {
+          "id": "partial_satisfaction_2",
+          "query": "Quero dados de caudais fluviais e ao mesmo tempo producao hidrica das albufeiras, tudo junto.",
+          "expected_present": ["tb-hydro-1", "tb-hydro-2"]
+        },
+        {
+          "id": "partial_satisfaction_3",
+          "query": "I'm looking for a single dataset with both onshore wind measurements and electricity generation.",
+          "expected_present": ["tb-wind-5", "tb-wind-2"]
+        }
+      ]
+    },
+    {
+      "id": "quantity_context_conflict",
+      "title": "Conflito quantidade/contexto",
+      "tests": [
+        {
+          "id": "quantity_context_conflict_1",
+          "query": "Da-me 5 datasets sobre mini-hidricas ou pequena hidrica.",
+          "expected_count": 1,
+          "expected_present": ["tb-hydro-3"]
+        },
+        {
+          "id": "quantity_context_conflict_2",
+          "query": "Quero 4 datasets exclusivamente sobre biogas.",
+          "expected_count": 1,
+          "expected_present": ["tb-biomass-3"],
+          "expected_absent": ["tb-biomass-2"]
+        },
+        {
+          "id": "quantity_context_conflict_3",
+          "query": "Find me 6 datasets about offshore renewable energy.",
+          "expected_count": 1,
+          "expected_present": ["tb-wind-1"]
+        }
+      ]
+    },
+    {
+      "id": "misleading_asset",
+      "title": "Asset enganador",
+      "tests": [
+        {
+          "id": "misleading_asset_1",
+          "query": "Preciso de dados de geracao fotovoltaica producao em MWh de parques solares.",
+          "expected_present": ["tb-solar-2"],
+          "expected_absent": ["tb-solar-5"]
+        },
+        {
+          "id": "misleading_asset_2",
+          "query": "Quero dados de vento a 80m e 120m de altura para estimar producao eolica.",
+          "expected_present": ["tb-wind-1", "tb-wind-4"],
+          "expected_absent": ["tb-wind-5"]
+        },
+        {
+          "id": "misleading_asset_3",
+          "query": "I need natural gas price comparisons for energy market analysis.",
+          "expected_absent": ["tb-biomass-4"]
+        }
+      ]
+    }
+  ]
+}
