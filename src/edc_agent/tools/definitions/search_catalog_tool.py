@@ -1,82 +1,87 @@
 from __future__ import annotations
 
+import logging
 import os
-from typing import Any
+from typing import Annotated, Any
 
 import requests
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
 
-from edc_agent.cp.lib.transferAsset import (
-    check_available_dataplanes,
-    check_policy_verification,
-    get_catalog,
-)
+from edc_agent.cp.lib.transferAsset import get_catalog
+
+logger = logging.getLogger(__name__)
 
 
 class SearchCatalogArgs(BaseModel):
-    keywords: list[str] = Field(
-        description=(
-            "List where the first element is the main topic from the user query, "
-            "followed by up to 5 related keywords." # LLM gera isto
+    queries: Annotated[
+        list[Annotated[str, Field(min_length=3, max_length=200)]],
+        Field(
+            description=(
+                "Semantically diverse search queries derived from the user's request. "
+                "Generate between 2 and 8 entries covering: "
+                "(1) a full-sentence rephrasing of the user's intent, "
+                "(2) synonyms and alternative names for the main concept, "
+                "(3) domain-specific or technical terms related to the topic, "
+                "(4) a broader category the topic belongs to, "
+                "(5) a more specific subtopic or use case. "
+                "Prefer descriptive phrases over single words. "
+                "Avoid redundancy — each entry must add a different semantic angle. "
+                "Do not invent technical jargon unrelated to the user's request. "
+                'Example — user asks "I need temperature sensor data": '
+                '["IoT temperature sensor readings", "environmental monitoring data", '
+                '"thermal measurement dataset", "climate sensor telemetry", "sensor time series"].'
+            ),
+            min_length=2,
+            max_length=8,
         ),
-        min_length=1,
-        max_length=6,
-    )
+    ]
 
 
 class SearchCatalogTool(BaseTool):
     name: str = "search_catalog"
-    description: str = "Search catalog assets by topic + related keywords."
+    description: str = "Search catalog assets by topic + related queries."
     args_schema: type[BaseModel] = SearchCatalogArgs
 
-    def _run(self, keywords: list[str]) -> list[dict[str, str]]:
-        prepared_keywords = self._prepare_keywords(keywords)
-        if not prepared_keywords:
+    def _run(self, queries: list[str]) -> list[dict[str, str]]:
+        logger.info("search_catalog queries: %s", queries)
+        prepared_queries = self._prepare_keywords(queries)
+        if not prepared_queries:
             return []
 
         catalog = get_catalog()
-        semantic_search_list, dataplane_list, policy_list = self._filter_catalog(catalog)
-
-        description_map = {
-            item["asset_id"]: item.get("description", "")
-            for item in semantic_search_list
-        }
+        logger.info("search_catalog raw catalog: %s", catalog)
+        semantic_search_list = self._extract_assets(catalog)
 
         filtered_list = self._semantic_search(
-            semantic_search_list, prepared_keywords, os.getenv("EMBEDDING_MODEL", "")
+            semantic_search_list, prepared_queries, os.getenv("EMBEDDING_MODEL", "")
         )
-
-        available_dataplanes = set(check_available_dataplanes() or [])
-        dataplane_map = {
-            item["asset_id"]: set(item.get("data_address", []))
-            for item in dataplane_list
-        }
-
-        filtered_list = [
-            asset_id
-            for asset_id in filtered_list
-            if not dataplane_map.get(asset_id, set()).isdisjoint(available_dataplanes)
-        ]
-
-        filtered_set = set(filtered_list)
-        filtered_policy_list = [
-            item for item in policy_list if item.get("asset_id") in filtered_set
-        ]
-        filtered_list = check_policy_verification(filtered_policy_list)
 
         return [
             {
                 "asset_id": asset_id,
-                "description": description_map.get(asset_id, ""),
+                "description": next(
+                    (item["description"] for item in semantic_search_list if item["asset_id"] == asset_id),
+                    "",
+                ),
             }
             for asset_id in filtered_list
         ]
 
+    def _extract_assets(self, catalog: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        assets: list[dict[str, Any]] = []
+        for item in catalog:
+            for asset in item["dcat:dataset"]:
+                assets.append({
+                    "asset_id": asset["@id"],
+                    "description": asset.get("description", ""),
+                })
+        return assets
+
     def _semantic_search(
-        self, semantic_search_list: list[dict[str, Any]], keywords: list[str], model: str
+        self, assets: list[dict[str, Any]], queries: list[str], model: str
     ) -> list[str]:
-        if not semantic_search_list or not keywords:
+        if not assets or not queries:
             return []
         if not model:
             raise ValueError("EMBEDDING_MODEL must be configured for semantic search.")
@@ -86,17 +91,9 @@ class SearchCatalogTool(BaseTool):
                 "(example: qwen3-embedding:0.6b)."
             )
 
-        descriptions = [item.get("description", "") for item in semantic_search_list]
-        query_embeddings = self._encode_with_ollama(
-            model=model,
-            texts=keywords,
-            is_query=True,
-        )
-        document_embeddings = self._encode_with_ollama(
-            model=model,
-            texts=descriptions,
-            is_query=False,
-        )
+        descriptions = [item.get("description", "") for item in assets]
+        query_embeddings = self._encode_with_ollama(model=model, texts=queries, is_query=True)
+        document_embeddings = self._encode_with_ollama(model=model, texts=descriptions, is_query=False)
         max_similarities = self._max_cosine_similarities(
             query_embeddings=query_embeddings,
             document_embeddings=document_embeddings,
@@ -104,7 +101,7 @@ class SearchCatalogTool(BaseTool):
 
         return [
             item.get("asset_id")
-            for item, score in zip(semantic_search_list, max_similarities, strict=False)
+            for item, score in zip(assets, max_similarities, strict=False)
             if float(score) > 0.5
         ]
 
@@ -156,7 +153,7 @@ class SearchCatalogTool(BaseTool):
         if left_norm == 0.0 or right_norm == 0.0:
             return 0.0
 
-        return dot / ((left_norm ** 0.5) * (right_norm ** 0.5))
+        return dot / ((left_norm**0.5) * (right_norm**0.5))
 
     def _prepare_keywords(self, keywords: list[str]) -> list[str]:
         unique_keywords: list[str] = []
@@ -173,44 +170,15 @@ class SearchCatalogTool(BaseTool):
 
             seen.add(lowered_keyword)
             unique_keywords.append(keyword)
-            if len(unique_keywords) >= 6:
+            if len(unique_keywords) >= 8:
                 break
 
         return unique_keywords
-
-    def _filter_catalog(
-        self, catalog: list[dict[str, Any]]
-    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
-        semantic_search_list: list[dict[str, Any]] = []
-        dataplane_list: list[dict[str, Any]] = []
-        policy_list: list[dict[str, Any]] = []
-
-        for item in catalog:
-            for asset in item["dcat:dataset"]:
-                asset_id = asset["@id"]
-                asset_description = asset.get("description", "")
-
-                semantic_search_list.append(
-                    {"asset_id": asset_id, "description": asset_description}
-                )
-
-                temp_dataplanes = []
-                for dataplane in asset.get("dcat:distribution"):
-                    temp_dataplanes.append(dataplane["dct:format"]["@id"])
-
-                dataplane_list.append(
-                    {"asset_id": asset_id, "data_address": temp_dataplanes}
-                )
-                policy_list.append(
-                    {"asset_id": asset_id, "policy": asset.get("odrl:hasPolicy", {})}
-                )
-
-        return semantic_search_list, dataplane_list, policy_list
 
 
 search_catalog_tool = SearchCatalogTool()
 
 
-def search_catalog(keywords: list[str]) -> list[dict[str, str]]:
+def search_catalog(queries: list[str]) -> list[dict[str, str]]:
     """Compatibility helper for direct calls outside LangChain tool execution."""
-    return search_catalog_tool._run(keywords=keywords)
+    return search_catalog_tool._run(queries=queries)
