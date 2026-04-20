@@ -7,10 +7,16 @@ from typing import Annotated, Any
 import requests
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
+from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
 
 from edc_agent.cp.lib.transferAsset import get_catalog
 
 logger = logging.getLogger(__name__)
+
+_COSINE_GATE = 0.40
+_MAX_Z_SCORE = 2.0
+_MIN_GAP_RATIO = 0.30
+_FALLBACK_TOP_N = 10
 
 
 class SearchCatalogArgs(BaseModel):
@@ -50,22 +56,15 @@ class SearchCatalogTool(BaseTool):
             return []
 
         catalog = get_catalog()
-        logger.info("search_catalog raw catalog: %s", catalog)
-        semantic_search_list = self._extract_assets(catalog)
+        logger.debug("search_catalog raw catalog: %s", catalog)
+        assets = self._extract_assets(catalog)
 
-        filtered_list = self._semantic_search(
-            semantic_search_list, prepared_queries, os.getenv("EMBEDDING_MODEL", "")
-        )
+        ranked = self._semantic_search(assets, prepared_queries, os.getenv("EMBEDDING_MODEL", ""))
+        selected = self._dynamic_cutoff(ranked)
 
         return [
-            {
-                "asset_id": asset_id,
-                "description": next(
-                    (item["description"] for item in semantic_search_list if item["asset_id"] == asset_id),
-                    "",
-                ),
-            }
-            for asset_id in filtered_list
+            {"asset_id": asset_id, "description": description}
+            for asset_id, description, _ in selected
         ]
 
     def _extract_assets(self, catalog: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -80,7 +79,8 @@ class SearchCatalogTool(BaseTool):
 
     def _semantic_search(
         self, assets: list[dict[str, Any]], queries: list[str], model: str
-    ) -> list[str]:
+    ) -> list[tuple[str, str, float]]:
+        """Returns assets passing the cosine gate, sorted by score descending: (asset_id, description, score)."""
         if not assets or not queries:
             return []
         if not model:
@@ -94,16 +94,59 @@ class SearchCatalogTool(BaseTool):
         descriptions = [item.get("description", "") for item in assets]
         query_embeddings = self._encode_with_ollama(model=model, texts=queries, is_query=True)
         document_embeddings = self._encode_with_ollama(model=model, texts=descriptions, is_query=False)
-        max_similarities = self._max_cosine_similarities(
-            query_embeddings=query_embeddings,
-            document_embeddings=document_embeddings,
-        )
+        similarities = self._avg_cosine_similarities(query_embeddings, document_embeddings)
 
-        return [
-            item.get("asset_id")
-            for item, score in zip(assets, max_similarities, strict=False)
-            if float(score) > 0.5
-        ]
+        mean = sum(similarities) / len(similarities)
+        variance = sum((s - mean) ** 2 for s in similarities) / len(similarities)
+        std = variance ** 0.5
+
+        logger.info("search_catalog cosine scores (mean=%.4f, std=%.4f):", mean, std)
+        passed = []
+        for item, score in zip(assets, similarities):
+            z_score = (score - mean) / std if std > 0 else 0.0
+            above_gate = score >= _COSINE_GATE
+            not_hub = z_score < _MAX_Z_SCORE
+            status = "PASS" if (above_gate and not_hub) else ("HUB " if (above_gate and not not_hub) else "FAIL")
+            logger.info(
+                "  [%s] score=%.4f  z=%.2f  %-40s  %s",
+                status,
+                score,
+                z_score,
+                item["asset_id"],
+                item.get("description", "")[:60],
+            )
+            if above_gate and not_hub:
+                passed.append((item, score))
+
+        passed.sort(key=lambda x: x[1], reverse=True)
+        return [(item["asset_id"], item.get("description", ""), score) for item, score in passed]
+
+    def _dynamic_cutoff(
+        self, ranked: list[tuple[str, str, float]]
+    ) -> list[tuple[str, str, float]]:
+        if len(ranked) <= 1:
+            return ranked
+
+        scores = [score for _, _, score in ranked]
+        score_range = scores[0] - scores[-1]
+        gaps = [scores[i] - scores[i + 1] for i in range(len(scores) - 1)]
+        max_gap = max(gaps)
+        relative_gap = (max_gap / score_range) if score_range > 0 else 0.0
+
+        if relative_gap >= _MIN_GAP_RATIO:
+            cut = gaps.index(max_gap) + 1
+            logger.info(
+                "search_catalog dynamic cutoff at position %d (gap=%.4f, relative=%.2f)",
+                cut, max_gap, relative_gap,
+            )
+            return ranked[:cut]
+
+        cut = min(_FALLBACK_TOP_N, len(ranked))
+        logger.info(
+            "search_catalog no significant gap (relative=%.2f < %.2f), fallback top-%d",
+            relative_gap, _MIN_GAP_RATIO, cut,
+        )
+        return ranked[:cut]
 
     def _encode_with_ollama(
         self, model: str, texts: list[str], is_query: bool
@@ -126,34 +169,12 @@ class SearchCatalogTool(BaseTool):
             raise ValueError("Ollama embedding response size mismatch.")
         return embeddings
 
-    def _max_cosine_similarities(
+    def _avg_cosine_similarities(
         self, query_embeddings: list[list[float]], document_embeddings: list[list[float]]
     ) -> list[float]:
-        max_scores: list[float] = []
-        for document_embedding in document_embeddings:
-            best_score = max(
-                self._cosine_similarity(query_embedding, document_embedding)
-                for query_embedding in query_embeddings
-            )
-            max_scores.append(float(best_score))
-        return max_scores
-
-    def _cosine_similarity(self, left: list[float], right: list[float]) -> float:
-        if len(left) != len(right):
-            raise ValueError("Embedding dimensions do not match.")
-
-        dot = 0.0
-        left_norm = 0.0
-        right_norm = 0.0
-        for left_value, right_value in zip(left, right, strict=False):
-            dot += left_value * right_value
-            left_norm += left_value * left_value
-            right_norm += right_value * right_value
-
-        if left_norm == 0.0 or right_norm == 0.0:
-            return 0.0
-
-        return dot / ((left_norm**0.5) * (right_norm**0.5))
+        # matrix shape: (n_queries, n_docs)
+        similarity_matrix = sklearn_cosine_similarity(query_embeddings, document_embeddings)
+        return similarity_matrix.mean(axis=0).tolist()
 
     def _prepare_keywords(self, keywords: list[str]) -> list[str]:
         unique_keywords: list[str] = []

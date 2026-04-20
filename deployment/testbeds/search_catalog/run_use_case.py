@@ -3,10 +3,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import os
 import re
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -19,12 +20,26 @@ if str(SRC) not in sys.path:
 try:
     from dotenv import load_dotenv
 except ModuleNotFoundError:  # optional dependency
-    def load_dotenv(*args, **kwargs):
+    def load_dotenv(*_args, **_kwargs):
         return False
 
 ASSET_PATTERN = re.compile(r"\btb-[a-z]+-\d+\b", re.IGNORECASE)
 DEFAULT_CASE_FILE = Path(__file__).with_name("use_cases.json")
 DEFAULT_RESULTS_DIR = Path(__file__).with_name("results")
+SEARCH_TOOL_LOGGER = "edc_agent.tools.definitions.search_catalog_tool"
+
+
+class _CapturingHandler(logging.Handler):
+    def __init__(self):
+        super().__init__()
+        self.records: list[str] = []
+
+    def emit(self, record: logging.LogRecord) -> None:
+        self.records.append(self.format(record))
+
+    def flush_records(self) -> list[str]:
+        captured, self.records = self.records, []
+        return captured
 
 
 @dataclass
@@ -37,6 +52,7 @@ class TestResult:
     found_assets: list[str]
     passed: bool
     failures: list[str]
+    search_tool_logs: list[str] = field(default_factory=list)
 
 
 def load_env_file(env_path: Path, override: bool = False) -> None:
@@ -156,17 +172,16 @@ def evaluate_expectations(test: dict[str, Any], found_assets: list[str]) -> tupl
     return (len(failures) == 0), failures
 
 
-def run_test(manager, use_case_id: str, test: dict[str, Any]) -> TestResult:
+def run_test(manager, use_case_id: str, test: dict[str, Any], capturing_handler: _CapturingHandler) -> TestResult:
+    capturing_handler.flush_records()
     manager.reset_history()
     greeting, _ = manager.start_conversation()
     process_result = manager.process(str(test["query"]))
     if isinstance(process_result, tuple):
-        if len(process_result) >= 1:
-            response = str(process_result[0])
-        else:
-            response = ""
+        response = str(process_result[0]) if process_result else ""
     else:
         response = str(process_result)
+    search_tool_logs = capturing_handler.flush_records()
     found_assets = extract_asset_ids(response)
     passed, failures = evaluate_expectations(test, found_assets)
     return TestResult(
@@ -178,6 +193,7 @@ def run_test(manager, use_case_id: str, test: dict[str, Any]) -> TestResult:
         found_assets=found_assets,
         passed=passed,
         failures=failures,
+        search_tool_logs=search_tool_logs,
     )
 
 
@@ -200,6 +216,10 @@ def render_text_report(results: list[TestResult], model: str, selected_id: str) 
         if result.use_case_id != current_case:
             current_case = result.use_case_id
             lines.append(f"## use_case: {current_case}")
+        search_logs_text = (
+            "\n".join(f"    {line}" for line in result.search_tool_logs)
+            if result.search_tool_logs else "    [no search tool logs]"
+        )
         lines.extend(
             [
                 f"- test_id: {result.test_id}",
@@ -209,6 +229,7 @@ def render_text_report(results: list[TestResult], model: str, selected_id: str) 
                 f"  output: {result.response}",
                 f"  parsed_asset_ids: {', '.join(result.found_assets) if result.found_assets else '[none]'}",
                 f"  checks: {', '.join(result.failures) if result.failures else 'ok'}",
+                f"  search_tool_logs:\n{search_logs_text}",
                 "",
             ]
         )
@@ -236,6 +257,7 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str) 
                 "found_assets": item.found_assets,
                 "passed": item.passed,
                 "failures": item.failures,
+                "search_tool_logs": item.search_tool_logs,
             }
             for item in results
         ],
@@ -291,10 +313,19 @@ def main() -> int:
         )
         return 2
 
+    capturing_handler = _CapturingHandler()
+    capturing_handler.setLevel(logging.INFO)
+    capturing_handler.setFormatter(logging.Formatter("%(levelname)s %(message)s"))
+    tool_logger = logging.getLogger(SEARCH_TOOL_LOGGER)
+    tool_logger.setLevel(logging.DEBUG)
+    tool_logger.addHandler(capturing_handler)
+
     results: list[TestResult] = []
     for use_case in selected_cases:
         for test in use_case.get("tests", []):
-            results.append(run_test(manager, str(use_case["id"]), test))
+            results.append(run_test(manager, str(use_case["id"]), test, capturing_handler))
+
+    tool_logger.removeHandler(capturing_handler)
 
     selection = args.use_case or "all"
     text_report = render_text_report(results, args.model, selection)
