@@ -14,7 +14,6 @@ from edc_agent.cp.lib.transferAsset import get_catalog
 logger = logging.getLogger(__name__)
 
 _COSINE_GATE = 0.40
-_MAX_Z_SCORE = 2.0
 _MIN_GAP_RATIO = 0.30
 _FALLBACK_TOP_N = 10
 
@@ -59,7 +58,11 @@ class SearchCatalogTool(BaseTool):
         logger.debug("search_catalog raw catalog: %s", catalog)
         assets = self._extract_assets(catalog)
 
-        ranked = self._semantic_search(assets, prepared_queries, os.getenv("EMBEDDING_MODEL", ""))
+        try:
+            ranked = self._semantic_search(assets, prepared_queries, os.getenv("EMBEDDING_MODEL", ""))
+        except Exception as exc:
+            logger.error("search_catalog semantic search failed: %s", exc)
+            return []
         selected = self._dynamic_cutoff(ranked)
 
         return [
@@ -105,8 +108,7 @@ class SearchCatalogTool(BaseTool):
         for item, score in zip(assets, similarities):
             z_score = (score - mean) / std if std > 0 else 0.0
             above_gate = score >= _COSINE_GATE
-            not_hub = z_score < _MAX_Z_SCORE
-            status = "PASS" if (above_gate and not_hub) else ("HUB " if (above_gate and not not_hub) else "FAIL")
+            status = "PASS" if above_gate else "FAIL"
             logger.info(
                 "  [%s] score=%.4f  z=%.2f  %-40s  %s",
                 status,
@@ -115,7 +117,7 @@ class SearchCatalogTool(BaseTool):
                 item["asset_id"],
                 item.get("description", "")[:60],
             )
-            if above_gate and not_hub:
+            if above_gate:
                 passed.append((item, score))
 
         passed.sort(key=lambda x: x[1], reverse=True)
@@ -160,7 +162,7 @@ class SearchCatalogTool(BaseTool):
         response = requests.post(
             endpoint,
             json={"model": model, "input": inputs},
-            timeout=30,
+            timeout=120,
         )
         response.raise_for_status()
         payload = response.json()

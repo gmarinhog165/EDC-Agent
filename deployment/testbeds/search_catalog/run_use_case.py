@@ -7,6 +7,7 @@ import logging
 import os
 import re
 import sys
+import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -19,11 +20,17 @@ if str(SRC) not in sys.path:
 
 try:
     from dotenv import load_dotenv
-except ModuleNotFoundError:  # optional dependency
+except ModuleNotFoundError:
     def load_dotenv(*_args, **_kwargs):
         return False
 
 ASSET_PATTERN = re.compile(r"\btb-[a-z]+-\d+\b", re.IGNORECASE)
+_LOG_ASSET_RE = re.compile(
+    r"\[(PASS|FAIL|HUB\s*)\]\s+score=([0-9.]+)\s+z=(-?[0-9.]+)\s+(tb-[a-z]+-\d+)",
+    re.IGNORECASE,
+)
+_LOG_CUTOFF_RE = re.compile(r"dynamic cutoff at position (\d+)")
+
 DEFAULT_CASE_FILE = Path(__file__).with_name("use_cases.json")
 DEFAULT_RESULTS_DIR = Path(__file__).with_name("results")
 SEARCH_TOOL_LOGGER = "edc_agent.tools.definitions.search_catalog_tool"
@@ -43,36 +50,45 @@ class _CapturingHandler(logging.Handler):
 
 
 @dataclass
-class TestResult:
-    use_case_id: str
-    test_id: str
-    query: str
+class RunResult:
+    run_index: int
     greeting: str
     response: str
     found_assets: list[str]
     passed: bool
     failures: list[str]
+    latency_s: float = 0.0
     search_tool_logs: list[str] = field(default_factory=list)
+    reciprocal_rank: float | None = None
+
+
+@dataclass
+class TestResult:
+    use_case_id: str
+    test_id: str
+    query: str
+    runs: list[RunResult]
+    pass_rate: float
+    passed: bool
+    latency_mean_s: float = 0.0
+    latency_min_s: float = 0.0
+    latency_max_s: float = 0.0
+    mrr: float | None = None
 
 
 def load_env_file(env_path: Path, override: bool = False) -> None:
     if not env_path.exists():
         return
-
     for raw_line in env_path.read_text(encoding="utf-8").splitlines():
         line = raw_line.strip()
         if not line or line.startswith("#") or "=" not in line:
             continue
-
         key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip()
-
+        key, value = key.strip(), value.strip()
         if (value.startswith('"') and value.endswith('"')) or (
             value.startswith("'") and value.endswith("'")
         ):
             value = value[1:-1]
-
         if override or key not in os.environ:
             os.environ[key] = value
 
@@ -120,7 +136,6 @@ def load_use_cases(case_file: Path) -> list[dict[str, Any]]:
 def select_use_cases(use_cases: list[dict[str, Any]], selected_id: str | None) -> list[dict[str, Any]]:
     if not selected_id or selected_id == "all":
         return use_cases
-
     selected = [case for case in use_cases if case.get("id") == selected_id]
     if not selected:
         available = ", ".join(case.get("id", "<missing>") for case in use_cases)
@@ -133,81 +148,163 @@ def extract_asset_ids(text: str) -> list[str]:
     ordered: list[str] = []
     for match in ASSET_PATTERN.findall(text or ""):
         asset_id = match.lower()
-        if asset_id in seen:
-            continue
-        seen.add(asset_id)
-        ordered.append(asset_id)
+        if asset_id not in seen:
+            seen.add(asset_id)
+            ordered.append(asset_id)
     return ordered
 
 
-def evaluate_expectations(test: dict[str, Any], found_assets: list[str]) -> tuple[bool, list[str]]:
+def parse_search_logs(logs: list[str]) -> list[dict[str, Any]]:
+    """Parse search tool logs into per-asset score details (informational only)."""
+    asset_details: list[dict[str, Any]] = []
+    for line in logs:
+        m = _LOG_ASSET_RE.search(line)
+        if m:
+            asset_details.append({
+                "asset_id": m.group(4).lower(),
+                "score": float(m.group(2)),
+                "z_score": float(m.group(3)),
+                "status": m.group(1).strip().upper(),
+            })
+    return asset_details
+
+
+def evaluate_test(test: dict[str, Any], found_assets: list[str], response: str) -> tuple[bool, list[str]]:
+    """Evaluate found_assets against test expectations.
+
+    Rules:
+    - expected_count: exact count match
+    - expected_present: these assets must appear; any asset NOT in this set is also a failure (strict)
+    - expected_pool: any returned asset must belong to this set (permissive — not all need to appear)
+    - expected_order: used only for MRR, does not affect pass/fail
+    """
     failures: list[str] = []
     found_set = set(found_assets)
-    expected_present = [str(asset_id).lower() for asset_id in test.get("expected_present", [])]
-    expected_absent = [str(asset_id).lower() for asset_id in test.get("expected_absent", [])]
-    allow_additional_assets = bool(test.get("allow_additional_assets", False))
 
+    expected_present = [str(a).lower() for a in test.get("expected_present", [])]
+    expected_pool = [str(a).lower() for a in test.get("expected_pool", [])]
     expected_count = test.get("expected_count")
+
     if expected_count is not None and len(found_assets) != int(expected_count):
-        failures.append(
-            f"expected_count={expected_count}, found_count={len(found_assets)}"
-        )
+        failures.append(f"expected_count={expected_count}, found_count={len(found_assets)}")
+
+    if expected_count == 0 and "asset_id" in response.lower():
+        failures.append("hallucinated_assets_in_response")
 
     for asset_id in expected_present:
         if asset_id not in found_set:
-            failures.append(f"missing_expected_asset={asset_id}")
+            failures.append(f"missing={asset_id}")
 
-    for asset_id in expected_absent:
-        if asset_id in found_set:
-            failures.append(f"unexpected_asset={asset_id}")
+    if expected_present:
+        expected_set = set(expected_present)
+        for asset_id in found_assets:
+            if asset_id not in expected_set:
+                failures.append(f"unexpected={asset_id}")
 
-    # Strict mode by default: if expectations are provided, do not allow assets
-    # outside the explicit expected_present list unless explicitly enabled.
-    if not allow_additional_assets and (expected_present or expected_absent):
-        expected_present_set = set(expected_present)
-        extras = [asset_id for asset_id in found_assets if asset_id not in expected_present_set]
-        for asset_id in extras:
-            failures.append(f"unexpected_extra_asset={asset_id}")
+    if expected_pool:
+        pool_set = set(expected_pool)
+        for asset_id in found_assets:
+            if asset_id not in pool_set:
+                failures.append(f"out_of_pool={asset_id}")
 
-    return (len(failures) == 0), failures
+    return len(failures) == 0, failures
 
 
-def run_test(manager, use_case_id: str, test: dict[str, Any], capturing_handler: _CapturingHandler) -> TestResult:
+def compute_reciprocal_rank(found_assets: list[str], relevant: list[str]) -> float | None:
+    """Return 1/rank of the first relevant hit, or None if expected_order is not defined."""
+    if not relevant:
+        return None
+    relevant_set = set(str(a).lower() for a in relevant)
+    for rank, asset_id in enumerate(found_assets, start=1):
+        if asset_id in relevant_set:
+            return 1.0 / rank
+    return 0.0
+
+
+def run_single(
+    manager,
+    _use_case_id: str,
+    test: dict[str, Any],
+    capturing_handler: _CapturingHandler,
+    run_index: int,
+) -> RunResult:
     capturing_handler.flush_records()
     manager.reset_history()
     greeting, _ = manager.start_conversation()
+    t0 = time.perf_counter()
     process_result = manager.process(str(test["query"]))
-    if isinstance(process_result, tuple):
-        response = str(process_result[0]) if process_result else ""
-    else:
-        response = str(process_result)
+    latency_s = time.perf_counter() - t0
+    response = str(process_result[0]) if isinstance(process_result, tuple) else str(process_result)
     search_tool_logs = capturing_handler.flush_records()
+
     found_assets = extract_asset_ids(response)
-    passed, failures = evaluate_expectations(test, found_assets)
-    return TestResult(
-        use_case_id=use_case_id,
-        test_id=str(test["id"]),
-        query=str(test["query"]),
+    passed, failures = evaluate_test(test, found_assets, response)
+    expected_order = [str(a).lower() for a in test.get("expected_order", [])]
+    rr = compute_reciprocal_rank(found_assets, expected_order)
+
+    return RunResult(
+        run_index=run_index,
         greeting=greeting,
         response=response,
         found_assets=found_assets,
         passed=passed,
         failures=failures,
+        latency_s=latency_s,
         search_tool_logs=search_tool_logs,
+        reciprocal_rank=rr,
     )
 
 
-def render_text_report(results: list[TestResult], model: str, selected_id: str) -> str:
+def run_test(
+    manager,
+    use_case_id: str,
+    test: dict[str, Any],
+    capturing_handler: _CapturingHandler,
+    n_runs: int,
+) -> TestResult:
+    runs = [
+        run_single(manager, use_case_id, test, capturing_handler, i)
+        for i in range(n_runs)
+    ]
+    pass_rate = sum(r.passed for r in runs) / n_runs
+    latencies = [r.latency_s for r in runs]
+    rr_values = [r.reciprocal_rank for r in runs if r.reciprocal_rank is not None]
+    mrr = sum(rr_values) / len(rr_values) if rr_values else None
+    return TestResult(
+        use_case_id=use_case_id,
+        test_id=str(test["id"]),
+        query=str(test["query"]),
+        runs=runs,
+        pass_rate=pass_rate,
+        passed=pass_rate == 1.0,
+        latency_mean_s=sum(latencies) / len(latencies),
+        latency_min_s=min(latencies),
+        latency_max_s=max(latencies),
+        mrr=mrr,
+    )
+
+
+def render_text_report(results: list[TestResult], model: str, selected_id: str, n_runs: int) -> str:
     now = datetime.now().isoformat(timespec="seconds")
     total = len(results)
-    passed = sum(1 for item in results if item.passed)
-    failed = total - passed
+    passed = sum(1 for r in results if r.passed)
+    success_rate = passed / total if total else 0.0
+    all_latencies = [r.latency_s for result in results for r in result.runs]
+    lat_mean = sum(all_latencies) / len(all_latencies) if all_latencies else 0.0
+    lat_min = min(all_latencies) if all_latencies else 0.0
+    lat_max = max(all_latencies) if all_latencies else 0.0
+
+    mrr_values = [r.mrr for r in results if r.mrr is not None]
+    mean_mrr = sum(mrr_values) / len(mrr_values) if mrr_values else None
+    mrr_str = f"  mrr={mean_mrr:.4f} (n={len(mrr_values)})" if mean_mrr is not None else ""
 
     lines = [
         f"timestamp: {now}",
         f"model: {model}",
         f"selection: {selected_id}",
-        f"summary: passed={passed} failed={failed} total={total}",
+        f"runs_per_test: {n_runs}",
+        f"summary: passed={passed} failed={total - passed} total={total} success_rate={success_rate:.1%}{mrr_str}",
+        f"latency: mean={lat_mean:.2f}s min={lat_min:.2f}s max={lat_max:.2f}s",
         "",
     ]
 
@@ -216,50 +313,83 @@ def render_text_report(results: list[TestResult], model: str, selected_id: str) 
         if result.use_case_id != current_case:
             current_case = result.use_case_id
             lines.append(f"## use_case: {current_case}")
-        search_logs_text = (
-            "\n".join(f"    {line}" for line in result.search_tool_logs)
-            if result.search_tool_logs else "    [no search tool logs]"
-        )
-        lines.extend(
-            [
-                f"- test_id: {result.test_id}",
-                f"  status: {'PASS' if result.passed else 'FAIL'}",
-                f"  input: {result.query}",
-                f"  greeting: {result.greeting}",
-                f"  output: {result.response}",
-                f"  parsed_asset_ids: {', '.join(result.found_assets) if result.found_assets else '[none]'}",
-                f"  checks: {', '.join(result.failures) if result.failures else 'ok'}",
-                f"  search_tool_logs:\n{search_logs_text}",
-                "",
-            ]
-        )
+
+        ok = sum(r.passed for r in result.runs)
+        mrr_tag = f"  mrr={result.mrr:.4f}" if result.mrr is not None else ""
+        lines.append(f"- test_id: {result.test_id}")
+        lines.append(f"  status: {'PASS' if result.passed else 'FAIL'} ({ok}/{n_runs}) success_rate={result.pass_rate:.1%}{mrr_tag}")
+        lines.append(f"  latency: mean={result.latency_mean_s:.2f}s min={result.latency_min_s:.2f}s max={result.latency_max_s:.2f}s")
+        lines.append(f"  input: {result.query}")
+
+        for run in result.runs:
+            tag = "PASS" if run.passed else f"FAIL[{','.join(run.failures)}]"
+            rr_tag = f"  rr={run.reciprocal_rank:.4f}" if run.reciprocal_rank is not None else ""
+            lines.append(f"  [run {run.run_index}] {tag} latency={run.latency_s:.2f}s{rr_tag}")
+            lines.append(f"    response: {run.response}")
+            lines.append(f"    found_assets: {', '.join(run.found_assets) or '[none]'}")
+
+        first_logs = result.runs[0].search_tool_logs if result.runs else []
+        if first_logs:
+            lines.append("  search_tool_logs (run 0):")
+            for log_line in first_logs:
+                lines.append(f"    {log_line}")
+        else:
+            lines.append("  search_tool_logs (run 0): [none]")
+
+        lines.append("")
 
     return "\n".join(lines).rstrip() + "\n"
 
 
-def render_json_report(results: list[TestResult], model: str, selected_id: str) -> str:
+def render_json_report(results: list[TestResult], model: str, selected_id: str, n_runs: int) -> str:
+    total = len(results)
+    passed = sum(1 for r in results if r.passed)
+    all_latencies = [r.latency_s for result in results for r in result.runs]
+    lat_mean = sum(all_latencies) / len(all_latencies) if all_latencies else 0.0
+    mrr_values = [r.mrr for r in results if r.mrr is not None]
+    mean_mrr = round(sum(mrr_values) / len(mrr_values), 4) if mrr_values else None
     payload = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
         "model": model,
         "selection": selected_id,
+        "runs_per_test": n_runs,
         "summary": {
-            "passed": sum(1 for item in results if item.passed),
-            "failed": sum(1 for item in results if not item.passed),
-            "total": len(results),
+            "passed": passed,
+            "failed": total - passed,
+            "total": total,
+            "success_rate": round(passed / total, 4) if total else 0.0,
+            "mrr": mean_mrr,
+            "latency_mean_s": round(lat_mean, 3),
+            "latency_min_s": round(min(all_latencies), 3) if all_latencies else 0.0,
+            "latency_max_s": round(max(all_latencies), 3) if all_latencies else 0.0,
         },
         "results": [
             {
-                "use_case_id": item.use_case_id,
-                "test_id": item.test_id,
-                "query": item.query,
-                "greeting": item.greeting,
-                "response": item.response,
-                "found_assets": item.found_assets,
-                "passed": item.passed,
-                "failures": item.failures,
-                "search_tool_logs": item.search_tool_logs,
+                "use_case_id": result.use_case_id,
+                "test_id": result.test_id,
+                "query": result.query,
+                "passed": result.passed,
+                "pass_rate": result.pass_rate,
+                "mrr": round(result.mrr, 4) if result.mrr is not None else None,
+                "latency_mean_s": round(result.latency_mean_s, 3),
+                "latency_min_s": round(result.latency_min_s, 3),
+                "latency_max_s": round(result.latency_max_s, 3),
+                "runs": [
+                    {
+                        "run_index": run.run_index,
+                        "greeting": run.greeting,
+                        "response": run.response,
+                        "found_assets": run.found_assets,
+                        "passed": run.passed,
+                        "failures": run.failures,
+                        "reciprocal_rank": run.reciprocal_rank,
+                        "latency_s": round(run.latency_s, 3),
+                        "search_tool_logs": run.search_tool_logs,
+                    }
+                    for run in result.runs
+                ],
             }
-            for item in results
+            for result in results
         ],
     }
     return json.dumps(payload, ensure_ascii=True, indent=2) + "\n"
@@ -279,6 +409,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--results-dir", default=str(DEFAULT_RESULTS_DIR), help="Directory for generated reports.")
     parser.add_argument("--model", default=os.getenv("LLM_MODEL", ""), help="Ollama chat model.")
     parser.add_argument("--temperature", type=int, default=0, help="Model temperature.")
+    parser.add_argument("--runs", type=int, default=1, help="Number of runs per test.")
     parser.add_argument("--list", action="store_true", help="List available use case ids and exit.")
     return parser.parse_args()
 
@@ -323,13 +454,13 @@ def main() -> int:
     results: list[TestResult] = []
     for use_case in selected_cases:
         for test in use_case.get("tests", []):
-            results.append(run_test(manager, str(use_case["id"]), test, capturing_handler))
+            results.append(run_test(manager, str(use_case["id"]), test, capturing_handler, args.runs))
 
     tool_logger.removeHandler(capturing_handler)
 
     selection = args.use_case or "all"
-    text_report = render_text_report(results, args.model, selection)
-    json_report = render_json_report(results, args.model, selection)
+    text_report = render_text_report(results, args.model, selection, args.runs)
+    json_report = render_json_report(results, args.model, selection, args.runs)
 
     text_output = Path(args.output).resolve() if args.output else build_output_path(results_dir, selection, "log")
     json_output = Path(args.json_output).resolve() if args.json_output else build_output_path(results_dir, selection, "json")
@@ -341,7 +472,7 @@ def main() -> int:
     print(f"text_report: {text_output}")
     print(f"json_report: {json_output}")
 
-    return 0 if all(item.passed for item in results) else 1
+    return 0 if all(r.passed for r in results) else 1
 
 
 if __name__ == "__main__":
