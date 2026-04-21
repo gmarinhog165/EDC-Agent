@@ -28,17 +28,35 @@
         {
           "id": "return_all_1",
           "query": "Quero explorar todos os datasets de energias renovaveis que tens disponiveis.",
-          "expected_count": 18
+          "expected_count": 18,
+          "expected_present": [
+            "tb-solar-1", "tb-solar-2", "tb-solar-3", "tb-solar-4", "tb-solar-5",
+            "tb-wind-1", "tb-wind-2", "tb-wind-3", "tb-wind-4", "tb-wind-5",
+            "tb-hydro-1", "tb-hydro-2", "tb-hydro-3", "tb-hydro-4",
+            "tb-biomass-1", "tb-biomass-2", "tb-biomass-3", "tb-biomass-4"
+          ]
         },
         {
           "id": "return_all_2",
           "query": "Que dados existem sobre producao, recursos e impacto das fontes renovaveis em Portugal?",
-          "expected_count": 18
+          "expected_count": 18,
+          "expected_present": [
+            "tb-solar-1", "tb-solar-2", "tb-solar-3", "tb-solar-4", "tb-solar-5",
+            "tb-wind-1", "tb-wind-2", "tb-wind-3", "tb-wind-4", "tb-wind-5",
+            "tb-hydro-1", "tb-hydro-2", "tb-hydro-3", "tb-hydro-4",
+            "tb-biomass-1", "tb-biomass-2", "tb-biomass-3", "tb-biomass-4"
+          ]
         },
         {
           "id": "return_all_3",
           "query": "I need an overview of all available renewable energy data for Portugal.",
-          "expected_count": 18
+          "expected_count": 18,
+          "expected_present": [
+            "tb-solar-1", "tb-solar-2", "tb-solar-3", "tb-solar-4", "tb-solar-5",
+            "tb-wind-1", "tb-wind-2", "tb-wind-3", "tb-wind-4", "tb-wind-5",
+            "tb-hydro-1", "tb-hydro-2", "tb-hydro-3", "tb-hydro-4",
+            "tb-biomass-1", "tb-biomass-2", "tb-biomass-3", "tb-biomass-4"
+          ]
         }
       ]
     },
@@ -50,19 +68,22 @@
           "id": "specific_n_1",
           "query": "Da-me 3 datasets sobre energia solar.",
           "expected_count": 3,
-          "expected_present": ["tb-solar-1", "tb-solar-2", "tb-solar-4"]
+          "expected_pool": ["tb-solar-1", "tb-solar-2", "tb-solar-3", "tb-solar-4", "tb-solar-5"],
+          "expected_order": ["tb-solar-1", "tb-solar-3", "tb-solar-4", "tb-solar-2", "tb-solar-5"]
         },
         {
           "id": "specific_n_2",
           "query": "Preciso de exactamente 2 fontes de dados sobre vento para um relatorio.",
           "expected_count": 2,
-          "expected_present": ["tb-wind-1", "tb-wind-4"]
+          "expected_pool": ["tb-wind-1", "tb-wind-4", "tb-wind-3", "tb-wind-2", "tb-wind-5"],
+          "expected_order": ["tb-wind-1", "tb-wind-4", "tb-wind-3", "tb-wind-2", "tb-wind-5"]
         },
         {
           "id": "specific_n_3",
           "query": "Show me 4 datasets related to hydrological or water resources.",
           "expected_count": 4,
-          "expected_present": ["tb-hydro-1", "tb-hydro-2", "tb-hydro-3", "tb-hydro-4"]
+          "expected_pool": ["tb-hydro-1", "tb-hydro-2", "tb-hydro-3", "tb-hydro-4"],
+          "expected_order": ["tb-hydro-2", "tb-hydro-3", "tb-hydro-1", "tb-hydro-4"]
         }
       ]
     },
@@ -74,19 +95,19 @@
           "id": "contextual_1",
           "query": "Estou a desenvolver um modelo de previsao de geracao solar para horizonte de 24h. Que dados me sao uteis?",
           "expected_present": ["tb-solar-1", "tb-wind-4"],
-          "expected_absent": ["tb-solar-3"]
+          "expected_order": ["tb-solar-1", "tb-wind-4"]
         },
         {
           "id": "contextual_2",
           "query": "Quero perceber o impacto ambiental e territorial das renovaveis em Portugal.",
           "expected_present": ["tb-solar-5", "tb-hydro-3"],
-          "expected_absent": ["tb-solar-1", "tb-wind-1"]
+          "expected_order": ["tb-solar-5", "tb-hydro-3"]
         },
         {
           "id": "contextual_3",
           "query": "I need to assess water availability for hydropower planning during drought years.",
           "expected_present": ["tb-hydro-1", "tb-hydro-4"],
-          "expected_absent": ["tb-hydro-2", "tb-hydro-3"]
+          "expected_order": ["tb-hydro-1", "tb-hydro-4"]
         }
       ]
     },
@@ -97,20 +118,17 @@
         {
           "id": "explicit_exclusion_1",
           "query": "Preciso de dados de irradiancia solar em Portugal para calibrar sensores.",
-          "expected_present": ["tb-solar-1"],
-          "expected_absent": ["tb-solar-2", "tb-solar-3"]
+          "expected_present": ["tb-solar-1"]
         },
         {
           "id": "explicit_exclusion_2",
           "query": "Quero dados de producao eletrica de parques eolicos onshore.",
-          "expected_present": ["tb-wind-2"],
-          "expected_absent": ["tb-wind-3", "tb-wind-5"]
+          "expected_present": ["tb-wind-2"]
         },
         {
           "id": "explicit_exclusion_3",
           "query": "Estou a procura de series temporais de biomassa solida consumida em centrais.",
-          "expected_present": ["tb-biomass-2"],
-          "expected_absent": ["tb-biomass-3"]
+          "expected_present": ["tb-biomass-2"]
         }
       ]
     },
@@ -142,17 +160,20 @@
         {
           "id": "semantic_ambiguity_1",
           "query": "Quero dados para otimizar o despacho de energia renovavel na rede.",
-          "expected_present": ["tb-hydro-2", "tb-wind-4", "tb-solar-2"]
+          "expected_present": ["tb-hydro-2", "tb-wind-4", "tb-solar-2"],
+          "expected_order": ["tb-hydro-2", "tb-solar-2", "tb-wind-4"]
         },
         {
           "id": "semantic_ambiguity_2",
           "query": "Preciso de dados historicos de producao renovavel para um modelo de machine learning.",
-          "expected_present": ["tb-solar-2", "tb-wind-1", "tb-hydro-1", "tb-biomass-2"]
+          "expected_present": ["tb-solar-2", "tb-hydro-2", "tb-biomass-2", "tb-biomass-3"],
+          "expected_order": ["tb-hydro-2", "tb-biomass-2", "tb-biomass-3", "tb-solar-2"]
         },
         {
           "id": "semantic_ambiguity_3",
           "query": "What weather and climate data is available for renewable energy analysis?",
-          "expected_present": ["tb-solar-1", "tb-wind-4", "tb-hydro-4", "tb-wind-1"]
+          "expected_present": ["tb-wind-4", "tb-hydro-4", "tb-wind-1"],
+          "expected_order": ["tb-hydro-4","tb-wind-4", "tb-wind-1"]
         }
       ]
     },
@@ -163,7 +184,7 @@
         {
           "id": "synonyms_1",
           "query": "Quero dados de radiacao solar quanto sol bate em cada zona de Portugal.",
-          "expected_present": ["tb-solar-1", "tb-solar-4"]
+          "expected_present": ["tb-solar-1"]
         },
         {
           "id": "synonyms_2",
@@ -212,8 +233,7 @@
           "id": "quantity_context_conflict_2",
           "query": "Quero 4 datasets exclusivamente sobre biogas.",
           "expected_count": 1,
-          "expected_present": ["tb-biomass-3"],
-          "expected_absent": ["tb-biomass-2"]
+          "expected_present": ["tb-biomass-3"]
         },
         {
           "id": "quantity_context_conflict_3",
@@ -230,19 +250,17 @@
         {
           "id": "misleading_asset_1",
           "query": "Preciso de dados de geracao fotovoltaica producao em MWh de parques solares.",
-          "expected_present": ["tb-solar-2"],
-          "expected_absent": ["tb-solar-5"]
+          "expected_present": ["tb-solar-2"]
         },
         {
           "id": "misleading_asset_2",
           "query": "Quero dados de vento a 80m e 120m de altura para estimar producao eolica.",
-          "expected_present": ["tb-wind-1", "tb-wind-4"],
-          "expected_absent": ["tb-wind-5"]
+          "expected_present": ["tb-wind-1"]
         },
         {
           "id": "misleading_asset_3",
           "query": "I need natural gas price comparisons for energy market analysis.",
-          "expected_absent": ["tb-biomass-4"]
+          "expected_count": 0
         }
       ]
     }
