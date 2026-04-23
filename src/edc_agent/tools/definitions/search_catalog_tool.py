@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 _COSINE_GATE = 0.40
 _MIN_GAP_RATIO = 0.30
-_FALLBACK_TOP_N = 10
+_FALLBACK_TOP_N = 20
 
 
 class SearchCatalogArgs(BaseModel):
@@ -135,8 +135,8 @@ class SearchCatalogTool(BaseTool):
         max_gap = max(gaps)
         relative_gap = (max_gap / score_range) if score_range > 0 else 0.0
 
-        if relative_gap >= _MIN_GAP_RATIO:
-            cut = gaps.index(max_gap) + 1
+        cut = gaps.index(max_gap) + 1
+        if relative_gap >= _MIN_GAP_RATIO and cut >= 2:
             logger.info(
                 "search_catalog dynamic cutoff at position %d (gap=%.4f, relative=%.2f)",
                 cut, max_gap, relative_gap,
