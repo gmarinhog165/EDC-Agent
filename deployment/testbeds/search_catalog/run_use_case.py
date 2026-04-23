@@ -65,6 +65,10 @@ class RunResult:
     retrieval_passed: bool = False
     retrieval_failures: list[str] = field(default_factory=list)
     retrieval_reciprocal_rank: float | None = None
+    presentation_precision: float | None = None
+    presentation_recall: float | None = None
+    retrieval_precision: float | None = None
+    retrieval_recall: float | None = None
 
 
 @dataclass
@@ -82,6 +86,10 @@ class TestResult:
     retrieval_pass_rate: float = 0.0
     retrieval_passed: bool = False
     retrieval_mrr: float | None = None
+    presentation_precision: float | None = None
+    presentation_recall: float | None = None
+    retrieval_precision: float | None = None
+    retrieval_recall: float | None = None
 
 
 def load_env_file(env_path: Path, override: bool = False) -> None:
@@ -112,18 +120,18 @@ def build_manager(model_name: str, temperature: int):
     router_agent = Agent(
         name="router",
         llm_client=llm_client,
-        system_prompt=get_prompt(agent_name="router", model_name=model_name),
+        system_prompt=get_prompt(agent_name="router", _model_name=model_name),
     )
     search_catalog_agent = Agent(
         name="search-catalog",
         llm_client=llm_client,
-        system_prompt=get_prompt(agent_name="search-catalog", model_name=model_name),
+        system_prompt=get_prompt(agent_name="search-catalog", _model_name=model_name),
         tools=[search_catalog_tool],
     )
     fetch_data_agent = Agent(
         name="fetch-data",
         llm_client=llm_client,
-        system_prompt=get_prompt(agent_name="fetch-data", model_name=model_name),
+        system_prompt=get_prompt(agent_name="fetch-data", _model_name=model_name),
         tools=[fetch_item_data_tool],
     )
     return PipelineManager(
@@ -269,6 +277,19 @@ def compute_reciprocal_rank(found_assets: list[str], relevant: list[str]) -> flo
     return 0.0
 
 
+def compute_precision_recall(
+    assets: list[str], relevant: list[str]
+) -> tuple[float | None, float | None]:
+    """Return (precision, recall) against a relevant set, or (None, None) when relevant is empty."""
+    if not relevant:
+        return None, None
+    relevant_set = set(str(a).lower() for a in relevant)
+    tp = sum(1 for a in assets if a in relevant_set)
+    precision = tp / len(assets) if assets else 0.0
+    recall = tp / len(relevant_set)
+    return precision, recall
+
+
 def run_single(
     manager,
     _use_case_id: str,
@@ -288,11 +309,14 @@ def run_single(
     found_assets = extract_asset_ids(response)
     passed, failures = evaluate_assets(test, found_assets, response=response)
     expected_order = [str(a).lower() for a in test.get("expected_order", [])]
+    expected_present = [str(a).lower() for a in test.get("expected_present", [])]
     rr = compute_reciprocal_rank(found_assets, expected_order)
+    pres_precision, pres_recall = compute_precision_recall(found_assets, expected_present)
 
     tool_returned_assets = extract_tool_returned_assets(search_tool_logs)
     retrieval_passed, retrieval_failures = evaluate_assets(test, tool_returned_assets)
     retrieval_rr = compute_reciprocal_rank(tool_returned_assets, expected_order)
+    retr_precision, retr_recall = compute_precision_recall(tool_returned_assets, expected_present)
 
     return RunResult(
         run_index=run_index,
@@ -308,6 +332,10 @@ def run_single(
         retrieval_passed=retrieval_passed,
         retrieval_failures=retrieval_failures,
         retrieval_reciprocal_rank=retrieval_rr,
+        presentation_precision=pres_precision,
+        presentation_recall=pres_recall,
+        retrieval_precision=retr_precision,
+        retrieval_recall=retr_recall,
     )
 
 
@@ -322,17 +350,15 @@ def run_test(
         run_single(manager, use_case_id, test, capturing_handler, i)
         for i in range(n_runs)
     ]
+    def _mean_or_none(vals: list[float | None]) -> float | None:
+        xs = [v for v in vals if v is not None]
+        return sum(xs) / len(xs) if xs else None
+
     pass_rate = sum(r.passed for r in runs) / n_runs
     retrieval_pass_rate = sum(r.retrieval_passed for r in runs) / n_runs
     latencies = [r.latency_s for r in runs]
-    rr_values = [r.reciprocal_rank for r in runs if r.reciprocal_rank is not None]
-    mrr = sum(rr_values) / len(rr_values) if rr_values else None
-    retrieval_rr_values = [
-        r.retrieval_reciprocal_rank for r in runs if r.retrieval_reciprocal_rank is not None
-    ]
-    retrieval_mrr = (
-        sum(retrieval_rr_values) / len(retrieval_rr_values) if retrieval_rr_values else None
-    )
+    mrr = _mean_or_none([r.reciprocal_rank for r in runs])
+    retrieval_mrr = _mean_or_none([r.retrieval_reciprocal_rank for r in runs])
     return TestResult(
         use_case_id=use_case_id,
         test_id=str(test["id"]),
@@ -347,10 +373,93 @@ def run_test(
         retrieval_pass_rate=retrieval_pass_rate,
         retrieval_passed=retrieval_pass_rate == 1.0,
         retrieval_mrr=retrieval_mrr,
+        presentation_precision=_mean_or_none([r.presentation_precision for r in runs]),
+        presentation_recall=_mean_or_none([r.presentation_recall for r in runs]),
+        retrieval_precision=_mean_or_none([r.retrieval_precision for r in runs]),
+        retrieval_recall=_mean_or_none([r.retrieval_recall for r in runs]),
     )
 
 
-def render_text_report(results: list[TestResult], model: str, selected_id: str, n_runs: int) -> str:
+def run_single_retrieval_only(
+    search_tool,
+    _use_case_id: str,
+    test: dict[str, Any],
+    capturing_handler: _CapturingHandler,
+    run_index: int,
+) -> RunResult:
+    """Run a single test using the search tool directly, bypassing the LLM."""
+    capturing_handler.flush_records()
+    t0 = time.perf_counter()
+    results = search_tool._run(queries=[test["query"]])
+    latency_s = time.perf_counter() - t0
+    search_tool_logs = capturing_handler.flush_records()
+
+    tool_returned_assets = [r["asset_id"].lower() for r in results]
+    expected_order = [str(a).lower() for a in test.get("expected_order", [])]
+    expected_present = [str(a).lower() for a in test.get("expected_present", [])]
+
+    retrieval_passed, retrieval_failures = evaluate_assets(test, tool_returned_assets)
+    retrieval_rr = compute_reciprocal_rank(tool_returned_assets, expected_order)
+    retr_precision, retr_recall = compute_precision_recall(tool_returned_assets, expected_present)
+
+    return RunResult(
+        run_index=run_index,
+        greeting="",
+        response="",
+        found_assets=tool_returned_assets,
+        passed=retrieval_passed,
+        failures=retrieval_failures,
+        latency_s=latency_s,
+        search_tool_logs=search_tool_logs,
+        reciprocal_rank=retrieval_rr,
+        tool_returned_assets=tool_returned_assets,
+        retrieval_passed=retrieval_passed,
+        retrieval_failures=retrieval_failures,
+        retrieval_reciprocal_rank=retrieval_rr,
+        retrieval_precision=retr_precision,
+        retrieval_recall=retr_recall,
+    )
+
+
+def run_test_retrieval_only(
+    search_tool,
+    use_case_id: str,
+    test: dict[str, Any],
+    capturing_handler: _CapturingHandler,
+    n_runs: int,
+) -> TestResult:
+    runs = [
+        run_single_retrieval_only(search_tool, use_case_id, test, capturing_handler, i)
+        for i in range(n_runs)
+    ]
+
+    def _mean_or_none(vals: list[float | None]) -> float | None:
+        xs = [v for v in vals if v is not None]
+        return sum(xs) / len(xs) if xs else None
+
+    pass_rate = sum(r.passed for r in runs) / n_runs
+    latencies = [r.latency_s for r in runs]
+    retrieval_mrr = _mean_or_none([r.retrieval_reciprocal_rank for r in runs])
+    return TestResult(
+        use_case_id=use_case_id,
+        test_id=str(test["id"]),
+        query=str(test["query"]),
+        runs=runs,
+        pass_rate=pass_rate,
+        passed=pass_rate == 1.0,
+        latency_mean_s=sum(latencies) / len(latencies),
+        latency_min_s=min(latencies),
+        latency_max_s=max(latencies),
+        mrr=retrieval_mrr,
+        retrieval_pass_rate=pass_rate,
+        retrieval_passed=pass_rate == 1.0,
+        retrieval_mrr=retrieval_mrr,
+        retrieval_precision=_mean_or_none([r.retrieval_precision for r in runs]),
+        retrieval_recall=_mean_or_none([r.retrieval_recall for r in runs]),
+    )
+
+
+def render_text_report(results: list[TestResult], model: str, selected_id: str, n_runs: int, retrieval_only: bool = False) -> str:
     now = datetime.now().isoformat(timespec="seconds")
     total = len(results)
     passed = sum(1 for r in results if r.passed)
@@ -376,16 +485,43 @@ def render_text_report(results: list[TestResult], model: str, selected_id: str, 
         else ""
     )
 
-    lines = [
+    def _smean(vals: list[float | None]) -> float | None:
+        xs = [v for v in vals if v is not None]
+        return sum(xs) / len(xs) if xs else None
+
+    pres_prec = _smean([r.presentation_precision for r in results])
+    pres_rec = _smean([r.presentation_recall for r in results])
+    retr_prec = _smean([r.retrieval_precision for r in results])
+    retr_rec = _smean([r.retrieval_recall for r in results])
+    pres_pr_str = (
+        f"  precision={pres_prec:.4f}  recall={pres_rec:.4f}"
+        if pres_prec is not None else ""
+    )
+    retr_pr_str = (
+        f"  precision={retr_prec:.4f}  recall={retr_rec:.4f}"
+        if retr_prec is not None else ""
+    )
+
+    header_lines = [
         f"timestamp: {now}",
-        f"model: {model}",
+        f"model: {model or '(retrieval-only)'}",
         f"selection: {selected_id}",
         f"runs_per_test: {n_runs}",
-        f"presentation: passed={passed} failed={total - passed} total={total} success_rate={success_rate:.1%}{mrr_str}",
-        f"retrieval:    passed={retrieval_passed} failed={total - retrieval_passed} total={total} success_rate={retrieval_success_rate:.1%}{retrieval_mrr_str}",
-        f"latency: mean={lat_mean:.2f}s min={lat_min:.2f}s max={lat_max:.2f}s",
-        "",
     ]
+    if retrieval_only:
+        header_lines.append(
+            f"retrieval:    passed={retrieval_passed} failed={total - retrieval_passed} total={total} success_rate={retrieval_success_rate:.1%}{retrieval_mrr_str}{retr_pr_str}"
+        )
+    else:
+        header_lines.append(
+            f"presentation: passed={passed} failed={total - passed} total={total} success_rate={success_rate:.1%}{mrr_str}{pres_pr_str}"
+        )
+        header_lines.append(
+            f"retrieval:    passed={retrieval_passed} failed={total - retrieval_passed} total={total} success_rate={retrieval_success_rate:.1%}{retrieval_mrr_str}{retr_pr_str}"
+        )
+    header_lines.append(f"latency: mean={lat_mean:.2f}s min={lat_min:.2f}s max={lat_max:.2f}s")
+    header_lines.append("")
+    lines = header_lines
 
     current_case = None
     for result in results:
@@ -397,9 +533,18 @@ def render_text_report(results: list[TestResult], model: str, selected_id: str, 
         retrieval_ok = sum(r.retrieval_passed for r in result.runs)
         mrr_tag = f"  mrr={result.mrr:.4f}" if result.mrr is not None else ""
         retrieval_mrr_tag = f"  mrr={result.retrieval_mrr:.4f}" if result.retrieval_mrr is not None else ""
+        pres_pr_tag = (
+            f"  precision={result.presentation_precision:.4f}  recall={result.presentation_recall:.4f}"
+            if result.presentation_precision is not None else ""
+        )
+        retr_pr_tag = (
+            f"  precision={result.retrieval_precision:.4f}  recall={result.retrieval_recall:.4f}"
+            if result.retrieval_precision is not None else ""
+        )
         lines.append(f"- test_id: {result.test_id}")
-        lines.append(f"  presentation: {'PASS' if result.passed else 'FAIL'} ({ok}/{n_runs}) success_rate={result.pass_rate:.1%}{mrr_tag}")
-        lines.append(f"  retrieval:    {'PASS' if result.retrieval_passed else 'FAIL'} ({retrieval_ok}/{n_runs}) success_rate={result.retrieval_pass_rate:.1%}{retrieval_mrr_tag}")
+        if not retrieval_only:
+            lines.append(f"  presentation: {'PASS' if result.passed else 'FAIL'} ({ok}/{n_runs}) success_rate={result.pass_rate:.1%}{mrr_tag}{pres_pr_tag}")
+        lines.append(f"  retrieval:    {'PASS' if result.retrieval_passed else 'FAIL'} ({retrieval_ok}/{n_runs}) success_rate={result.retrieval_pass_rate:.1%}{retrieval_mrr_tag}{retr_pr_tag}")
         lines.append(f"  latency: mean={result.latency_mean_s:.2f}s min={result.latency_min_s:.2f}s max={result.latency_max_s:.2f}s")
         lines.append(f"  input: {result.query}")
 
@@ -412,11 +557,15 @@ def render_text_report(results: list[TestResult], model: str, selected_id: str, 
                 if run.retrieval_reciprocal_rank is not None
                 else ""
             )
-            lines.append(f"  [run {run.run_index}] presentation={tag} latency={run.latency_s:.2f}s{rr_tag}")
-            lines.append(f"             retrieval={retrieval_tag}{retrieval_rr_tag}")
-            lines.append(f"    response: {run.response}")
-            lines.append(f"    found_assets:         {', '.join(run.found_assets) or '[none]'}")
-            lines.append(f"    tool_returned_assets: {', '.join(run.tool_returned_assets) or '[none]'}")
+            if retrieval_only:
+                lines.append(f"  [run {run.run_index}] retrieval={retrieval_tag} latency={run.latency_s:.2f}s{retrieval_rr_tag}")
+                lines.append(f"    tool_returned_assets: {', '.join(run.tool_returned_assets) or '[none]'}")
+            else:
+                lines.append(f"  [run {run.run_index}] presentation={tag} latency={run.latency_s:.2f}s{rr_tag}")
+                lines.append(f"             retrieval={retrieval_tag}{retrieval_rr_tag}")
+                lines.append(f"    response: {run.response}")
+                lines.append(f"    found_assets:         {', '.join(run.found_assets) or '[none]'}")
+                lines.append(f"    tool_returned_assets: {', '.join(run.tool_returned_assets) or '[none]'}")
 
         first_logs = result.runs[0].search_tool_logs if result.runs else []
         if first_logs:
@@ -431,12 +580,16 @@ def render_text_report(results: list[TestResult], model: str, selected_id: str, 
     return "\n".join(lines).rstrip() + "\n"
 
 
-def render_json_report(results: list[TestResult], model: str, selected_id: str, n_runs: int) -> str:
+def render_json_report(results: list[TestResult], model: str, selected_id: str, n_runs: int, retrieval_only: bool = False) -> str:
     total = len(results)
     passed = sum(1 for r in results if r.passed)
     retrieval_passed = sum(1 for r in results if r.retrieval_passed)
     all_latencies = [r.latency_s for result in results for r in result.runs]
     lat_mean = sum(all_latencies) / len(all_latencies) if all_latencies else 0.0
+    def _mean_r(vals: list[float | None]) -> float | None:
+        xs = [v for v in vals if v is not None]
+        return round(sum(xs) / len(xs), 4) if xs else None
+
     mrr_values = [r.mrr for r in results if r.mrr is not None]
     mean_mrr = round(sum(mrr_values) / len(mrr_values), 4) if mrr_values else None
     retrieval_mrr_values = [r.retrieval_mrr for r in results if r.retrieval_mrr is not None]
@@ -447,23 +600,34 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
     )
     payload = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
-        "model": model,
+        "model": model or "(retrieval-only)",
         "selection": selected_id,
         "runs_per_test": n_runs,
+        "retrieval_only": retrieval_only,
         "summary": {
-            "presentation": {
-                "passed": passed,
-                "failed": total - passed,
-                "total": total,
-                "success_rate": round(passed / total, 4) if total else 0.0,
-                "mrr": mean_mrr,
-            },
+            **(
+                {}
+                if retrieval_only
+                else {
+                    "presentation": {
+                        "passed": passed,
+                        "failed": total - passed,
+                        "total": total,
+                        "success_rate": round(passed / total, 4) if total else 0.0,
+                        "mrr": mean_mrr,
+                        "precision": _mean_r([r.presentation_precision for r in results]),
+                        "recall": _mean_r([r.presentation_recall for r in results]),
+                    },
+                }
+            ),
             "retrieval": {
                 "passed": retrieval_passed,
                 "failed": total - retrieval_passed,
                 "total": total,
                 "success_rate": round(retrieval_passed / total, 4) if total else 0.0,
                 "mrr": retrieval_mean_mrr,
+                "precision": _mean_r([r.retrieval_precision for r in results]),
+                "recall": _mean_r([r.retrieval_recall for r in results]),
             },
             "latency_mean_s": round(lat_mean, 3),
             "latency_min_s": round(min(all_latencies), 3) if all_latencies else 0.0,
@@ -477,9 +641,13 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
                 "presentation_passed": result.passed,
                 "presentation_pass_rate": result.pass_rate,
                 "presentation_mrr": round(result.mrr, 4) if result.mrr is not None else None,
+                "presentation_precision": round(result.presentation_precision, 4) if result.presentation_precision is not None else None,
+                "presentation_recall": round(result.presentation_recall, 4) if result.presentation_recall is not None else None,
                 "retrieval_passed": result.retrieval_passed,
                 "retrieval_pass_rate": result.retrieval_pass_rate,
                 "retrieval_mrr": round(result.retrieval_mrr, 4) if result.retrieval_mrr is not None else None,
+                "retrieval_precision": round(result.retrieval_precision, 4) if result.retrieval_precision is not None else None,
+                "retrieval_recall": round(result.retrieval_recall, 4) if result.retrieval_recall is not None else None,
                 "latency_mean_s": round(result.latency_mean_s, 3),
                 "latency_min_s": round(result.latency_min_s, 3),
                 "latency_max_s": round(result.latency_max_s, 3),
@@ -493,9 +661,13 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
                         "presentation_passed": run.passed,
                         "presentation_failures": run.failures,
                         "presentation_reciprocal_rank": run.reciprocal_rank,
+                        "presentation_precision": round(run.presentation_precision, 4) if run.presentation_precision is not None else None,
+                        "presentation_recall": round(run.presentation_recall, 4) if run.presentation_recall is not None else None,
                         "retrieval_passed": run.retrieval_passed,
                         "retrieval_failures": run.retrieval_failures,
                         "retrieval_reciprocal_rank": run.retrieval_reciprocal_rank,
+                        "retrieval_precision": round(run.retrieval_precision, 4) if run.retrieval_precision is not None else None,
+                        "retrieval_recall": round(run.retrieval_recall, 4) if run.retrieval_recall is not None else None,
                         "latency_s": round(run.latency_s, 3),
                         "search_tool_logs": run.search_tool_logs,
                     }
@@ -524,6 +696,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--temperature", type=int, default=0, help="Model temperature.")
     parser.add_argument("--runs", type=int, default=1, help="Number of runs per test.")
     parser.add_argument("--list", action="store_true", help="List available use case ids and exit.")
+    parser.add_argument(
+        "--retrieval-only",
+        action="store_true",
+        help="Skip LLM entirely; call search_catalog_tool directly with the raw query.",
+    )
     return parser.parse_args()
 
 
@@ -542,20 +719,13 @@ def main() -> int:
             print(f"{case.get('id')}: {case.get('title', '')}")
         return 0
 
-    if not args.model:
+    retrieval_only: bool = args.retrieval_only
+
+    if not retrieval_only and not args.model:
         print("LLM_MODEL is not configured. Set it in .env or pass --model <name:tag>.")
         return 2
 
     selected_cases = select_use_cases(use_cases, args.use_case)
-    try:
-        manager = build_manager(model_name=args.model, temperature=args.temperature)
-    except ModuleNotFoundError as exc:
-        missing = getattr(exc, "name", "dependency")
-        print(
-            f"Missing Python dependency: {missing}. "
-            "Install project dependencies first with: pip install -e ."
-        )
-        return 2
 
     capturing_handler = _CapturingHandler()
     capturing_handler.setLevel(logging.INFO)
@@ -565,15 +735,33 @@ def main() -> int:
     tool_logger.addHandler(capturing_handler)
 
     results: list[TestResult] = []
-    for use_case in selected_cases:
-        for test in use_case.get("tests", []):
-            results.append(run_test(manager, str(use_case["id"]), test, capturing_handler, args.runs))
+    if retrieval_only:
+        from edc_agent.tools.definitions.search_catalog_tool import SearchCatalogTool
+        search_tool = SearchCatalogTool()
+        for use_case in selected_cases:
+            for test in use_case.get("tests", []):
+                results.append(
+                    run_test_retrieval_only(search_tool, str(use_case["id"]), test, capturing_handler, args.runs)
+                )
+    else:
+        try:
+            manager = build_manager(model_name=args.model, temperature=args.temperature)
+        except ModuleNotFoundError as exc:
+            missing = getattr(exc, "name", "dependency")
+            print(
+                f"Missing Python dependency: {missing}. "
+                "Install project dependencies first with: pip install -e ."
+            )
+            return 2
+        for use_case in selected_cases:
+            for test in use_case.get("tests", []):
+                results.append(run_test(manager, str(use_case["id"]), test, capturing_handler, args.runs))
 
     tool_logger.removeHandler(capturing_handler)
 
     selection = args.use_case or "all"
-    text_report = render_text_report(results, args.model, selection, args.runs)
-    json_report = render_json_report(results, args.model, selection, args.runs)
+    text_report = render_text_report(results, args.model, selection, args.runs, retrieval_only=retrieval_only)
+    json_report = render_json_report(results, args.model, selection, args.runs, retrieval_only=retrieval_only)
 
     text_output = Path(args.output).resolve() if args.output else build_output_path(results_dir, selection, "log")
     json_output = Path(args.json_output).resolve() if args.json_output else build_output_path(results_dir, selection, "json")

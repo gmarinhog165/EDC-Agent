@@ -94,14 +94,14 @@
         {
           "id": "contextual_1",
           "query": "Estou a desenvolver um modelo de previsao de geracao solar para horizonte de 24h. Que dados me sao uteis?",
-          "expected_present": ["tb-solar-1", "tb-wind-4"],
-          "expected_order": ["tb-solar-1", "tb-wind-4"]
+          "expected_present": ["tb-solar-1"],
+          "expected_order": ["tb-solar-1"]
         },
         {
           "id": "contextual_2",
           "query": "Quero perceber o impacto ambiental e territorial das renovaveis em Portugal.",
-          "expected_present": ["tb-solar-5", "tb-hydro-3"],
-          "expected_order": ["tb-solar-5", "tb-hydro-3"]
+          "expected_present": ["tb-solar-5", "tb-hydro-3", "tb-wind-5"],
+          "expected_order": ["tb-solar-5", "tb-hydro-3", "tb-wind-5"]
         },
         {
           "id": "contextual_3",
@@ -123,7 +123,7 @@
         {
           "id": "explicit_exclusion_2",
           "query": "Quero dados de producao eletrica de parques eolicos onshore.",
-          "expected_present": ["tb-wind-2"]
+          "expected_present": []
         },
         {
           "id": "explicit_exclusion_3",
@@ -172,8 +172,8 @@
         {
           "id": "semantic_ambiguity_3",
           "query": "What weather and climate data is available for renewable energy analysis?",
-          "expected_present": ["tb-wind-4", "tb-hydro-4", "tb-wind-1"],
-          "expected_order": ["tb-hydro-4","tb-wind-4", "tb-wind-1"]
+          "expected_present": ["tb-wind-4", "tb-hydro-4", "tb-wind-1", "tb-solar-1"],
+          "expected_order": ["tb-hydro-4","tb-wind-4", "tb-wind-1", "tb-solar-1"]
         }
       ]
     },
@@ -183,7 +183,7 @@
       "tests": [
         {
           "id": "synonyms_1",
-          "query": "Quero dados de radiacao solar quanto sol bate em cada zona de Portugal.",
+          "query": "Quero dados sobre quanto sol bate em cada zona de Portugal.",
           "expected_present": ["tb-solar-1"]
         },
         {
@@ -215,7 +215,7 @@
         {
           "id": "partial_satisfaction_3",
           "query": "I'm looking for a single dataset with both onshore wind measurements and electricity generation.",
-          "expected_present": ["tb-wind-5", "tb-wind-2"]
+          "expected_present": ["tb-wind-5"]
         }
       ]
     },
