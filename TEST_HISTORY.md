@@ -4,7 +4,16 @@ Ledger of evaluation runs for the `search_catalog` pipeline. Record each run wit
 
 All runs use `use_cases.json` (33 tests, 11 use-case groups, 1 run per test unless noted). Precision/recall are macro-averaged over the 23 tests that have a non-empty `expected_present` (the 10 "no-results" tests are excluded from P/R; they still count toward success_rate).
 
-Artifacts live under `deployment/testbeds/search_catalog/results/all_<timestamp>.{json,log}`.
+Artifacts live under `deployment/testbeds/search_catalog/results/<prompt_version>/all_<timestamp>.{json,log}`.
+
+Prompt version subdirectories:
+- `v1/` — strict validate + hard-constraint (Runs 1–3)
+- `v2/` — softened VALIDATE + softened combined-content (Run 4)
+- `v2_hybrid/` — re-hardened VALIDATE + softened combined-content (Runs 5–6 + contextual)
+- `v2_soft_validate/` — softer VALIDATE + strict combined-content + bilingual expansions (Run 7)
+- `v3/` — full rewrite: LANGUAGE POLICY, complementarity step, sibling-subtype rule (Runs 8–9)
+- `v4/` — Gates A/B/C, strict combination trigger, Gate C anti-hedge requirement (Run 10)
+- `misc/` — pre-run scratch logs
 
 ---
 
@@ -19,6 +28,9 @@ Artifacts live under `deployment/testbeds/search_catalog/results/all_<timestamp>
 | 5 | 2026-04-22 20:51 | gate=0.40 / fallback=20 / hybrid prompt / elbow cut≥1 | qwen2.5:7b | 24.2% | 0.631 / 0.708 / 0.481 | 48.5% | 0.623 / 0.557 / 0.500 | 150 s |
 | 6 | 2026-04-22 22:42 | same + elbow cut≥2 (no single-outlier cutoff) | qwen2.5:7b | 24.2% | 0.561 / 0.714 / 0.370 | **51.5%** | **0.652 / 0.562** / 0.444 | 142 s |
 | 7 | 2026-04-23 15:11 | softer VALIDATE + strict combined-content + bilingual expansions | qwen2.5:7b | 3.0% | 0.308 / 0.811 / 0.593 | 39.4% | 0.582 / **0.636** / **0.667** | 159 s |
+| 8 | 2026-04-23 18:29 | prompt v3 (lang policy + complementarity step) + expanded query expansion (4–8, 7 angles) | qwen2.5:7b | 9.1% | 0.350 / **0.850** / **0.778** | 27.3% | 0.605 / **0.814** / **0.778** | 233 s |
+| 9 | 2026-04-24 12:05 | same prompt v3 + original query expansion (2–8, 5 angles — ablation) | qwen2.5:7b | 6.1% | **0.407** / 0.799 / 0.741 | 18.2% | 0.568 / 0.797 / 0.815 | 214 s |
+| 10 | 2026-04-24 17:28 | prompt v4 (Gates A/B/C + strict combination trigger) + expanded query expansion (4–8, 7 angles) | qwen2.5:7b | 6.1% | 0.408 / **0.890** / **0.815** | **39.4%** | **0.641** / 0.688 / **0.815** | 213 s |
 
 Retrieval P / R in run #2 were recomputed post-hoc using `compute_precision_recall` from the current `run_use_case.py` (the file snapshot did not contain those fields).
 
@@ -232,23 +244,158 @@ Retrieval P / R in run #2 were recomputed post-hoc using `compute_precision_reca
 
 ---
 
-## Planned: Run 8 — targeted fixes for observed failure modes
+## Run 8 — 2026-04-23 18:29 (`all_20260423-182935`) — prompt v3 + expanded query expansion
 
-**Identified problems to address (in approximate priority order):**
+**Changes vs. Run 7:**
 
-1. **Contextual queries — low semantic score for contextually relevant assets.** For some testbed queries, the correct asset doesn't score high enough in semantic search, because the user's phrasing doesn't map directly to the asset description. Query expansions should be generated to maximise embedding recall — broader, more diverse, and explicitly closer to how EDC assets are described — not just paraphrases of the user query.
+- **Prompt (search_catalog_prompt.py):** full rewrite → v3.
+  - Added explicit **LANGUAGE POLICY** section at the top: detect query language, entire output in that language (including translated asset descriptions), only `asset_id` and `<DONE>` kept verbatim, no mixing allowed. This directly targets the language-mixing and wrong-language status-line failures observed in Run 7.
+  - **VALIDATE** (step 3): tightened wording — "exclude clearly irrelevant assets"; added "even if indirect but plausible" to contextual connection; clarified that doubt → include and step 4 handles stricter filtering.
+  - **HARD-CONSTRAINT CHECK** (step 4): added explicit **sibling-subtype rule** ("an asset covering a sibling subtype MUST be dropped — belonging to the same parent category is NOT a substitute"). "Required combinations" removed from this step and promoted to a separate step 5.
+  - **New step 5 — COMBINATION / COMPLEMENTARITY HANDLING**: full match vs. partial match classification; partial matches listed with explicit coverage/gap annotation; combination note added when two+ partial matches together satisfy the requirement. Addresses the partial-satisfaction failure mode from Run 7.
+  - **OUTPUT FORMAT** (step 6): strict structured format — status line rules (omit when full results, "Only X" when fewer, "No matching" when zero), numbered list with `asset_id / description / connection / match_type` fields, complementarity paragraph after list, `<DONE>` on its own line.
+  - **CRITICAL CONSTRAINTS**: added explicit rule forbidding list + "No matching" in the same response (spurious appended phrase from Run 7).
 
-2. **Partial-satisfaction queries — tool rejects partially matching assets.** For queries like "Preciso de um dataset que tenha ao mesmo tempo perfis verticais de vento e curvas de potência de turbinas" or "I'm looking for a single dataset with both onshore wind measurements and electricity generation", the semantic search identifies candidates but the tool (or LLM) discards them because they only partially satisfy the combined requirement. The tool should pass these candidates through, and the LLM should: (a) retain partial matches, and (b) actively surface asset combinations that together satisfy the requirement when no single dataset covers it fully.
+- **Query expansion description (search_catalog_tool.py `SearchCatalogArgs`):** rewritten.
+  - Min expansions raised **2 → 4**.
+  - Added **LANGUAGE RULE**: expansions in the same language as the user's query; exception for English technical terms (≥1 English expansion required when the concept is primarily used in English literature). Replaces the ad-hoc bilingual behaviour observed in Run 7 with an explicit, principled rule.
+  - Coverage extended to **7 angles** (previously 5): added (6) combination-splitting (one expansion per component + one for the pair) and (7) contextual expansion (downstream use cases, related metrics, typical data products). Directly targets the contextual-query and partial-satisfaction retrieval failures.
+  - Style section: explicit 3–8 word phrase guidance; updated example with 6 entries.
 
-3. **Cross-domain hallucination — LLM accepts wrong-domain assets.** For "Quero benchmarks de modelos de previsão para energia hídrica", the LLM selected a solar energy benchmark instead of a hydro benchmark, because it latched onto the "benchmark" keyword without enforcing the domain constraint. LLM filtering must be stricter about matching the asset's domain/content against the user's explicit domain qualifier.
+- **Tool constants:** unchanged (`_COSINE_GATE=0.40`, `_FALLBACK_TOP_N=20`, `_MIN_GAP_RATIO=0.30`, elbow `cut >= 2`).
 
-4. **Query expansions generated in English regardless of query language.** The current tool generates query expansions in English even when the user queries in Portuguese (or another language). Expansions should be generated in the same language as the user's query (or bilingually) to improve embedding alignment.
+**Results:**
+- **Presentation:** success **27.3%** (9/33), precision 0.605, recall **0.814**, MRR **0.778**.
+- **Retrieval:** success 9.1% (3/33), precision 0.350, recall **0.850**, MRR **0.778**.
+- Latency: mean 233 s, max 456 s.
 
-5. **LLM response language mixing.** The LLM occasionally mixes the query language with English in its response. The response must consistently use the same language as the user's query throughout.
+**Deltas vs. Run 7:**
 
-6. **"Only X matching asset was found" appears at the end and in the wrong language.** This phrase should appear at the beginning of the response (before the asset list) and must follow the user's query language.
+| Metric | Run 7 | Run 8 | Δ |
+|---|---|---|---|
+| Pres. success | 39.4% | 27.3% | **−12.1 pp** |
+| Pres. precision | 0.582 | 0.605 | +0.023 |
+| Pres. recall | 0.636 | **0.814** | **+0.178** |
+| Pres. MRR | 0.667 | **0.778** | **+0.111** |
+| Retr. success | 3.0% | 9.1% | +6.1 pp |
+| Retr. precision | 0.308 | 0.350 | +0.042 |
+| Retr. recall | 0.811 | **0.850** | +0.039 |
+| Retr. MRR | 0.593 | **0.778** | **+0.185** |
+| Latency mean | 159 s | 233 s | **+74 s** |
 
-7. **Spurious "No matching assets were found" appended after results.** The LLM sometimes appends this phrase even when assets were returned. This must be removed — it should only appear when the result list is genuinely empty.
+**Reading:**
+- **Recall and MRR improved sharply** — both are the best values recorded so far. The 7-angle expanded query expansion is picking up contextually relevant assets and combination components that the narrower 5-angle set missed.
+- **Success rate regressed** again — the broader query expansions surface more FPs, which the strict `unexpected=X` testbed check penalises. This is the same structural tension observed in Runs 3–4 and 7.
+- **Latency cost is high (+74 s mean)**: generating 4–8 longer, more detailed expansions plus the richer prompt v3 adds significant LLM time per query.
+- **Run 9 (ablation without expanded query expansion) was run next to isolate whether the recall gains are from the prompt v3 rewrite or the expanded query expansion.**
+
+---
+
+## Run 9 — 2026-04-24 12:05 (`all_20260424-120530`) — prompt v3 + original query expansion (ablation)
+
+**Purpose:** isolate the effect of the expanded query expansion. Identical to Run 8 except the `SearchCatalogArgs` description was reverted to the shorter Run 6/7 version (2–8 entries, 5 angles, no LANGUAGE RULE, no combination-splitting or contextual-expansion angles).
+
+**Changes vs. Run 8:**
+- **Query expansion description:** reverted to the original (2–8 entries, 5 semantic angles). All other conditions identical.
+- **Prompt:** unchanged (v3 — same as Run 8).
+- **Tool constants:** unchanged (`_COSINE_GATE=0.40`, `_FALLBACK_TOP_N=20`, `_MIN_GAP_RATIO=0.30`, elbow `cut >= 2`).
+
+**Results:**
+- **Presentation:** success **18.2%** (6/33), precision 0.568, recall 0.797, MRR **0.815**.
+- **Retrieval:** success 6.1% (2/33), precision **0.407**, recall 0.799, MRR 0.741.
+- Latency: mean 214 s, max 413 s.
+
+**Deltas vs. Run 8 (expanded vs. original query expansion):**
+
+| Metric | Run 8 (expanded) | Run 9 (original) | Δ |
+|---|---|---|---|
+| Pres. success | 27.3% | 18.2% | **−9.1 pp** |
+| Pres. precision | 0.605 | 0.568 | −0.037 |
+| Pres. recall | **0.814** | 0.797 | −0.017 |
+| Pres. MRR | 0.778 | **0.815** | +0.037 |
+| Retr. success | 9.1% | 6.1% | −3.0 pp |
+| Retr. precision | 0.350 | **0.407** | **+0.057** |
+| Retr. recall | **0.850** | 0.799 | −0.051 |
+| Retr. MRR | **0.778** | 0.741 | −0.037 |
+| Latency mean | 233 s | 214 s | −19 s |
+
+**Reading:**
+- **Expanded query expansion drives recall and retrieval MRR.** Removing it drops retrieval recall by −0.051 and retrieval MRR by −0.037 — the 7-angle coverage (especially combination-splitting and contextual expansions) meaningfully improves the tool's ability to retrieve the right candidates.
+- **Original query expansion yields better retrieval precision (+0.057)** — fewer angles means fewer FPs surface. This also explains the slightly better presentation MRR: when the LLM sees a cleaner candidate set, its top-ranked selection is more reliable.
+- **Latency savings are modest (−19 s)** — the main cost is prompt v3 itself, not the expanded query expansion text.
+- **Conclusion:** the expanded query expansion is net-positive on recall (the primary objective for catalog discovery), at the cost of more FPs and slightly higher latency. Prompt v3 alone (without the expanded expansion) recovers some precision but loses recall. Both together (Run 8) represent the best recall configuration recorded so far.
+
+**Deltas vs. Run 2 (baseline):**
+
+| Metric | Run 2 | Run 9 | Δ |
+|---|---|---|---|
+| Pres. success | **51.5%** | 18.2% | **−33.3 pp** |
+| Pres. precision | 0.659 | 0.568 | −0.091 |
+| Pres. recall | 0.592 | **0.797** | **+0.205** |
+| Pres. MRR | 0.389 | **0.815** | **+0.426** |
+| Retr. success | **21.2%** | 6.1% | **−15.1 pp** |
+| Retr. precision | 0.517 | 0.407 | −0.110 |
+| Retr. recall | 0.692 | **0.799** | **+0.107** |
+| Retr. MRR | 0.370 | **0.741** | **+0.371** |
+| Latency mean | 143 s | 214 s | +71 s |
+
+---
+
+## Run 10 — 2026-04-24 17:28 (`all_20260424-172825`) — prompt v4 (Gates A/B/C)
+
+**Changes vs. Run 8 (same tool config, same expanded query expansion):**
+
+- **Prompt (search_catalog_prompt.py):** rewrite → v4.
+  - Steps 3–5 replaced with a three-gate pipeline: **Gate A** (primary-subject match on domain, entity class, and subtype qualifier), **Gate B** (hard-constraint check — drop on first violation, no weighing against overlap), **Gate C** (concrete-connection requirement — the asset survives only if you can write a hedge-free declarative sentence naming a specific attribute from the description that directly satisfies a specific phrase in the query; hedge words such as "may", "could", "related to", "indirectly" cause an automatic drop).
+  - **COMBINATION HANDLING** (step 4) is now gated on an explicit trigger: the query must contain a combination connector ("both X and Y", "at the same time", "combined with", etc.). A bare "and" is no longer sufficient. When not triggered, partial-match assets are evaluated as plain candidates under Gates A–C and dropped if they lack a concrete direct connection.
+  - Added explicit **drop-on-doubt** rule in Gate C.
+  - CRITICAL CONSTRAINTS expanded: added "It is correct and expected to return zero assets" and "thematic proximity is NOT a substitute for concrete connection".
+  - Removed the v3 step numbering collision (v3 had steps 3 VALIDATE → 4 HARD-CONSTRAINT → 5 COMBINATION → 6 OUTPUT; v4 collapses these to 3 FILTER → 4 COMBINATION → 5 OUTPUT).
+- **Query expansion description (search_catalog_tool.py):** same as Run 8 (4–8 entries, 7 angles, LANGUAGE RULE). Note: Run 9 had reverted this to 5 angles; Run 10 re-applies the expanded version.
+- **Tool constants:** unchanged (`_COSINE_GATE=0.40`, `_FALLBACK_TOP_N=20`, `_MIN_GAP_RATIO=0.30`, elbow `cut >= 2`).
+
+**Results:**
+- **Presentation:** success **39.4%** (13/33), precision **0.641**, recall 0.688, MRR **0.815**.
+- **Retrieval:** success 6.1% (2/33), precision 0.408, recall **0.890**, MRR **0.815**.
+- Latency: mean 213 s, max 363 s.
+
+**Deltas vs. Run 8 (prompt v3 + expanded query expansion):**
+
+| Metric | Run 8 | Run 10 | Δ |
+|---|---|---|---|
+| Pres. success | 27.3% | **39.4%** | **+12.1 pp** |
+| Pres. precision | 0.605 | **0.641** | **+0.036** |
+| Pres. recall | **0.814** | 0.688 | **−0.126** |
+| Pres. MRR | 0.778 | **0.815** | +0.037 |
+| Retr. success | 9.1% | 6.1% | −3.0 pp |
+| Retr. precision | 0.350 | **0.408** | **+0.058** |
+| Retr. recall | 0.850 | **0.890** | +0.040 |
+| Retr. MRR | 0.778 | **0.815** | +0.037 |
+| Latency mean | 233 s | 213 s | **−20 s** |
+
+**Deltas vs. Run 2 (baseline):**
+
+| Metric | Run 2 | Run 10 | Δ |
+|---|---|---|---|
+| Pres. success | **51.5%** | 39.4% | −12.1 pp |
+| Pres. precision | **0.659** | 0.641 | −0.018 |
+| Pres. recall | 0.592 | **0.688** | **+0.096** |
+| Pres. MRR | 0.389 | **0.815** | **+0.426** |
+| Retr. success | **21.2%** | 6.1% | −15.1 pp |
+| Retr. precision | 0.517 | 0.408 | −0.109 |
+| Retr. recall | 0.692 | **0.890** | **+0.198** |
+| Retr. MRR | 0.370 | **0.815** | **+0.445** |
+| Latency mean | 143 s | 213 s | +70 s |
+
+**Reading:**
+
+- **Presentation success recovered sharply (+12.1 pp vs. Run 8)** — the strict three-gate filter (especially Gate C's anti-hedge requirement) significantly cuts FPs. The LLM now drops assets it cannot connect to the query with a concrete, hedge-free sentence.
+- **Presentation recall dropped (−0.126 vs. Run 8)** — the stricter filter is now cutting some true positives. Gate C's no-hedge rule may be too aggressive for assets with indirect but legitimate connections; the LLM may be failing Gate C on assets it should keep.
+- **Retrieval recall improved (+0.040 vs. Run 8, +0.198 vs. baseline)** — the expanded 7-angle query expansion continues to improve tool coverage; this is the highest retrieval recall recorded so far (0.890).
+- **MRR at both layers improved (+0.037 vs. Run 8)** — 0.815 is the best MRR recorded at either layer. When the LLM does include an asset, it ranks it correctly.
+- **Precision gap between retrieval (0.408) and presentation (0.641)** confirms that Gate C is doing real filtering work — the LLM discards ~37% of the tool's candidates. However, some of that filtering is over-aggressive (recall drop).
+- **Latency slightly lower (−20 s vs. Run 8)** — modest gain; the prompt v4 is slightly shorter than v3.
+- **Key tension:** the v4 prompt achieves better precision and MRR but at the cost of presentation recall. The next step is to investigate which tests regressed on recall under v4 to determine whether Gate C is mis-firing or whether the tool is retrieving assets that genuinely do not belong.
 
 ---
 

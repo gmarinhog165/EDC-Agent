@@ -23,19 +23,37 @@ class SearchCatalogArgs(BaseModel):
         list[Annotated[str, Field(min_length=3, max_length=200)]],
         Field(
             description=(
-                "Semantically diverse search queries derived from the user's request. "
-                "Generate between 2 and 8 entries covering: "
-                "(1) a full-sentence rephrasing of the user's intent, "
-                "(2) synonyms and alternative names for the main concept, "
-                "(3) domain-specific or technical terms related to the topic, "
-                "(4) a broader category the topic belongs to, "
-                "(5) a more specific subtopic or use case. "
-                "Prefer descriptive phrases over single words. "
-                "Avoid redundancy — each entry must add a different semantic angle. "
-                "Do not invent technical jargon unrelated to the user's request. "
-                'Example — user asks "I need temperature sensor data": '
-                '["IoT temperature sensor readings", "environmental monitoring data", '
-                '"thermal measurement dataset", "climate sensor telemetry", "sensor time series"].'
+                "Semantically diverse search queries derived from the user's request, optimized for "
+                "a vector/semantic search engine. Generate between 4 and 8 entries.\n\n"
+                "LANGUAGE RULE: produce the expansions in the SAME language as the user's original query. "
+                "EXCEPTION: if a technical term, standard name, acronym, or domain-specific concept is "
+                "predominantly used in English in the relevant technical or scientific literature, include "
+                "AT LEAST ONE expansion using the English term alongside the native-language expansions. "
+                "This improves semantic recall when catalog descriptions are written in English or mix "
+                "languages.\n\n"
+                "COVERAGE — each entry must add a DIFFERENT semantic angle. Aim to cover:\n"
+                "(1) a full-sentence rephrasing of the user's intent;\n"
+                "(2) synonyms and alternative names for the main concept;\n"
+                "(3) domain-specific or technical terms related to the topic (including English technical "
+                "terms when applicable);\n"
+                "(4) a broader category the topic belongs to — important when catalog descriptions are "
+                "written at a higher level of abstraction than the user's query;\n"
+                "(5) a more specific subtopic, use case, or application scenario;\n"
+                "(6) if the query requires a COMBINATION of attributes (A and B), include at least one "
+                "expansion for EACH component independently, plus one for the combination — otherwise "
+                "assets covering only one component would not be retrieved;\n"
+                "(7) if the query is CONTEXTUAL (the user's need is implied rather than expressed as direct "
+                "keywords), include expansions describing the downstream use case, related metrics, or "
+                "typical data products associated with the request.\n\n"
+                "STYLE:\n"
+                "- Prefer descriptive phrases (3–8 words) over single words.\n"
+                "- Do not invent technical jargon unrelated to the user's request.\n"
+                "- Avoid redundancy — rephrasings that differ only in word order do not count as different "
+                "angles.\n\n"
+                "EXAMPLE — user asks in English: 'I need temperature sensor data':\n"
+                '["IoT temperature sensor readings", "environmental monitoring dataset", '
+                '"thermal measurement time series", "climate sensor telemetry", '
+                '"ambient temperature observations", "indoor temperature logs"]'
             ),
             min_length=2,
             max_length=8,
