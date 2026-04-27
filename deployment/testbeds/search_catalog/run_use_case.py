@@ -31,6 +31,7 @@ _LOG_ASSET_RE = re.compile(
 )
 _LOG_CUTOFF_RE = re.compile(r"dynamic cutoff at position (\d+)")
 _LOG_FALLBACK_RE = re.compile(r"fallback top-(\d+)")
+_LOG_DIAGNOSTICS_RE = re.compile(r"search_catalog_diagnostics (\{.+\})\s*$")
 
 DEFAULT_CASE_FILE = Path(__file__).with_name("use_cases.json")
 DEFAULT_RESULTS_DIR = Path(__file__).with_name("results")
@@ -69,6 +70,7 @@ class RunResult:
     presentation_recall: float | None = None
     retrieval_precision: float | None = None
     retrieval_recall: float | None = None
+    tool_diagnostics: dict | None = None
 
 
 @dataclass
@@ -82,6 +84,7 @@ class TestResult:
     latency_mean_s: float = 0.0
     latency_min_s: float = 0.0
     latency_max_s: float = 0.0
+    latency_std_s: float = 0.0
     mrr: float | None = None
     retrieval_pass_rate: float = 0.0
     retrieval_passed: bool = False
@@ -109,7 +112,7 @@ def load_env_file(env_path: Path, override: bool = False) -> None:
             os.environ[key] = value
 
 
-def build_manager(model_name: str, temperature: int):
+def build_manager(model_name: str, temperature: int, prompt_version: str | None = None):
     from edc_agent.agents.agent import Agent
     from edc_agent.clients.ollama_client import OllamaClient
     from edc_agent.manager import PipelineManager
@@ -125,7 +128,11 @@ def build_manager(model_name: str, temperature: int):
     search_catalog_agent = Agent(
         name="search-catalog",
         llm_client=llm_client,
-        system_prompt=get_prompt(agent_name="search-catalog", _model_name=model_name),
+        system_prompt=get_prompt(
+            agent_name="search-catalog",
+            _model_name=model_name,
+            version=prompt_version,
+        ),
         tools=[search_catalog_tool],
     )
     fetch_data_agent = Agent(
@@ -216,6 +223,28 @@ def extract_tool_returned_assets(logs: list[str]) -> list[str]:
     if cut is not None:
         passes = passes[:cut]
     return [asset_id for asset_id, _ in passes]
+
+
+def parse_tool_diagnostics(logs: list[str]) -> dict | None:
+    """Extract structured diagnostics emitted by search_catalog_tool as a JSON log line."""
+    for line in logs:
+        m = _LOG_DIAGNOSTICS_RE.search(line)
+        if m:
+            try:
+                return json.loads(m.group(1))
+            except json.JSONDecodeError:
+                return None
+    return None
+
+
+def _assets_from_diagnostics(diag: dict) -> list[str]:
+    """Reconstruct ordered tool-returned asset list from structured diagnostics."""
+    scores = diag.get("per_asset_scores", [])
+    cutoff = diag.get("cutoff") or {}
+    passed = [(s["asset_id"].lower(), s["score"]) for s in scores if s.get("status") == "PASS"]
+    passed.sort(key=lambda x: x[1], reverse=True)
+    n = cutoff.get("position", len(passed))
+    return [a for a, _ in passed[:n]]
 
 
 def evaluate_assets(
@@ -313,7 +342,11 @@ def run_single(
     rr = compute_reciprocal_rank(found_assets, expected_order)
     pres_precision, pres_recall = compute_precision_recall(found_assets, expected_present)
 
-    tool_returned_assets = extract_tool_returned_assets(search_tool_logs)
+    tool_diagnostics = parse_tool_diagnostics(search_tool_logs)
+    if tool_diagnostics is not None:
+        tool_returned_assets = _assets_from_diagnostics(tool_diagnostics)
+    else:
+        tool_returned_assets = extract_tool_returned_assets(search_tool_logs)
     retrieval_passed, retrieval_failures = evaluate_assets(test, tool_returned_assets)
     retrieval_rr = compute_reciprocal_rank(tool_returned_assets, expected_order)
     retr_precision, retr_recall = compute_precision_recall(tool_returned_assets, expected_present)
@@ -336,6 +369,7 @@ def run_single(
         presentation_recall=pres_recall,
         retrieval_precision=retr_precision,
         retrieval_recall=retr_recall,
+        tool_diagnostics=tool_diagnostics,
     )
 
 
@@ -357,6 +391,8 @@ def run_test(
     pass_rate = sum(r.passed for r in runs) / n_runs
     retrieval_pass_rate = sum(r.retrieval_passed for r in runs) / n_runs
     latencies = [r.latency_s for r in runs]
+    lat_mean = sum(latencies) / len(latencies)
+    lat_std = (sum((l - lat_mean) ** 2 for l in latencies) / len(latencies)) ** 0.5
     mrr = _mean_or_none([r.reciprocal_rank for r in runs])
     retrieval_mrr = _mean_or_none([r.retrieval_reciprocal_rank for r in runs])
     return TestResult(
@@ -366,9 +402,10 @@ def run_test(
         runs=runs,
         pass_rate=pass_rate,
         passed=pass_rate == 1.0,
-        latency_mean_s=sum(latencies) / len(latencies),
+        latency_mean_s=lat_mean,
         latency_min_s=min(latencies),
         latency_max_s=max(latencies),
+        latency_std_s=lat_std,
         mrr=mrr,
         retrieval_pass_rate=retrieval_pass_rate,
         retrieval_passed=retrieval_pass_rate == 1.0,
@@ -397,6 +434,7 @@ def run_single_retrieval_only(
     tool_returned_assets = [r["asset_id"].lower() for r in results]
     expected_order = [str(a).lower() for a in test.get("expected_order", [])]
     expected_present = [str(a).lower() for a in test.get("expected_present", [])]
+    tool_diagnostics = parse_tool_diagnostics(search_tool_logs)
 
     retrieval_passed, retrieval_failures = evaluate_assets(test, tool_returned_assets)
     retrieval_rr = compute_reciprocal_rank(tool_returned_assets, expected_order)
@@ -418,6 +456,7 @@ def run_single_retrieval_only(
         retrieval_reciprocal_rank=retrieval_rr,
         retrieval_precision=retr_precision,
         retrieval_recall=retr_recall,
+        tool_diagnostics=tool_diagnostics,
     )
 
 
@@ -439,6 +478,8 @@ def run_test_retrieval_only(
 
     pass_rate = sum(r.passed for r in runs) / n_runs
     latencies = [r.latency_s for r in runs]
+    lat_mean = sum(latencies) / len(latencies)
+    lat_std = (sum((l - lat_mean) ** 2 for l in latencies) / len(latencies)) ** 0.5
     retrieval_mrr = _mean_or_none([r.retrieval_reciprocal_rank for r in runs])
     return TestResult(
         use_case_id=use_case_id,
@@ -447,9 +488,10 @@ def run_test_retrieval_only(
         runs=runs,
         pass_rate=pass_rate,
         passed=pass_rate == 1.0,
-        latency_mean_s=sum(latencies) / len(latencies),
+        latency_mean_s=lat_mean,
         latency_min_s=min(latencies),
         latency_max_s=max(latencies),
+        latency_std_s=lat_std,
         mrr=retrieval_mrr,
         retrieval_pass_rate=pass_rate,
         retrieval_passed=pass_rate == 1.0,
@@ -459,7 +501,28 @@ def run_test_retrieval_only(
     )
 
 
-def render_text_report(results: list[TestResult], model: str, selected_id: str, n_runs: int, retrieval_only: bool = False) -> str:
+def _get_git_sha() -> str:
+    import subprocess
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            stderr=subprocess.DEVNULL,
+            cwd=str(ROOT),
+            text=True,
+        ).strip()
+    except Exception:
+        return "unknown"
+
+
+def _pop_std(vals: list[float | None]) -> float | None:
+    xs = [v for v in vals if v is not None]
+    if len(xs) < 2:
+        return None
+    mean = sum(xs) / len(xs)
+    return round((sum((x - mean) ** 2 for x in xs) / len(xs)) ** 0.5, 4)
+
+
+def render_text_report(results: list[TestResult], model: str, selected_id: str, n_runs: int, retrieval_only: bool = False, prompt_version: str | None = None, temperature: int = 0) -> str:
     now = datetime.now().isoformat(timespec="seconds")
     total = len(results)
     passed = sum(1 for r in results if r.passed)
@@ -504,7 +567,11 @@ def render_text_report(results: list[TestResult], model: str, selected_id: str, 
 
     header_lines = [
         f"timestamp: {now}",
+        f"git_sha: {_get_git_sha()}",
         f"model: {model or '(retrieval-only)'}",
+        f"embedding_model: {os.getenv('EMBEDDING_MODEL', '')}",
+        f"temperature: {temperature}",
+        f"prompt_version: {prompt_version or 'flat'}",
         f"selection: {selected_id}",
         f"runs_per_test: {n_runs}",
     ]
@@ -580,12 +647,13 @@ def render_text_report(results: list[TestResult], model: str, selected_id: str, 
     return "\n".join(lines).rstrip() + "\n"
 
 
-def render_json_report(results: list[TestResult], model: str, selected_id: str, n_runs: int, retrieval_only: bool = False) -> str:
+def render_json_report(results: list[TestResult], model: str, selected_id: str, n_runs: int, retrieval_only: bool = False, prompt_version: str | None = None, temperature: int = 0) -> str:
     total = len(results)
     passed = sum(1 for r in results if r.passed)
     retrieval_passed = sum(1 for r in results if r.retrieval_passed)
     all_latencies = [r.latency_s for result in results for r in result.runs]
     lat_mean = sum(all_latencies) / len(all_latencies) if all_latencies else 0.0
+
     def _mean_r(vals: list[float | None]) -> float | None:
         xs = [v for v in vals if v is not None]
         return round(sum(xs) / len(xs), 4) if xs else None
@@ -598,9 +666,31 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
         if retrieval_mrr_values
         else None
     )
+
+    try:
+        from edc_agent.tools.definitions.search_catalog_tool import TOOL_CONFIG
+        tool_config: dict | None = TOOL_CONFIG
+    except Exception:
+        tool_config = None
+
+    catalog_size: int | None = None
+    for tr in results:
+        for run in tr.runs:
+            if run.tool_diagnostics and "catalog_size" in run.tool_diagnostics:
+                catalog_size = run.tool_diagnostics["catalog_size"]
+                break
+        if catalog_size is not None:
+            break
+
     payload = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "git_sha": _get_git_sha(),
         "model": model or "(retrieval-only)",
+        "embedding_model": os.getenv("EMBEDDING_MODEL", ""),
+        "temperature": temperature,
+        "prompt_version": prompt_version or "flat",
+        "tool_config": tool_config,
+        "catalog_size": catalog_size,
         "selection": selected_id,
         "runs_per_test": n_runs,
         "retrieval_only": retrieval_only,
@@ -614,9 +704,13 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
                         "failed": total - passed,
                         "total": total,
                         "success_rate": round(passed / total, 4) if total else 0.0,
+                        "success_rate_std": _pop_std([r.pass_rate for r in results]),
                         "mrr": mean_mrr,
+                        "mrr_std": _pop_std([r.mrr for r in results]),
                         "precision": _mean_r([r.presentation_precision for r in results]),
+                        "precision_std": _pop_std([r.presentation_precision for r in results]),
                         "recall": _mean_r([r.presentation_recall for r in results]),
+                        "recall_std": _pop_std([r.presentation_recall for r in results]),
                     },
                 }
             ),
@@ -625,9 +719,13 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
                 "failed": total - retrieval_passed,
                 "total": total,
                 "success_rate": round(retrieval_passed / total, 4) if total else 0.0,
+                "success_rate_std": _pop_std([r.retrieval_pass_rate for r in results]),
                 "mrr": retrieval_mean_mrr,
+                "mrr_std": _pop_std([r.retrieval_mrr for r in results]),
                 "precision": _mean_r([r.retrieval_precision for r in results]),
+                "precision_std": _pop_std([r.retrieval_precision for r in results]),
                 "recall": _mean_r([r.retrieval_recall for r in results]),
+                "recall_std": _pop_std([r.retrieval_recall for r in results]),
             },
             "latency_mean_s": round(lat_mean, 3),
             "latency_min_s": round(min(all_latencies), 3) if all_latencies else 0.0,
@@ -651,6 +749,7 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
                 "latency_mean_s": round(result.latency_mean_s, 3),
                 "latency_min_s": round(result.latency_min_s, 3),
                 "latency_max_s": round(result.latency_max_s, 3),
+                "latency_std_s": round(result.latency_std_s, 3),
                 "runs": [
                     {
                         "run_index": run.run_index,
@@ -669,6 +768,7 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
                         "retrieval_precision": round(run.retrieval_precision, 4) if run.retrieval_precision is not None else None,
                         "retrieval_recall": round(run.retrieval_recall, 4) if run.retrieval_recall is not None else None,
                         "latency_s": round(run.latency_s, 3),
+                        "tool_diagnostics": run.tool_diagnostics,
                         "search_tool_logs": run.search_tool_logs,
                     }
                     for run in result.runs
@@ -694,12 +794,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--results-dir", default=str(DEFAULT_RESULTS_DIR), help="Directory for generated reports.")
     parser.add_argument("--model", default=os.getenv("LLM_MODEL", ""), help="Ollama chat model.")
     parser.add_argument("--temperature", type=int, default=0, help="Model temperature.")
-    parser.add_argument("--runs", type=int, default=1, help="Number of runs per test.")
+    parser.add_argument("--runs", type=int, default=3, help="Number of runs per test (default: 3).")
     parser.add_argument("--list", action="store_true", help="List available use case ids and exit.")
     parser.add_argument(
         "--retrieval-only",
         action="store_true",
         help="Skip LLM entirely; call search_catalog_tool directly with the raw query.",
+    )
+    parser.add_argument(
+        "--prompt-version",
+        default=None,
+        help=(
+            "Search-catalog prompt version to load from src/edc_agent/prompts/versions/<version>/ "
+            "(e.g. 'v3'). When omitted, the flat src/edc_agent/prompts/search_catalog_prompt.py is used."
+        ),
     )
     return parser.parse_args()
 
@@ -745,7 +853,11 @@ def main() -> int:
                 )
     else:
         try:
-            manager = build_manager(model_name=args.model, temperature=args.temperature)
+            manager = build_manager(
+                model_name=args.model,
+                temperature=args.temperature,
+                prompt_version=args.prompt_version,
+            )
         except ModuleNotFoundError as exc:
             missing = getattr(exc, "name", "dependency")
             print(
@@ -760,8 +872,9 @@ def main() -> int:
     tool_logger.removeHandler(capturing_handler)
 
     selection = args.use_case or "all"
-    text_report = render_text_report(results, args.model, selection, args.runs, retrieval_only=retrieval_only)
-    json_report = render_json_report(results, args.model, selection, args.runs, retrieval_only=retrieval_only)
+    prompt_version = None if retrieval_only else args.prompt_version
+    text_report = render_text_report(results, args.model, selection, args.runs, retrieval_only=retrieval_only, prompt_version=prompt_version, temperature=args.temperature)
+    json_report = render_json_report(results, args.model, selection, args.runs, retrieval_only=retrieval_only, prompt_version=prompt_version, temperature=args.temperature)
 
     text_output = Path(args.output).resolve() if args.output else build_output_path(results_dir, selection, "log")
     json_output = Path(args.json_output).resolve() if args.json_output else build_output_path(results_dir, selection, "json")
