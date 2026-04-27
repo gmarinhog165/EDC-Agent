@@ -1,0 +1,1578 @@
+{
+  "timestamp": "2026-04-21T12:27:55",
+  "model": "qwen2.5:7b",
+  "selection": "all",
+  "runs_per_test": 1,
+  "summary": {
+    "passed": 12,
+    "failed": 21,
+    "total": 33,
+    "success_rate": 0.3636,
+    "mrr": 0.5556,
+    "latency_mean_s": 119.964,
+    "latency_min_s": 35.531,
+    "latency_max_s": 297.461
+  },
+  "results": [
+    {
+      "use_case_id": "no_results",
+      "test_id": "no_results_1",
+      "query": "Preciso de dados sobre emissoes de CO2 do setor da aviacao comercial europeia.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "mrr": null,
+      "latency_mean_s": 105.667,
+      "latency_min_s": 105.667,
+      "latency_max_s": 105.667,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "No matching assets were found.",
+          "found_assets": [],
+          "passed": true,
+          "failures": [],
+          "reciprocal_rank": null,
+          "latency_s": 105.667,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['CO2 emissions from commercial aviation in Europe', 'aviation carbon footprint Europe', 'European airline CO2 data', 'air travel greenhouse gas emissions', 'sustainability metrics for European airlines', 'emissions reporting for commercial flights']",
+            "INFO search_catalog cosine scores (mean=0.3038, std=0.0506):",
+            "INFO   [PASS] score=0.4326  z=2.54  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [FAIL] score=0.2588  z=-0.89  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [FAIL] score=0.3016  z=-0.04  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [FAIL] score=0.3148  z=0.22  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2265  z=-1.53  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3466  z=0.84  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3138  z=0.20  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [FAIL] score=0.3447  z=0.81  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3548  z=1.01  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3173  z=0.27  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3103  z=0.13  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.2514  z=-1.04  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.2307  z=-1.44  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.2534  z=-1.00  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.2879  z=-0.31  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3588  z=1.09  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2726  z=-0.62  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.2924  z=-0.23  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "no_results",
+      "test_id": "no_results_2",
+      "query": "Quero informacao sobre tarifas de importacao de paineis solares na Uniao Europeia.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "mrr": null,
+      "latency_mean_s": 98.207,
+      "latency_min_s": 98.207,
+      "latency_max_s": 98.207,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "No matching assets were found.\n\nOnly 0 matching assets were found.",
+          "found_assets": [],
+          "passed": true,
+          "failures": [],
+          "reciprocal_rank": null,
+          "latency_s": 98.207,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['tarifas de importa\u00e7\u00e3o de pain\u00e9is solares em europa', 'taxes on solar panel imports to europe', 'import duties for solar panels in eu', 'customs tariffs on photovoltaic modules', 'solar energy trade policies', 'eu solar panel tariff regulations']",
+            "INFO search_catalog cosine scores (mean=0.2737, std=0.0745):",
+            "INFO   [PASS] score=0.4117  z=1.85  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [FAIL] score=0.3321  z=0.78  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [FAIL] score=0.3734  z=1.34  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.4482  z=2.34  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.3022  z=0.38  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.2365  z=-0.50  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.2743  z=0.01  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [FAIL] score=0.3065  z=0.44  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.2695  z=-0.06  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.2374  z=-0.49  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.2073  z=-0.89  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.2182  z=-0.75  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.1830  z=-1.22  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.2138  z=-0.80  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.2140  z=-0.80  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.2318  z=-0.56  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2815  z=0.10  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.1853  z=-1.19  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 1 (gap=0.0366, relative=1.00)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "no_results",
+      "test_id": "no_results_3",
+      "query": "Looking for datasets on electric vehicle charging infrastructure in Portugal.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 61.748,
+      "latency_min_s": 61.748,
+      "latency_max_s": 61.748,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: EV_Charging_Portugal_2023\n   description: This dataset includes detailed information on public and private electric vehicle charging stations across Portugal.\n   thematic_connection: The dataset directly addresses the query by providing data relevant to electric vehicle charging infrastructure.\n\n2. asset_id: Portugal_Energy_Sector_Report_2024\n   description: A comprehensive report covering various aspects of energy sector in Portugal, including a section on electric vehicle charging infrastructure.\n   contextual_connection: While broader than just charging stations, this report provides context and metrics related to the development and usage of EV charging infrastructure.\n\n3. asset_id: Lisbon_EV_Charging_2022\n   description: A detailed dataset focusing specifically on electric vehicle charging points in Lisbon, Portugal.\n   thematic_connection: This dataset is highly relevant as it focuses on a major city within Portugal where electric vehicle charging infrastructure data would be particularly useful.",
+          "found_assets": [],
+          "passed": false,
+          "failures": [
+            "hallucinated_assets_in_response"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 61.748,
+          "search_tool_logs": []
+        }
+      ]
+    },
+    {
+      "use_case_id": "return_all",
+      "test_id": "return_all_1",
+      "query": "Quero explorar todos os datasets de energias renovaveis que tens disponiveis.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 108.763,
+      "latency_min_s": 108.763,
+      "latency_max_s": 108.763,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-solar-1  \n   Description: Irradiancia Solar - Portugal Continental. Dataset com medicoes horarias de irradiancia global horizontal (GHI) e irradiancia direta normal (DNI) para 42 estacoes meteorologicas em Portugal Continental, cobrindo o periodo 2015-2023. Inclui metadados de localizacao, altitude e cobertura de nuvens. Disponivel em formato Parquet.",
+          "found_assets": [
+            "tb-solar-1"
+          ],
+          "passed": false,
+          "failures": [
+            "expected_count=18, found_count=1",
+            "missing=tb-solar-2",
+            "missing=tb-solar-3",
+            "missing=tb-solar-4",
+            "missing=tb-solar-5",
+            "missing=tb-wind-1",
+            "missing=tb-wind-2",
+            "missing=tb-wind-3",
+            "missing=tb-wind-4",
+            "missing=tb-wind-5",
+            "missing=tb-hydro-1",
+            "missing=tb-hydro-2",
+            "missing=tb-hydro-3",
+            "missing=tb-hydro-4",
+            "missing=tb-biomass-1",
+            "missing=tb-biomass-2",
+            "missing=tb-biomass-3",
+            "missing=tb-biomass-4"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 108.763,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['datasets on renewable energy', 'renewable energy data', 'solar power dataset', 'wind energy statistics', 'hydroelectric power data', 'bioenergy datasets']",
+            "INFO search_catalog cosine scores (mean=0.4106, std=0.0614):",
+            "INFO   [PASS] score=0.5345  z=2.02  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4580  z=0.77  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.4454  z=0.57  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.4881  z=1.26  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2745  z=-2.22  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3947  z=-0.26  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3983  z=-0.20  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.4425  z=0.52  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3758  z=-0.57  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [PASS] score=0.4535  z=0.70  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3950  z=-0.25  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.4666  z=0.91  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3622  z=-0.79  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.3232  z=-1.42  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3698  z=-0.67  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [PASS] score=0.4168  z=0.10  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.3486  z=-1.01  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [PASS] score=0.4436  z=0.54  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 1 (gap=0.0465, relative=0.39)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "return_all",
+      "test_id": "return_all_2",
+      "query": "Que dados existem sobre producao, recursos e impacto das fontes renovaveis em Portugal?",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 194.202,
+      "latency_min_s": 194.202,
+      "latency_max_s": 194.202,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. tb-solar-1 - Irradiancia Solar - Portugal Continental. Dataset com medicoes horarias de irradiancia global horizontal (GHI) e irradiancia direta normal (DNI) para 42 estacoes meteorologicas em Portugal Continental, cobrindo o periodo 2015-2023.\n\n2. tb-solar-4 - Inventario de Paineis Solares Instalados - Municipios. Base de dados georreferenciada com o numero de instalacoes fotovoltaicas por municipio, tipologia (residencial, comercial, industrial), potencia total instalada e ano de instalacao. Cobre os 308 municipios portugueses com dados ate 2022.\n\n3. tb-wind-4 - Previsao de Vento NWP - ECMWF Downscaling. Resultados de downscaling estatistico de previsoes NWP (ECMWF ERA5) para Portugal, com resolucao espacial de 5km e temporal de 1 hora. Horizonte de previsao ate 72 horas. Cobre o periodo 2020-2023.\n\n4. tb-hydro-2 - Producao Hidrica - Grandes Albufeiras. Producao diaria de energia hidrica de 23 grandes albufeiras com capacidade superior a 100 GWh, geridas pela REN, entre 2010 e 2023.\n\n5. tb-biomass-4 - Precos de Biomassa Florestal - Mercado Nacional. Series trimestrais de precos de mercado de pellets, estilha e rolaria para uso energetico em Portugal, desagregados por regiao e tipologia de comprador (central, industrial, residencial). Inclui comparacao com precos do gas natural. Periodo 2016-2023.\n\nOnly 5 matching assets were found.",
+          "found_assets": [
+            "tb-solar-1",
+            "tb-solar-4",
+            "tb-wind-4",
+            "tb-hydro-2",
+            "tb-biomass-4"
+          ],
+          "passed": false,
+          "failures": [
+            "expected_count=18, found_count=5",
+            "missing=tb-solar-2",
+            "missing=tb-solar-3",
+            "missing=tb-solar-5",
+            "missing=tb-wind-1",
+            "missing=tb-wind-2",
+            "missing=tb-wind-3",
+            "missing=tb-wind-5",
+            "missing=tb-hydro-1",
+            "missing=tb-hydro-3",
+            "missing=tb-hydro-4",
+            "missing=tb-biomass-1",
+            "missing=tb-biomass-2",
+            "missing=tb-biomass-3"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 194.202,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['production and renewable energy sources in Portugal', 'renewable resources data Portugal', 'impact of renewables on Portuguese economy', 'Portuguese renewable energy statistics', 'renewable energy usage in Portugal']",
+            "INFO search_catalog cosine scores (mean=0.4582, std=0.0640):",
+            "INFO   [PASS] score=0.5959  z=2.15  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4507  z=-0.12  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [FAIL] score=0.3849  z=-1.15  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.5455  z=1.36  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [PASS] score=0.4141  z=-0.69  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [PASS] score=0.4465  z=-0.18  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [PASS] score=0.5392  z=1.26  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.5067  z=0.76  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [PASS] score=0.4611  z=0.04  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3595  z=-1.54  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [PASS] score=0.4628  z=0.07  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.4673  z=0.14  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3791  z=-1.24  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [PASS] score=0.4461  z=-0.19  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3665  z=-1.43  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [PASS] score=0.5021  z=0.68  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [PASS] score=0.5059  z=0.74  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [PASS] score=0.4141  z=-0.69  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog no significant gap (relative=0.28 < 0.30), fallback top-10"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "return_all",
+      "test_id": "return_all_3",
+      "query": "I need an overview of all available renewable energy data for Portugal.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 297.461,
+      "latency_min_s": 297.461,
+      "latency_max_s": 297.461,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. tb-solar-1 - Irradiancia Solar - Portugal Continental. Dataset com medicoes horarias de irradiancia global horizontal (GHI) e irradiancia direta normal (DNI) para 42 estacoes meteorologicas em Portugal Continental, cobrindo o periodo 2015-2023.\n\n2. tb-solar-4 - Inventario de Paineis Solares Instalados - Municipios. Base de dados georreferenciada com o numero de instalacoes fotovoltaicas por municipio, tipologia (residencial, comercial, industrial), potencia total instalada e ano de instalacao. Cobre os 308 municipios portugueses com dados ate 2022.\n\n3. tb-wind-2 - Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha tecnica de 91 parques eolicos onshore em Portugal: coordenadas, numero de turbinas, fabricante, modelo, potencia unitaria, altura do cubo e data de inicio de operacao. Este asset exclui explicitamente parques offshore e qualquer dado de producao ou medicao de vento.\n\n4. tb-wind-3 - Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas de potencia certificadas (IEC 61400-12) de 24 modelos de turbinas instaladas em Portugal, com dados de densidade do ar corrigida. Formato JSON. Nao inclui dados historicos de producao nem localizacao de parques.\n\n5. tb-biomass-3 - Biogas - Producao em ETAR e Aterros. Dados de producao de biogas em estacoes de tratamento de aguas residuais (ETAR) e aterros sanitarios em Portugal, com desagregacao por instalacao e destino energetico (eletricidade, calor, injecao na rede). Periodo 2017-2022. Nao inclui biomassa solida nem culturas energeticas.\n\n6. tb-biomass-4 - Precos de Biomassa Florestal - Mercado Nacional. Series trimestrais de precos de mercado de pellets, estilha e rolaria para uso energetico em Portugal, desagregados por regiao e tipologia de comprador (central, industrial, residencial). Inclui comparacao com precos do gas natural. Periodo 2016-2023.\n\n7. tb-hydro-2 - Producao Hidrica - Grandes Albufeiras. Producao diaria de energia hidrica de 23 grandes albufeiras com capacidade superior a 100 GWh, geridas pela REN, entre 2010 e 2023. Inclui volume armazenado, cota da albufeira e energia turbinada vs. bombagem. Nao contem dados de caudais afluentes nem de meteorologia.\n\n8. tb-solar-2 - Producao Fotovoltaica - Parques >1MW. Registos de producao horaria agregada de 38 parques fotovoltaicos com potencia instalada superior a 1 MW, operados na rede nacional entre 2019 e 2023. Nao inclui dados de autoconsumo nem instalacoes residenciais. Os dados de irradiancia nao estao presentes neste asset.\n\n9. tb-hydro-1 - Caudais Fluviais - Bacias Hidrograficas Nacionais. Series historicas de caudais diarios medidos em 78 estacoes hidrometricas das principais bacias hidrograficas portuguesas (Douro, Tejo, Guadiana, Minho, Lima), cobrindo 1980-2022. Inclui dados de cheias e periodos de seca. Formato NetCDF.\n\n10. tb-wind-4 - Previsao de Vento NWP - ECMWF Downscaling. Resultados de downscaling estatistico de previsoes NWP (ECMWF ERA5) para Portugal, com resolucao espacial de 5km e temporal de 1 hora. Horizonte de previsao ate 72 horas. Cobre o periodo 2020-2023. Inclui variaveis de vento a 100m e temperatura.",
+          "found_assets": [
+            "tb-solar-1",
+            "tb-solar-4",
+            "tb-wind-2",
+            "tb-wind-3",
+            "tb-biomass-3",
+            "tb-biomass-4",
+            "tb-hydro-2",
+            "tb-solar-2",
+            "tb-hydro-1",
+            "tb-wind-4"
+          ],
+          "passed": false,
+          "failures": [
+            "expected_count=18, found_count=10",
+            "missing=tb-solar-3",
+            "missing=tb-solar-5",
+            "missing=tb-wind-1",
+            "missing=tb-wind-5",
+            "missing=tb-hydro-3",
+            "missing=tb-hydro-4",
+            "missing=tb-biomass-1",
+            "missing=tb-biomass-2"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 297.461,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['renewable energy data Portugal', 'Portuguese renewable energy statistics', 'sustainable power sources Portugal', 'renewable energy production in Portugal', 'green energy metrics Portugal']",
+            "INFO search_catalog cosine scores (mean=0.4721, std=0.0690):",
+            "INFO   [PASS] score=0.6117  z=2.02  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4786  z=0.09  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [FAIL] score=0.3983  z=-1.07  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.5694  z=1.41  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [PASS] score=0.4170  z=-0.80  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [PASS] score=0.4613  z=-0.16  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [PASS] score=0.5655  z=1.35  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.5413  z=1.00  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [PASS] score=0.4634  z=-0.13  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3694  z=-1.49  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [PASS] score=0.4709  z=-0.02  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.4818  z=0.14  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3916  z=-1.17  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [PASS] score=0.4558  z=-0.24  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3666  z=-1.53  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [PASS] score=0.5236  z=0.75  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [PASS] score=0.5067  z=0.50  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [PASS] score=0.4253  z=-0.68  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog no significant gap (relative=0.22 < 0.30), fallback top-10"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "specific_n",
+      "test_id": "specific_n_1",
+      "query": "Da-me 3 datasets sobre energia solar.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "mrr": 1.0,
+      "latency_mean_s": 146.316,
+      "latency_min_s": 146.316,
+      "latency_max_s": 146.316,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. tb-solar-1 - Irradiancia Solar - Portugal Continental. Dataset com medidas hor\u00e1rias de irradiancia global horizontal (GHI) e irradiancia direta normal (DNI) para 42 esta\u00e7\u00f5es meteorol\u00f3gicas em Portugal Continental, cobrindo o per\u00edodo 2015-2023.\n\n2. tb-solar-4 - Inventario de Paineis Solares Instalados - Municipios. Base de dados georreferenciada com o n\u00famero de instala\u00e7\u00f5es fotovoltaicas por munic\u00edpio, tipologia (residencial, comercial, industrial), pot\u00eancia total instalada e ano de instala\u00e7\u00e3o. Cobre os 308 munic\u00edpios portugueses com dados at\u00e9 2022.\n\n3. tb-solar-3 - Modelos de Previs\u00e3o de Gera\u00e7\u00e3o Solar - Benchmarks. Conjunto de resultados de benchmarking de 12 modelos de previs\u00e3o de gera\u00e7\u00e3o solar (ARIMA, LSTM, XGBoost, Transformer) avaliados em horizontes de 1h, 6h e 24h. Inclui m\u00e9tricas MAE, RMSE e intervalos de confian\u00e7a.",
+          "found_assets": [
+            "tb-solar-1",
+            "tb-solar-4",
+            "tb-solar-3"
+          ],
+          "passed": true,
+          "failures": [],
+          "reciprocal_rank": 1.0,
+          "latency_s": 146.316,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['solar energy datasets', 'renewable energy data', 'photovoltaic power generation']",
+            "INFO search_catalog cosine scores (mean=0.4113, std=0.0807):",
+            "INFO   [PASS] score=0.5907  z=2.22  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4968  z=1.06  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.5435  z=1.64  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.5516  z=1.74  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.3289  z=-1.02  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3795  z=-0.39  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3820  z=-0.36  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.4185  z=0.09  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3755  z=-0.44  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [PASS] score=0.4459  z=0.43  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3608  z=-0.63  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.4270  z=0.19  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3362  z=-0.93  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.3193  z=-1.14  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3418  z=-0.86  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3895  z=-0.27  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.3311  z=-0.99  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.3849  z=-0.33  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog no significant gap (relative=0.30 < 0.30), fallback top-7"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "specific_n",
+      "test_id": "specific_n_2",
+      "query": "Preciso de exactamente 2 fontes de dados sobre vento para um relatorio.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "mrr": 1.0,
+      "latency_mean_s": 149.105,
+      "latency_min_s": 149.105,
+      "latency_max_s": 149.105,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-wind-1\n   Description: Velocidade e Direcao do Vento - Offshore. Medicoes de anemometros a 10m, 80m e 120m de altura em 6 pontos de monitorizacao offshore na costa portuguesa (Atlantico Norte). Dados em formato CSV com resolucao de 10 minutos, cobrindo 2018-2023. Inclui temperatura do ar e pressao atmosferica.\n   Connection: This dataset provides comprehensive wind speed and direction measurements from offshore locations in Portugal, which is relevant for your report.\n\n2. asset_id: tb-wind-4\n   Description: Previsao de Vento NWP - ECMWF Downscaling. Resultados de downscaling estatistico de previsoes NWP (ECMWF ERA5) para Portugal, com resolucao espacial de 5km e temporal de 1 hora. Horizonte de previsao ate 72 horas. Cobre o periodo 2020-2023. Inclui variaveis de vento a 100m e temperatura.\n   Connection: This dataset offers wind prediction data from the ECMWF ERA5 model, downsampled to a spatial resolution of 5km and temporal resolution of 1 hour for Portugal, which is useful for your report.",
+          "found_assets": [
+            "tb-wind-1",
+            "tb-wind-4"
+          ],
+          "passed": true,
+          "failures": [],
+          "reciprocal_rank": 1.0,
+          "latency_s": 149.105,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['wind data sources', 'wind measurement datasets', 'atmospheric wind telemetry']",
+            "INFO search_catalog cosine scores (mean=0.3762, std=0.1170):",
+            "INFO   [PASS] score=0.5434  z=1.43  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [FAIL] score=0.3271  z=-0.42  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [FAIL] score=0.3905  z=0.12  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [FAIL] score=0.3639  z=-0.10  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.1918  z=-1.58  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [PASS] score=0.6018  z=1.93  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [PASS] score=0.4106  z=0.29  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.4472  z=0.61  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [PASS] score=0.5482  z=1.47  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [PASS] score=0.5445  z=1.44  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [PASS] score=0.4156  z=0.34  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.2958  z=-0.69  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.2935  z=-0.71  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.3225  z=-0.46  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.2701  z=-0.91  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3084  z=-0.58  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2405  z=-1.16  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.2554  z=-1.03  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 4 (gap=0.0961, relative=0.50)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "specific_n",
+      "test_id": "specific_n_3",
+      "query": "Show me 4 datasets related to hydrological or water resources.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": 1.0,
+      "latency_mean_s": 110.105,
+      "latency_min_s": 110.105,
+      "latency_max_s": 110.105,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-hydro-1  \n   Description: Caudais Fluviais - Bacias Hidrograficas Nacionais. Series historicas de caudais diarios medidos em 78 estacoes hidrometricas das principais bacias hidrograficas portuguesas (Douro, Tejo, Guadiana, Minho, Lima), cobrindo 1980-2022. Inclui dados de cheias e periodos de seca. Formato NetCDF. This dataset covers historical daily flow measurements from key Portuguese river basins, providing insights into flood and drought periods.\n\nNo more assets matching your criteria were found.",
+          "found_assets": [
+            "tb-hydro-1"
+          ],
+          "passed": false,
+          "failures": [
+            "expected_count=4, found_count=1"
+          ],
+          "reciprocal_rank": 1.0,
+          "latency_s": 110.105,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['hydrological data', 'water resources dataset', 'river flow measurements', 'aquifer monitoring']",
+            "INFO search_catalog cosine scores (mean=0.3525, std=0.0919):",
+            "INFO   [PASS] score=0.4959  z=1.56  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [FAIL] score=0.3157  z=-0.40  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [FAIL] score=0.3477  z=-0.05  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [FAIL] score=0.3512  z=-0.01  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.1889  z=-1.78  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [PASS] score=0.4021  z=0.54  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.2879  z=-0.70  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [FAIL] score=0.3046  z=-0.52  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3528  z=0.00  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3726  z=0.22  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [PASS] score=0.5767  z=2.44  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.4370  z=0.92  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [PASS] score=0.4421  z=0.97  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.3627  z=0.11  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.2904  z=-0.68  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3265  z=-0.28  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2213  z=-1.43  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.2700  z=-0.90  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 1 (gap=0.0808, relative=0.46)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "contextual",
+      "test_id": "contextual_1",
+      "query": "Estou a desenvolver um modelo de previsao de geracao solar para horizonte de 24h. Que dados me sao uteis?",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": 0.5,
+      "latency_mean_s": 134.348,
+      "latency_min_s": 134.348,
+      "latency_max_s": 134.348,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-solar-3  \n   Description: Modelos de Previs\u00e3o de Gera\u00e7\u00e3o Solar - Benchmarks. Conjunto de resultados de benchmarking de 12 modelos de previs\u00e3o de gera\u00e7\u00e3o solar (ARIMA, LSTM, XGBoost, Transformer) avaliados em horizontes de 1h, 6h e 24h. Inclui m\u00e9tricas MAE, RMSE e intervalos de confian\u00e7a. Este asset n\u00e3o cont\u00e9m s\u00e9ries temporais de produ\u00e7\u00e3o real.\n\n2. asset_id: tb-solar-1  \n   Description: Irradiancia Solar - Portugal Continental. Dataset com medi\u00e7\u00f5es hor\u00e1rias de irradiancia global horizontal (GHI) e irradiancia direta normal (DNI) para 42 esta\u00e7\u00f5es meteorol\u00f3gicas em Portugal Continental, cobrindo o per\u00edodo 2015-2023. Inclui metadados de localiza\u00e7\u00e3o, altitude e cobertura de nuvens. Dispon\u00edvel em formato Parquet.",
+          "found_assets": [
+            "tb-solar-3",
+            "tb-solar-1"
+          ],
+          "passed": false,
+          "failures": [
+            "missing=tb-wind-4",
+            "unexpected=tb-solar-3"
+          ],
+          "reciprocal_rank": 0.5,
+          "latency_s": 134.348,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['solar energy prediction data', 'photovoltaic power generation forecast', 'solar irradiance time series', 'weather conditions for solar panel output', '24-hour solar power generation modeling']",
+            "INFO search_catalog cosine scores (mean=0.3797, std=0.1077):",
+            "INFO   [PASS] score=0.6071  z=2.11  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4818  z=0.95  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.6363  z=2.38  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.4861  z=0.99  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.3102  z=-0.65  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3636  z=-0.15  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3083  z=-0.66  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [FAIL] score=0.3824  z=0.03  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [PASS] score=0.4506  z=0.66  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3855  z=0.05  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3423  z=-0.35  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.3379  z=-0.39  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.2871  z=-0.86  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.3309  z=-0.45  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.2823  z=-0.90  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3001  z=-0.74  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2556  z=-1.15  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.2860  z=-0.87  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 2 (gap=0.1210, relative=0.65)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "contextual",
+      "test_id": "contextual_2",
+      "query": "Quero perceber o impacto ambiental e territorial das renovaveis em Portugal.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": 1.0,
+      "latency_mean_s": 129.606,
+      "latency_min_s": 129.606,
+      "latency_max_s": 129.606,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-solar-5, description: Impacto de Parques Solares na Biodiversidade e Uso do Solo. Este asset foca exclusivamente no impacto ambiental dos parques solares em Portugal, analisando altera\u00e7\u00f5es no uso do solo, fragmenta\u00e7\u00e3o de habitats e efeitos sobre esp\u00e9cies protegidas.\n\n2.",
+          "found_assets": [
+            "tb-solar-5"
+          ],
+          "passed": false,
+          "failures": [
+            "missing=tb-hydro-3"
+          ],
+          "reciprocal_rank": 1.0,
+          "latency_s": 129.606,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['impact of renewable energy on the environment in portugal', 'environmental footprint of renewables in portugal', 'renewable energy sustainability in portugal', 'territorial impact of green energy sources in portugal', 'sustainability metrics for renewable projects in Portugal']",
+            "INFO search_catalog cosine scores (mean=0.4143, std=0.0650):",
+            "INFO   [PASS] score=0.5218  z=1.65  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [FAIL] score=0.3931  z=-0.33  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [FAIL] score=0.3246  z=-1.38  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.4805  z=1.02  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [PASS] score=0.5266  z=1.73  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3971  z=-0.26  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [PASS] score=0.5045  z=1.39  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.4665  z=0.80  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [PASS] score=0.4014  z=-0.20  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3367  z=-1.19  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3934  z=-0.32  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.3784  z=-0.55  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3676  z=-0.72  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [PASS] score=0.4132  z=-0.02  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3215  z=-1.43  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [PASS] score=0.4480  z=0.52  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [PASS] score=0.4501  z=0.55  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.3326  z=-1.26  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog no significant gap (relative=0.28 < 0.30), fallback top-9"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "contextual",
+      "test_id": "contextual_3",
+      "query": "I need to assess water availability for hydropower planning during drought years.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": 0.0,
+      "latency_mean_s": 49.231,
+      "latency_min_s": 49.231,
+      "latency_max_s": 49.231,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: WAT001 - Description: This dataset includes historical water flow measurements from major rivers, crucial for understanding water availability patterns during droughts.\n2. asset_id: HYD003 - Description: This report focuses on the impact of drought on hydropower generation and provides strategies for planning under water scarcity conditions.\n3. asset_id: MET005 - Description: This meteorological dataset covers precipitation levels, temperature trends, and other climatic factors that significantly influence water availability in key hydropower regions.",
+          "found_assets": [],
+          "passed": false,
+          "failures": [
+            "missing=tb-hydro-1",
+            "missing=tb-hydro-4"
+          ],
+          "reciprocal_rank": 0.0,
+          "latency_s": 49.231,
+          "search_tool_logs": []
+        }
+      ]
+    },
+    {
+      "use_case_id": "explicit_exclusion",
+      "test_id": "explicit_exclusion_1",
+      "query": "Preciso de dados de irradiancia solar em Portugal para calibrar sensores.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "mrr": null,
+      "latency_mean_s": 108.026,
+      "latency_min_s": 108.026,
+      "latency_max_s": 108.026,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-solar-1  \n   description: Irradiancia Solar - Portugal Continental. Dataset com medicoes horarias de irradiancia global horizontal (GHI) e irradiancia direta normal (DNI) para 42 estacoes meteorologicas em Portugal Continental, cobrindo o periodo 2015-2023. Inclui metadados de localizacao, altitude e cobertura de nuvens. Disponivel em formato Parquet.",
+          "found_assets": [
+            "tb-solar-1"
+          ],
+          "passed": true,
+          "failures": [],
+          "reciprocal_rank": null,
+          "latency_s": 108.026,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['irradiancia solar portugal', 'radiacao solar medicao', 'sensores solares calibracao', 'dados irradiancia climatologia']",
+            "INFO search_catalog cosine scores (mean=0.3887, std=0.0931):",
+            "INFO   [PASS] score=0.6731  z=3.05  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4356  z=0.50  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.4905  z=1.09  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.5158  z=1.37  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.3736  z=-0.16  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [PASS] score=0.4080  z=0.21  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3581  z=-0.33  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.4013  z=0.14  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3881  z=-0.01  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3601  z=-0.31  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3883  z=-0.00  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.3126  z=-0.82  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.2961  z=-0.99  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.3730  z=-0.17  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3157  z=-0.78  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3311  z=-0.62  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2997  z=-0.96  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.2757  z=-1.21  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 1 (gap=0.1572, relative=0.58)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "explicit_exclusion",
+      "test_id": "explicit_exclusion_2",
+      "query": "Quero dados de producao eletrica de parques eolicos onshore.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "mrr": null,
+      "latency_mean_s": 129.13,
+      "latency_min_s": 129.13,
+      "latency_max_s": 129.13,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. tb-wind-2 - Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha tecnica de 91 parques eolicos onshore em Portugal, incluindo numero de turbinas, fabricante, modelo, potencia unitaria, altura do cubo e data de inicio de operacao.\n\nNo matching assets were found.",
+          "found_assets": [
+            "tb-wind-2"
+          ],
+          "passed": true,
+          "failures": [],
+          "reciprocal_rank": null,
+          "latency_s": 129.13,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['production data from onshore wind farms', 'wind energy generation statistics', 'onshore wind park output metrics', 'renewable energy production records', 'electricity yield from wind parks']",
+            "INFO search_catalog cosine scores (mean=0.4022, std=0.0812):",
+            "INFO   [PASS] score=0.4751  z=0.90  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4909  z=1.09  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.4226  z=0.25  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.4315  z=0.36  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2299  z=-2.12  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [PASS] score=0.4558  z=0.66  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [PASS] score=0.5083  z=1.31  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.4689  z=0.82  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [PASS] score=0.4507  z=0.60  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [PASS] score=0.4865  z=1.04  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3365  z=-0.81  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.4534  z=0.63  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3268  z=-0.93  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.2815  z=-1.49  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3066  z=-1.18  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [PASS] score=0.4112  z=0.11  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.3020  z=-1.23  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [PASS] score=0.4007  z=-0.02  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog no significant gap (relative=0.18 < 0.30), fallback top-10"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "explicit_exclusion",
+      "test_id": "explicit_exclusion_3",
+      "query": "Estou a procura de series temporais de biomassa solida consumida em centrais.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "mrr": null,
+      "latency_mean_s": 108.242,
+      "latency_min_s": 108.242,
+      "latency_max_s": 108.242,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. Asset ID: tb-biomass-2  \n   Description: Centrais de Biomassa - Consumo e Producao. Dados anuais de 14 centrais de biomassa ligadas a rede: consumo de combustivel (t/ano), producao eletrica (MWh), eficiencia e regime de operacao. Cobre 2015-2022. Este asset exclui unidades de cogeracao a gas natural e biogas - apenas biomassa solida.",
+          "found_assets": [
+            "tb-biomass-2"
+          ],
+          "passed": true,
+          "failures": [],
+          "reciprocal_rank": null,
+          "latency_s": 108.242,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['series temporal solid biomass consumption power plants', 'biomass fuel usage time series', 'solid biofuel consumption data', 'energy sector biomass metrics', 'bioenergy feedstock utilization']",
+            "INFO search_catalog cosine scores (mean=0.3809, std=0.0991):",
+            "INFO   [PASS] score=0.4307  z=0.50  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [FAIL] score=0.3535  z=-0.28  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [FAIL] score=0.3885  z=0.08  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [FAIL] score=0.3612  z=-0.20  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2215  z=-1.61  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3282  z=-0.53  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3006  z=-0.81  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [FAIL] score=0.3200  z=-0.61  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3254  z=-0.56  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3061  z=-0.75  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3514  z=-0.30  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.3816  z=0.01  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3067  z=-0.75  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.3065  z=-0.75  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [PASS] score=0.5333  z=1.54  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [PASS] score=0.5089  z=1.29  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [PASS] score=0.5095  z=1.30  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [PASS] score=0.6218  z=2.43  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 1 (gap=0.0885, relative=0.46)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "requested_zero_found",
+      "test_id": "requested_zero_found_1",
+      "query": "Preciso de dados de geracao solar em tempo real com resolucao inferior a 1 minuto.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 140.385,
+      "latency_min_s": 140.385,
+      "latency_max_s": 140.385,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-solar-4  \n   Description: Inventario de Paineis Solares Instalados - Municipios. Base de dados georreferenciada com o numero de instalacoes fotovoltaicas por municipio, tipologia (residencial, comercial, industrial), potencia total instalada e ano de instalacao. Cobre os 308 municipios portugueses com dados ate 2022.\n   - This asset provides information on the number of solar installations by municipality and type, which can be useful for understanding the potential for real-time solar generation.\n\n2. asset_id: tb-solar-1  \n   Description: Irradiancia Solar - Portugal Continental. Dataset com medicoes horarias de irradiancia global horizontal (GHI) e irradiancia direta normal (DNI) para 42 estacoes meteorologicas em Portugal Continental, cobrindo o periodo 2015-2023. Inclui metadados de localizacao, altitude e cobertura de nuvens.\n   - This dataset can be used to derive real-time solar generation estimates based on irradiance levels.\n\nNo matching assets were found that provide minute-resolution real-time solar generation data.",
+          "found_assets": [
+            "tb-solar-4",
+            "tb-solar-1"
+          ],
+          "passed": false,
+          "failures": [
+            "expected_count=0, found_count=2",
+            "hallucinated_assets_in_response"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 140.385,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['real-time solar generation data', 'solar power telemetry', 'photovoltaic output monitoring', 'instantaneous solar energy production', 'minute-resolution solar generation']",
+            "INFO search_catalog cosine scores (mean=0.3789, std=0.0925):",
+            "INFO   [PASS] score=0.5590  z=1.95  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.5120  z=1.44  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.5628  z=1.99  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.5071  z=1.39  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2944  z=-0.91  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3619  z=-0.18  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3433  z=-0.39  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [FAIL] score=0.3833  z=0.05  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3763  z=-0.03  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [PASS] score=0.4087  z=0.32  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3252  z=-0.58  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.3725  z=-0.07  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3260  z=-0.57  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.2756  z=-1.12  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.2931  z=-0.93  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3378  z=-0.44  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2532  z=-1.36  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.3275  z=-0.56  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 4 (gap=0.0984, relative=0.64)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "requested_zero_found",
+      "test_id": "requested_zero_found_2",
+      "query": "Quero benchmarks de modelos de previsao para energia hidrica.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 106.873,
+      "latency_min_s": 106.873,
+      "latency_max_s": 106.873,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-solar-3  \n   description: Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto de resultados de benchmarking de 12 modelos de previsao de geracao solar (ARIMA, LSTM, XGBoost, Transformer) avaliados em horizontes de 1h, 6h e 24h. Inclui metricas MAE, RMSE e intervalos de confianca. Este asset nao contem series temporais de producao real.",
+          "found_assets": [
+            "tb-solar-3"
+          ],
+          "passed": false,
+          "failures": [
+            "expected_count=0, found_count=1",
+            "hallucinated_assets_in_response"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 106.873,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['benchmarks for hydroelectric energy prediction models', 'hydroelectric power forecasting model evaluation', 'performance metrics of hydroelectric energy prediction systems', 'hydroelectricity load forecasting comparison']",
+            "INFO search_catalog cosine scores (mean=0.4122, std=0.0935):",
+            "INFO   [PASS] score=0.5171  z=1.12  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4241  z=0.13  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.6586  z=2.63  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [FAIL] score=0.3997  z=-0.13  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2313  z=-1.93  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3737  z=-0.41  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3764  z=-0.38  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.4254  z=0.14  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [PASS] score=0.4940  z=0.87  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [PASS] score=0.4214  z=0.10  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [PASS] score=0.4584  z=0.49  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.4906  z=0.84  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [PASS] score=0.4715  z=0.63  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.3270  z=-0.91  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3446  z=-0.72  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3551  z=-0.61  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.3013  z=-1.19  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.3503  z=-0.66  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 1 (gap=0.1415, relative=0.60)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "requested_zero_found",
+      "test_id": "requested_zero_found_3",
+      "query": "Looking for offshore wind power generation time series.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 156.788,
+      "latency_min_s": 156.788,
+      "latency_max_s": 156.788,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. tb-wind-1 - Velocidade e Direcao do Vento - Offshore. Medicoes de anemometros a 10m, 80m e 120m de altura em 6 pontos de monitorizacao offshore na costa portuguesa (Atlantico Norte). Dados em formato CSV com resolucao de 10 minutos, cobrindo 2018-2023. Inclui temperatura do ar e pressao atmosferica.\n2. tb-wind-5 - Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acustica. Dataset de medicoes acusticas e de vibracao recolhidas em 8 parques eolicos onshore, com dados de nivel de pressao sonora (dB) a diferentes distancias, espectros de frequencia e correlacao com velocidade do vento. Inclui perfis de vento a 80m e 120m usados como variavel independente nas analises. Este asset nao contem dados de producao eletrica, curvas de potencia nem series de energia gerada.",
+          "found_assets": [
+            "tb-wind-1",
+            "tb-wind-5"
+          ],
+          "passed": false,
+          "failures": [
+            "expected_count=0, found_count=2"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 156.788,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['offshore wind power generation data', 'marine renewable energy time series', 'wind farm output metrics', 'oceanic electricity production records', 'sustainable sea energy telemetry']",
+            "INFO search_catalog cosine scores (mean=0.3857, std=0.0695):",
+            "INFO   [PASS] score=0.4663  z=1.16  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4240  z=0.55  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.4177  z=0.46  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.4011  z=0.22  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2181  z=-2.41  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [PASS] score=0.4876  z=1.47  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [PASS] score=0.4308  z=0.65  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.4449  z=0.85  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [PASS] score=0.4044  z=0.27  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [PASS] score=0.4565  z=1.02  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3716  z=-0.20  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.4345  z=0.70  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3593  z=-0.38  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.2984  z=-1.26  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.2976  z=-1.27  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3775  z=-0.12  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2912  z=-1.36  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.3612  z=-0.35  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog no significant gap (relative=0.25 < 0.30), fallback top-10"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "semantic_ambiguity",
+      "test_id": "semantic_ambiguity_1",
+      "query": "Quero dados para otimizar o despacho de energia renovavel na rede.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": 0.0,
+      "latency_mean_s": 127.926,
+      "latency_min_s": 127.926,
+      "latency_max_s": 127.926,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-solar-3  \n   Description: Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto de resultados de benchmarking de 12 modelos de previsao de geracao solar (ARIMA, LSTM, XGBoost, Transformer) avaliados em horizontes de 1h, 6h e 24h. Inclui metricas MAE, RMSE e intervalos de confianca. Este asset nao contem series temporais de producao real.\n\n2. asset_id: tb-solar-1  \n   Description: Irradiancia Solar - Portugal Continental. Dataset com medicoes horarias de irradiancia global horizontal (GHI) e irradiancia direta normal (DNI) para 42 estacoes meteorologicas em Portugal Continental, cobrindo o periodo 2015-2023. Inclui metadados de localizacao, altitude e cobertura de nuvens. Disponivel em formato Parquet.",
+          "found_assets": [
+            "tb-solar-3",
+            "tb-solar-1"
+          ],
+          "passed": false,
+          "failures": [
+            "missing=tb-hydro-2",
+            "missing=tb-wind-4",
+            "missing=tb-solar-2",
+            "unexpected=tb-solar-3",
+            "unexpected=tb-solar-1"
+          ],
+          "reciprocal_rank": 0.0,
+          "latency_s": 127.926,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['optimal dispatch of renewable energy', 'renewable energy scheduling data', 'energy grid optimization metrics', 'smart grid management systems', 'renewable power distribution analytics']",
+            "INFO search_catalog cosine scores (mean=0.3401, std=0.0589):",
+            "INFO   [PASS] score=0.4376  z=1.65  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4011  z=1.04  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.4501  z=1.87  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.4027  z=1.06  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2383  z=-1.73  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3158  z=-0.41  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3165  z=-0.40  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [FAIL] score=0.3607  z=0.35  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3449  z=0.08  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3567  z=0.28  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.2966  z=-0.74  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.3890  z=0.83  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3027  z=-0.63  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.2374  z=-1.74  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3110  z=-0.49  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3224  z=-0.30  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2817  z=-0.99  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.3560  z=0.27  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 2 (gap=0.0348, relative=0.71)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "semantic_ambiguity",
+      "test_id": "semantic_ambiguity_2",
+      "query": "Preciso de dados historicos de producao renovavel para um modelo de machine learning.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": 0.5,
+      "latency_mean_s": 166.918,
+      "latency_min_s": 166.918,
+      "latency_max_s": 166.918,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-solar-1  \n   Description: Irradiancia Solar - Portugal Continental. Dataset com medicoes horarias de irradiancia global horizontal (GHI) e irradiancia direta normal (DNI) para 42 estacoes meteorologicas em Portugal Continental, cobrindo o periodo 2015-2023. Inclui metadados de localizacao, altitude e cobertura de nuvens. Disponivel em formato Parquet.\n   - This asset provides historical irradiance data which is crucial for training machine learning models on renewable energy production.\n\n2. asset_id: tb-solar-2  \n   Description: Producao Fotovoltaica - Parques >1MW. Registos de producao horaria agregada de 38 parques fotovoltaicos com potencia instalada superior a 1 MW, operados na rede nacional entre 2019 e 2023. Nao inclui dados de autoconsumo nem instalacoes residenciais. Os dados de irradiancia nao estao presentes neste asset.\n   - This dataset includes historical production data from large-scale solar parks which can be used to train machine learning models for renewable energy forecasting.\n\n3. asset_id: tb-solar-3  \n   Description: Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto de resultados de benchmarking de 12 modelos de previsao de geracao solar (ARIMA, LSTM, XGBoost, Transformer) avaliados em horizontes de 1h, 6h e 24h. Inclui metricas MAE, RMSE e intervalos de confianca. Este asset nao contem series temporais de producao real.\n   - This benchmark dataset can be used to evaluate the performance of different machine learning models on solar energy production prediction tasks.",
+          "found_assets": [
+            "tb-solar-1",
+            "tb-solar-2",
+            "tb-solar-3"
+          ],
+          "passed": false,
+          "failures": [
+            "missing=tb-hydro-2",
+            "missing=tb-biomass-2",
+            "missing=tb-biomass-3",
+            "unexpected=tb-solar-1",
+            "unexpected=tb-solar-3"
+          ],
+          "reciprocal_rank": 0.5,
+          "latency_s": 166.918,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['historical renewable energy production data', 'renewable energy dataset', 'solar wind hydroelectric power history', 'energy production time series', 'green energy statistics']",
+            "INFO search_catalog cosine scores (mean=0.3889, std=0.0644):",
+            "INFO   [PASS] score=0.4978  z=1.69  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4616  z=1.13  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.4516  z=0.97  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.4457  z=0.88  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2407  z=-2.30  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3610  z=-0.43  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3601  z=-0.45  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.4012  z=0.19  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3743  z=-0.23  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [PASS] score=0.4017  z=0.20  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3872  z=-0.03  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.4838  z=1.47  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3529  z=-0.56  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.3032  z=-1.33  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3218  z=-1.04  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [PASS] score=0.4071  z=0.28  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.3327  z=-0.87  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [PASS] score=0.4156  z=0.41  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 5 (gap=0.0301, relative=0.31)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "semantic_ambiguity",
+      "test_id": "semantic_ambiguity_3",
+      "query": "What weather and climate data is available for renewable energy analysis?",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": 0.0,
+      "latency_mean_s": 47.695,
+      "latency_min_s": 47.695,
+      "latency_max_s": 47.695,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: WE001\n   description: Historical temperature and precipitation data, essential for assessing the reliability of solar and hydroelectric power.\n   \n2. asset_id: CL003\n   description: Global climate model projections relevant to wind and solar energy planning and impact assessment.\n\n3. asset_id: MET005\n   description: Real-time weather station data including wind speed, direction, and humidity for optimizing wind farm operations.\n\n4. asset_id: ENV007\n   description: Long-term climate trend analysis useful for understanding the long-term impacts of climate change on renewable energy infrastructure.",
+          "found_assets": [],
+          "passed": false,
+          "failures": [
+            "missing=tb-wind-4",
+            "missing=tb-hydro-4",
+            "missing=tb-wind-1"
+          ],
+          "reciprocal_rank": 0.0,
+          "latency_s": 47.695,
+          "search_tool_logs": []
+        }
+      ]
+    },
+    {
+      "use_case_id": "synonyms",
+      "test_id": "synonyms_1",
+      "query": "Quero dados de radiacao solar quanto sol bate em cada zona de Portugal.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "mrr": null,
+      "latency_mean_s": 108.998,
+      "latency_min_s": 108.998,
+      "latency_max_s": 108.998,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-solar-1  \n   description: Irradiancia Solar - Portugal Continental. Dataset com medicoes horarias de irradiancia global horizontal (GHI) e irradiancia direta normal (DNI) para 42 estacoes meteorologicas em Portugal Continental, cobrindo o periodo 2015-2023. Inclui metadados de localizacao, altitude e cobertura de nuvens. Disponivel em formato Parquet.",
+          "found_assets": [
+            "tb-solar-1"
+          ],
+          "passed": true,
+          "failures": [],
+          "reciprocal_rank": null,
+          "latency_s": 108.998,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['radiation data from sun in portugal', 'solar radiation measurements by region in portugal', 'portuguese solar irradiance dataset', 'regional solar radiation data', 'sunlight impact on different zones of Portugal']",
+            "INFO search_catalog cosine scores (mean=0.4366, std=0.1084):",
+            "INFO   [PASS] score=0.7697  z=3.07  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4463  z=0.09  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.4809  z=0.41  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.5695  z=1.23  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [PASS] score=0.4341  z=-0.02  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [PASS] score=0.4824  z=0.42  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [PASS] score=0.4395  z=0.03  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.4423  z=0.05  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [PASS] score=0.4677  z=0.29  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3765  z=-0.55  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [PASS] score=0.4797  z=0.40  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.3399  z=-0.89  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3009  z=-1.25  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [PASS] score=0.4687  z=0.30  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3229  z=-1.05  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3847  z=-0.48  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.3670  z=-0.64  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.2852  z=-1.40  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 1 (gap=0.2002, relative=0.60)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "synonyms",
+      "test_id": "synonyms_2",
+      "query": "I need woodchip and pellet price data for biomass energy.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 46.294,
+      "latency_min_s": 46.294,
+      "latency_max_s": 46.294,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: 456789\n   description: Historical and current prices of woodchips and pellets in North America, including regional variations.\n   thematic connection: Directly addresses the pricing aspect of woodchips and pellets relevant to biomass energy.\n\n2. asset_id: 123456\n   description: Market analysis report on woodchip and pellet prices for sustainable biomass energy projects.\n   thematic connection: Provides market insights that are crucial for understanding price trends in the context of biomass energy.",
+          "found_assets": [],
+          "passed": false,
+          "failures": [
+            "missing=tb-biomass-4"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 46.294,
+          "search_tool_logs": []
+        }
+      ]
+    },
+    {
+      "use_case_id": "synonyms",
+      "test_id": "synonyms_3",
+      "query": "Quero previsoes numericas de vento NWP ou similar para Portugal.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 145.868,
+      "latency_min_s": 145.868,
+      "latency_max_s": 145.868,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-wind-4  \n   Description: Previsao de Vento NWP - ECMWF Downscaling. Resultados de downscaling estatistico de previsoes NWP (ECMWF ERA5) para Portugal, com resolucao espacial de 5km e temporal de 1 hora. Horizonte de previsao ate 72 horas. Cobre o periodo 2020-2023. Inclui variaveis de vento a 100m e temperatura.\n   \n   Connection: This asset provides numerical wind prediction data for Portugal using NWP models, which is directly relevant to your request.\n\n2. asset_id: tb-wind-1  \n   Description: Velocidade e Direcao do Vento - Offshore. Medicoes de anemometros a 10m, 80m e 120m de altura em 6 pontos de monitorizacao offshore na costa portuguesa (Atlantico Norte). Dados em formato CSV com resolucao de 10 minutos, cobrindo 2018-2023. Inclui temperatura do ar e pressao atmosferica.\n   \n   Connection: This asset covers wind speed and direction data offshore in Portugal, which is related to your interest in wind prediction for the country.\n\nNo matching assets were found.",
+          "found_assets": [
+            "tb-wind-4",
+            "tb-wind-1"
+          ],
+          "passed": false,
+          "failures": [
+            "unexpected=tb-wind-1"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 145.868,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['wind prediction data for Portugal', 'numerical weather prediction wind models', 'Portuguese wind NWP datasets', 'wind forecasting models for Portugal', 'reanalysis wind data Portugal']",
+            "INFO search_catalog cosine scores (mean=0.4546, std=0.1233):",
+            "INFO   [PASS] score=0.6610  z=1.67  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [FAIL] score=0.3882  z=-0.54  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.5135  z=0.48  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.4501  z=-0.04  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.3005  z=-1.25  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [PASS] score=0.6235  z=1.37  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [PASS] score=0.5196  z=0.53  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.5341  z=0.64  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [PASS] score=0.7232  z=2.18  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [PASS] score=0.4645  z=0.08  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [PASS] score=0.5025  z=0.39  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.3430  z=-0.91  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3358  z=-0.96  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [PASS] score=0.4565  z=0.02  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3124  z=-1.15  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3888  z=-0.53  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.3829  z=-0.58  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.2829  z=-1.39  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 3 (gap=0.0894, relative=0.33)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "partial_satisfaction",
+      "test_id": "partial_satisfaction_1",
+      "query": "Preciso de um dataset que tenha ao mesmo tempo perfis verticais de vento e curvas de potencia de turbinas.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 143.278,
+      "latency_min_s": 143.278,
+      "latency_max_s": 143.278,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-wind-4  \n   Description: Previsao de Vento NWP - ECMWF Downscaling. This dataset includes wind speed profiles at 100m and temperature, which can be used as independent variables in analyses related to both wind profiles and turbine power curves.\n\n2. asset_id: tb-wind-1  \n   Description: Velocidade e Direcao do Vento - Offshore. Although this dataset primarily contains offshore wind velocity data, it could be relevant for understanding the broader context of wind conditions that might affect turbine performance.\n\n3. asset_id: tb-wind-5  \n   Description: Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acustica. This asset includes vertical wind profiles at 80m and 120m, which can be used as independent variables in analyses related to both wind profiles and turbine power curves.\n\nOnly 3 matching assets were found.",
+          "found_assets": [
+            "tb-wind-4",
+            "tb-wind-1",
+            "tb-wind-5"
+          ],
+          "passed": false,
+          "failures": [
+            "missing=tb-wind-3",
+            "unexpected=tb-wind-4",
+            "unexpected=tb-wind-5"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 143.278,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['wind profile data and turbine power curves', 'vertical wind profiles and turbine performance datasets', 'turbine wind speed and power output data', 'wind energy vertical profiles and generator efficiency']",
+            "INFO search_catalog cosine scores (mean=0.4199, std=0.1138):",
+            "INFO   [PASS] score=0.5370  z=1.03  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [FAIL] score=0.3987  z=-0.19  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.4749  z=0.48  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.4099  z=-0.09  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2214  z=-1.74  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [PASS] score=0.5551  z=1.19  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [PASS] score=0.4851  z=0.57  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.5955  z=1.54  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [PASS] score=0.5553  z=1.19  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [PASS] score=0.6283  z=1.83  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3589  z=-0.54  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.3754  z=-0.39  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3666  z=-0.47  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.3038  z=-1.02  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3207  z=-0.87  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3388  z=-0.71  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2890  z=-1.15  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.3442  z=-0.67  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog no significant gap (relative=0.30 < 0.30), fallback top-8"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "partial_satisfaction",
+      "test_id": "partial_satisfaction_2",
+      "query": "Quero dados de caudais fluviais e ao mesmo tempo producao hidrica das albufeiras, tudo junto.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "mrr": null,
+      "latency_mean_s": 146.115,
+      "latency_min_s": 146.115,
+      "latency_max_s": 146.115,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-hydro-1  \n   Description: Caudais Fluviais - Bacias Hidrograficas Nacionais. Series historicas de caudais diarios medidos em 78 estacoes hidrometricas das principais bacias hidrograficas portuguesas (Douro, Tejo, Guadiana, Minho, Lima), cobrindo 1980-2022. Inclui dados de cheias e periodos de seca. Formato NetCDF.\n   - Thematic connection: This asset provides historical daily flow data from major Portuguese river basins, which is directly related to the user's request for water flow data.\n\n2. asset_id: tb-hydro-2  \n   Description: Producao Hidrica - Grandes Albufeiras. Producao diaria de energia hidrica de 23 grandes albufeiras com capacidade superior a 100 GWh, geridas pela REN, entre 2010 e 2023. Inclui volume armazenado, cota da albufeira e energia turbinada vs. bombagem. Nao contem dados de caudais afluentes nem de meteorologia.\n   - Contextual connection: This asset covers daily hydroelectric production from major reservoirs, which is relevant to the user's request for reservoir production data.",
+          "found_assets": [
+            "tb-hydro-1",
+            "tb-hydro-2"
+          ],
+          "passed": true,
+          "failures": [],
+          "reciprocal_rank": null,
+          "latency_s": 146.115,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['water flow data and reservoir production', 'fluvial discharge measurements and hydroelectric power generation', 'river flow rates and reservoir water management', 'hydrological data for reservoirs and hydropower plants', 'flow rate monitoring and hydropower output']",
+            "INFO search_catalog cosine scores (mean=0.3860, std=0.0929):",
+            "INFO   [PASS] score=0.4906  z=1.13  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [FAIL] score=0.3810  z=-0.05  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [FAIL] score=0.3972  z=0.12  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [FAIL] score=0.3756  z=-0.11  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.1982  z=-2.02  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3944  z=0.09  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3285  z=-0.62  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [FAIL] score=0.3595  z=-0.29  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3863  z=0.00  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3910  z=0.05  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [PASS] score=0.5756  z=2.04  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.5487  z=1.75  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [PASS] score=0.5068  z=1.30  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.3337  z=-0.56  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3200  z=-0.71  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3764  z=-0.10  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2537  z=-1.43  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.3313  z=-0.59  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 2 (gap=0.0419, relative=0.49)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "partial_satisfaction",
+      "test_id": "partial_satisfaction_3",
+      "query": "I'm looking for a single dataset with both onshore wind measurements and electricity generation.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 35.531,
+      "latency_min_s": 35.531,
+      "latency_max_s": 35.531,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: WIND_ELEC_001\n   description: This dataset includes comprehensive onshore wind speed measurements alongside corresponding electricity generation data from various wind farms.",
+          "found_assets": [],
+          "passed": false,
+          "failures": [
+            "missing=tb-wind-5",
+            "missing=tb-wind-2"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 35.531,
+          "search_tool_logs": []
+        }
+      ]
+    },
+    {
+      "use_case_id": "quantity_context_conflict",
+      "test_id": "quantity_context_conflict_1",
+      "query": "Da-me 5 datasets sobre mini-hidricas ou pequena hidrica.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "mrr": null,
+      "latency_mean_s": 104.675,
+      "latency_min_s": 104.675,
+      "latency_max_s": 104.675,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-hydro-3  \n   Description: Potencial Hidrico Nao Aproveitado - Mini-hidricas. This dataset studies the potential for mini-hydroelectric installations (<10 MW) in unutilized river stretches, including annual production estimates, flow rate sizing, and environmental classification of the stretches. It does not include existing production data or flow series.\n\nNo matching assets were found beyond this one.",
+          "found_assets": [
+            "tb-hydro-3"
+          ],
+          "passed": true,
+          "failures": [],
+          "reciprocal_rank": null,
+          "latency_s": 104.675,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['datasets about mini-hydroelectric plants', 'small hydroelectric data', 'mini-hydro assets information', 'renewable energy small scale', 'hydroelectric power generation small systems']",
+            "INFO search_catalog cosine scores (mean=0.3855, std=0.0801):",
+            "INFO   [PASS] score=0.4652  z=1.00  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.4153  z=0.37  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.4147  z=0.36  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.4513  z=0.82  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2379  z=-1.84  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3283  z=-0.71  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [PASS] score=0.4118  z=0.33  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.4002  z=0.18  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3393  z=-0.58  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3928  z=0.09  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [PASS] score=0.4149  z=0.37  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.4806  z=1.19  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [PASS] score=0.5830  z=2.47  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.2875  z=-1.22  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3234  z=-0.78  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3528  z=-0.41  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2828  z=-1.28  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.3566  z=-0.36  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 1 (gap=0.1024, relative=0.56)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "quantity_context_conflict",
+      "test_id": "quantity_context_conflict_2",
+      "query": "Quero 4 datasets exclusivamente sobre biogas.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "mrr": null,
+      "latency_mean_s": 108.008,
+      "latency_min_s": 108.008,
+      "latency_max_s": 108.008,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-biomass-3  \n   Description: Biogas - Produ\u00e7\u00e3o em ETAR e Aterros. Dados de produ\u00e7\u00e3o de biog\u00e1s em esta\u00e7\u00f5es de tratamento de \u00e1guas residuais (ETAR) e aterros sanit\u00e1rios em Portugal, com desagrega\u00e7\u00e3o por instala\u00e7\u00e3o e destino energ\u00e9tico (eletricidade, calor, injec\u00e3o na rede). Per\u00edodo 2017-2022. N\u00e3o inclui biomassa s\u00f3lida nem culturas energ\u00e9ticas.\n\nNo matching assets were found.",
+          "found_assets": [
+            "tb-biomass-3"
+          ],
+          "passed": true,
+          "failures": [],
+          "reciprocal_rank": null,
+          "latency_s": 108.008,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['biogas production data', 'biogas energy datasets', 'methane from organic waste', 'renewable gas statistics', 'anaerobic digestion outputs']",
+            "INFO search_catalog cosine scores (mean=0.3205, std=0.0891):",
+            "INFO   [FAIL] score=0.3625  z=0.47  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [FAIL] score=0.3147  z=-0.07  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [FAIL] score=0.3191  z=-0.02  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [FAIL] score=0.3209  z=0.00  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.1813  z=-1.56  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3100  z=-0.12  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.2695  z=-0.57  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [FAIL] score=0.2880  z=-0.37  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.2774  z=-0.48  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.2994  z=-0.24  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.2790  z=-0.47  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.3441  z=0.26  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.2695  z=-0.57  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.2044  z=-1.30  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3418  z=0.24  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [PASS] score=0.6055  z=3.20  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.3387  z=0.20  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [PASS] score=0.4436  z=1.38  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 1 (gap=0.1619, relative=1.00)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "quantity_context_conflict",
+      "test_id": "quantity_context_conflict_3",
+      "query": "Find me 6 datasets about offshore renewable energy.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "mrr": null,
+      "latency_mean_s": 109.958,
+      "latency_min_s": 109.958,
+      "latency_max_s": 109.958,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-wind-1  \n   Description: Velocidade e Direcao do Vento - Offshore. Medicoes de anemometros a 10m, 80m e 120m de altura em 6 pontos de monitorizacao offshore na costa portuguesa (Atlantico Norte). Dados em formato CSV com resolucao de 10 minutos, cobrindo 2018-2023. Inclui temperatura do ar e pressao atmosferica.\n\nNo matching assets were found for the other queries.",
+          "found_assets": [
+            "tb-wind-1"
+          ],
+          "passed": true,
+          "failures": [],
+          "reciprocal_rank": null,
+          "latency_s": 109.958,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['offshore wind energy data', 'marine renewable resources', 'ocean energy statistics', 'tidal power dataset', 'wave energy research', 'renewable marine environment']",
+            "INFO search_catalog cosine scores (mean=0.3292, std=0.0517):",
+            "INFO   [FAIL] score=0.3736  z=0.86  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [FAIL] score=0.3177  z=-0.22  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [FAIL] score=0.3056  z=-0.46  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [FAIL] score=0.3333  z=0.08  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2194  z=-2.12  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [PASS] score=0.4172  z=1.70  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3594  z=0.58  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [FAIL] score=0.3702  z=0.79  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3237  z=-0.11  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [FAIL] score=0.3847  z=1.07  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3226  z=-0.13  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.4011  z=1.39  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3633  z=0.66  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.2418  z=-1.69  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.2848  z=-0.86  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3287  z=-0.01  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2698  z=-1.15  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.3091  z=-0.39  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 1 (gap=0.0162, relative=1.00)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "misleading_asset",
+      "test_id": "misleading_asset_1",
+      "query": "Preciso de dados de geracao fotovoltaica producao em MWh de parques solares.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 133.34,
+      "latency_min_s": 133.34,
+      "latency_max_s": 133.34,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-solar-2  \n   Description: Produ\u00e7\u00e3o Fotovoltaica - Parques >1MW. Registos de produ\u00e7\u00e3o hor\u00e1ria agregada de 38 parques fotovoltaicos com pot\u00eancia instalada superior a 1 MW, operados na rede nacional entre 2019 e 2023. N\u00e3o inclui dados de autoconsumo nem instala\u00e7\u00f5es residenciais. Os dados de irradiancia n\u00e3o est\u00e3o presentes neste asset.\n\n2. asset_id: tb-solar-4  \n   Description: Invent\u00e1rio de Pain\u00e9is Solares Instalados - Municipios. Base de dados georreferenciada com o n\u00famero de instala\u00e7\u00f5es fotovoltaicas por munic\u00edpio, tipologia (residencial, comercial, industrial), pot\u00eancia total instalada e ano de instala\u00e7\u00e3o. Cobre os 308 munic\u00edpios portugueses com dados at\u00e9 2022.\n\nOnly 2 matching assets were found.\nDONE",
+          "found_assets": [
+            "tb-solar-2",
+            "tb-solar-4"
+          ],
+          "passed": false,
+          "failures": [
+            "unexpected=tb-solar-4"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 133.34,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['production data from solar parks in MWh', 'fotovoltaic power generation metrics', 'solar farm output measurements', 'renewable energy production statistics', 'photovoltaic plant yield']",
+            "INFO search_catalog cosine scores (mean=0.3984, std=0.0821):",
+            "INFO   [PASS] score=0.5201  z=1.48  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [PASS] score=0.5589  z=1.95  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.5184  z=1.46  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [PASS] score=0.5207  z=1.49  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.3084  z=-1.10  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [FAIL] score=0.3522  z=-0.56  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [FAIL] score=0.3928  z=-0.07  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.4083  z=0.12  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [FAIL] score=0.3641  z=-0.42  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [PASS] score=0.4127  z=0.17  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3279  z=-0.86  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [PASS] score=0.4416  z=0.53  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3322  z=-0.81  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.2926  z=-1.29  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3209  z=-0.94  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [PASS] score=0.4072  z=0.11  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2930  z=-1.28  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.3999  z=0.02  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 4 (gap=0.0768, relative=0.51)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "misleading_asset",
+      "test_id": "misleading_asset_2",
+      "query": "Quero dados de vento a 80m e 120m de altura para estimar producao eolica.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 153.716,
+      "latency_min_s": 153.716,
+      "latency_max_s": 153.716,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: tb-wind-1  \n   Description: Velocidade e Direcao do Vento - Offshore. Medicoes de anemometros a 80m e 120m de altura em 6 pontos de monitorizacao offshore na costa portuguesa (Atlantico Norte). Dados em formato CSV com resolucao de 10 minutos, cobrindo 2018-2023. Inclui temperatura do ar e pressao atmosferica.\n   - This asset provides wind speed and direction data at the required heights for offshore locations in Portugal.\n\n2. asset_id: tb-wind-4  \n   Description: Previsao de Vento NWP - ECMWF Downscaling. Resultados de downscaling estatistico de previsoes NWP (ECMWF ERA5) para Portugal, com resolucao espacial de 5km e temporal de 1 hora. Horizonte de previsao ate 72 horas. Cobre o periodo 2020-2023. Inclui variaveis de vento a 100m e temperatura.\n   - This asset offers wind speed predictions at the necessary height and can be used for long-term planning.\n\nOnly 2 matching assets were found.",
+          "found_assets": [
+            "tb-wind-1",
+            "tb-wind-4"
+          ],
+          "passed": false,
+          "failures": [
+            "unexpected=tb-wind-4"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 153.716,
+          "search_tool_logs": [
+            "INFO search_catalog queries: ['wind speed data at 80m and 120m height for wind power estimation', 'anemometer readings for eolic production', 'high-altitude wind velocity measurements', 'vertical wind profile for wind farm productivity', 'eolic energy yield from atmospheric currents']",
+            "INFO search_catalog cosine scores (mean=0.3983, std=0.1028):",
+            "INFO   [PASS] score=0.5209  z=1.19  tb-solar-1                                Irradiancia Solar - Portugal Continental. Dataset com medico",
+            "INFO   [FAIL] score=0.3736  z=-0.24  tb-solar-2                                Producao Fotovoltaica - Parques >1MW. Registos de producao h",
+            "INFO   [PASS] score=0.4397  z=0.40  tb-solar-3                                Modelos de Previsao de Geracao Solar - Benchmarks. Conjunto ",
+            "INFO   [FAIL] score=0.3810  z=-0.17  tb-solar-4                                Inventario de Paineis Solares Instalados - Municipios. Base ",
+            "INFO   [FAIL] score=0.2186  z=-1.75  tb-solar-5                                Impacto de Parques Solares na Biodiversidade e Uso do Solo. ",
+            "INFO   [PASS] score=0.5719  z=1.69  tb-wind-1                                 Velocidade e Direcao do Vento - Offshore. Medicoes de anemom",
+            "INFO   [PASS] score=0.4450  z=0.45  tb-wind-2                                 Parques Eolicos Onshore - Caracteristicas Tecnicas. Ficha te",
+            "INFO   [PASS] score=0.5017  z=1.01  tb-wind-3                                 Curvas de Potencia - Turbinas Eolicas Certificadas. Curvas d",
+            "INFO   [PASS] score=0.5556  z=1.53  tb-wind-4                                 Previsao de Vento NWP - ECMWF Downscaling. Resultados de dow",
+            "INFO   [PASS] score=0.5493  z=1.47  tb-wind-5                                 Ruido e Vibracoes de Turbinas Eolicas - Monitorizacao Acusti",
+            "INFO   [FAIL] score=0.3556  z=-0.42  tb-hydro-1                                Caudais Fluviais - Bacias Hidrograficas Nacionais. Series hi",
+            "INFO   [FAIL] score=0.3614  z=-0.36  tb-hydro-2                                Producao Hidrica - Grandes Albufeiras. Producao diaria de en",
+            "INFO   [FAIL] score=0.3607  z=-0.37  tb-hydro-3                                Potencial Hidrico Nao Aproveitado - Mini-hidricas. Estudo de",
+            "INFO   [FAIL] score=0.2910  z=-1.04  tb-hydro-4                                Eventos de Seca - Indice PDSI Portugal. Series mensais do in",
+            "INFO   [FAIL] score=0.3237  z=-0.73  tb-biomass-1                              Inventario Florestal - Biomassa Disponivel. Estimativas de b",
+            "INFO   [FAIL] score=0.3447  z=-0.52  tb-biomass-3                              Biogas - Producao em ETAR e Aterros. Dados de producao de bi",
+            "INFO   [FAIL] score=0.2708  z=-1.24  tb-biomass-4                              Precos de Biomassa Florestal - Mercado Nacional. Series trim",
+            "INFO   [FAIL] score=0.3046  z=-0.91  tb-biomass-2                              Centrais de Biomassa - Consumo e Producao. Dados anuais de 1",
+            "INFO search_catalog dynamic cutoff at position 5 (gap=0.0567, relative=0.43)"
+          ]
+        }
+      ]
+    },
+    {
+      "use_case_id": "misleading_asset",
+      "test_id": "misleading_asset_3",
+      "query": "I need natural gas price comparisons for energy market analysis.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "mrr": null,
+      "latency_mean_s": 46.276,
+      "latency_min_s": 46.276,
+      "latency_max_s": 46.276,
+      "runs": [
+        {
+          "run_index": 0,
+          "greeting": "Ol\u00e1! Como te posso ajudar hoje?",
+          "response": "1. asset_id: NGP001 - Description: This dataset compares historical natural gas prices across major global markets, ideal for comprehensive energy market analysis.\n2. asset_id: EMA003 - Description: Analyzes the correlation between natural gas prices and other energy commodities to provide a broader perspective in market analysis.\n3. asset_id: GMP005 - Description: Offers real-time and historical comparisons of natural gas pricing across different regions, essential for dynamic market studies.",
+          "found_assets": [],
+          "passed": false,
+          "failures": [
+            "hallucinated_assets_in_response"
+          ],
+          "reciprocal_rank": null,
+          "latency_s": 46.276,
+          "search_tool_logs": []
+        }
+      ]
+    }
+  ]
+}
