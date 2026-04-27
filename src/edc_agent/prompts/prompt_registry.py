@@ -1,19 +1,9 @@
 from importlib import import_module
+from importlib.util import module_from_spec, spec_from_file_location
+from pathlib import Path
 
 
-def _module_prefix_for_model(model_name: str) -> str:
-    normalized = (model_name or "").strip().lower()
-    if normalized.startswith("qwen2.5"):
-        return "qwen2_5"
-    if normalized.startswith("qwen3"):
-        return "qwen3"
-    raise ValueError(
-        f"Unsupported model '{model_name}'. Configure prompts for this model under src/edc_agent/prompts/<model>/."
-    )
-
-
-def get_prompt(agent_name: str, model_name: str) -> str:
-    module_prefix = _module_prefix_for_model(model_name)
+def get_prompt(agent_name: str, _model_name: str = None, version: str | None = None) -> str:
     module_name_by_agent = {
         "router": "router_prompt",
         "search-catalog": "search_catalog_prompt",
@@ -30,11 +20,27 @@ def get_prompt(agent_name: str, model_name: str) -> str:
     if not prompt_module_name or not prompt_constant_name:
         raise ValueError(f"Unsupported agent '{agent_name}'.")
 
-    prompt_module = import_module(f".{module_prefix}.{prompt_module_name}", package=__package__)
+    if version:
+        version_file = (
+            Path(__file__).parent / "versions" / version / f"{prompt_module_name}.py"
+        )
+        if not version_file.exists():
+            raise ValueError(
+                f"Prompt version '{version}' has no '{prompt_module_name}.py' "
+                f"(looked in {version_file.parent})."
+            )
+        spec = spec_from_file_location(
+            f"_prompt_versions.{version}.{prompt_module_name}", version_file
+        )
+        prompt_module = module_from_spec(spec)
+        spec.loader.exec_module(prompt_module)
+    else:
+        prompt_module = import_module(f".{prompt_module_name}", package=__package__)
+
     prompt_value = getattr(prompt_module, prompt_constant_name, None)
     if not isinstance(prompt_value, str):
         raise ValueError(
-            f"Prompt constant '{prompt_constant_name}' is missing in module '{module_prefix}.{prompt_module_name}'."
+            f"Prompt constant '{prompt_constant_name}' is missing in module '{prompt_module_name}'."
         )
 
     return prompt_value.strip()

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import json
 import logging
 import os
+import time
 from typing import Annotated, Any
 
 import requests
@@ -15,7 +17,15 @@ logger = logging.getLogger(__name__)
 
 _COSINE_GATE = 0.40
 _MIN_GAP_RATIO = 0.30
-_FALLBACK_TOP_N = 10
+_MIN_ABSOLUTE_GAP = 0.05
+_FALLBACK_TOP_N = 20
+
+TOOL_CONFIG: dict[str, Any] = {
+    "cosine_gate": _COSINE_GATE,
+    "min_gap_ratio": _MIN_GAP_RATIO,
+    "min_absolute_gap": _MIN_ABSOLUTE_GAP,
+    "fallback_top_n": _FALLBACK_TOP_N,
+}
 
 
 class SearchCatalogArgs(BaseModel):
@@ -23,19 +33,37 @@ class SearchCatalogArgs(BaseModel):
         list[Annotated[str, Field(min_length=3, max_length=200)]],
         Field(
             description=(
-                "Semantically diverse search queries derived from the user's request. "
-                "Generate between 2 and 8 entries covering: "
-                "(1) a full-sentence rephrasing of the user's intent, "
-                "(2) synonyms and alternative names for the main concept, "
-                "(3) domain-specific or technical terms related to the topic, "
-                "(4) a broader category the topic belongs to, "
-                "(5) a more specific subtopic or use case. "
-                "Prefer descriptive phrases over single words. "
-                "Avoid redundancy — each entry must add a different semantic angle. "
-                "Do not invent technical jargon unrelated to the user's request. "
-                'Example — user asks "I need temperature sensor data": '
-                '["IoT temperature sensor readings", "environmental monitoring data", '
-                '"thermal measurement dataset", "climate sensor telemetry", "sensor time series"].'
+                "Semantically diverse search queries derived from the user's request, optimized for "
+                "a vector/semantic search engine. Generate between 4 and 8 entries.\n\n"
+                "LANGUAGE RULE: produce the expansions in the SAME language as the user's original query. "
+                "EXCEPTION: if a technical term, standard name, acronym, or domain-specific concept is "
+                "predominantly used in English in the relevant technical or scientific literature, include "
+                "AT LEAST ONE expansion using the English term alongside the native-language expansions. "
+                "This improves semantic recall when catalog descriptions are written in English or mix "
+                "languages.\n\n"
+                "COVERAGE — each entry must add a DIFFERENT semantic angle. Aim to cover:\n"
+                "(1) a full-sentence rephrasing of the user's intent;\n"
+                "(2) synonyms and alternative names for the main concept;\n"
+                "(3) domain-specific or technical terms related to the topic (including English technical "
+                "terms when applicable);\n"
+                "(4) a broader category the topic belongs to — important when catalog descriptions are "
+                "written at a higher level of abstraction than the user's query;\n"
+                "(5) a more specific subtopic, use case, or application scenario;\n"
+                "(6) if the query requires a COMBINATION of attributes (A and B), include at least one "
+                "expansion for EACH component independently, plus one for the combination — otherwise "
+                "assets covering only one component would not be retrieved;\n"
+                "(7) if the query is CONTEXTUAL (the user's need is implied rather than expressed as direct "
+                "keywords), include expansions describing the downstream use case, related metrics, or "
+                "typical data products associated with the request.\n\n"
+                "STYLE:\n"
+                "- Prefer descriptive phrases (3–8 words) over single words.\n"
+                "- Do not invent technical jargon unrelated to the user's request.\n"
+                "- Avoid redundancy — rephrasings that differ only in word order do not count as different "
+                "angles.\n\n"
+                "EXAMPLE — user asks in English: 'I need temperature sensor data':\n"
+                '["IoT temperature sensor readings", "environmental monitoring dataset", '
+                '"thermal measurement time series", "climate sensor telemetry", '
+                '"ambient temperature observations", "indoor temperature logs"]'
             ),
             min_length=2,
             max_length=8,
@@ -52,18 +80,44 @@ class SearchCatalogTool(BaseTool):
         logger.info("search_catalog queries: %s", queries)
         prepared_queries = self._prepare_keywords(queries)
         if not prepared_queries:
+            logger.info(
+                "search_catalog_diagnostics %s",
+                json.dumps({"queries_expanded": [], "catalog_size": 0, "per_asset_scores": [], "cutoff": None, "phase_latency_s": {}}),
+            )
             return []
 
+        t0 = time.perf_counter()
         catalog = get_catalog()
         logger.debug("search_catalog raw catalog: %s", catalog)
         assets = self._extract_assets(catalog)
+        t_catalog = time.perf_counter() - t0
 
         try:
-            ranked = self._semantic_search(assets, prepared_queries, os.getenv("EMBEDDING_MODEL", ""))
+            t0 = time.perf_counter()
+            ranked, per_asset_scores = self._semantic_search(assets, prepared_queries, os.getenv("EMBEDDING_MODEL", ""))
+            t_embed = time.perf_counter() - t0
         except Exception as exc:
             logger.error("search_catalog semantic search failed: %s", exc)
             return []
-        selected = self._dynamic_cutoff(ranked)
+
+        t0 = time.perf_counter()
+        selected, cutoff_info = self._dynamic_cutoff(ranked)
+        t_cutoff = time.perf_counter() - t0
+
+        logger.info(
+            "search_catalog_diagnostics %s",
+            json.dumps({
+                "queries_expanded": prepared_queries,
+                "catalog_size": len(assets),
+                "per_asset_scores": per_asset_scores,
+                "cutoff": cutoff_info,
+                "phase_latency_s": {
+                    "catalog_fetch": round(t_catalog, 3),
+                    "embedding": round(t_embed, 3),
+                    "cutoff": round(t_cutoff, 4),
+                },
+            }),
+        )
 
         return [
             {"asset_id": asset_id, "description": description}
@@ -82,10 +136,10 @@ class SearchCatalogTool(BaseTool):
 
     def _semantic_search(
         self, assets: list[dict[str, Any]], queries: list[str], model: str
-    ) -> list[tuple[str, str, float]]:
-        """Returns assets passing the cosine gate, sorted by score descending: (asset_id, description, score)."""
+    ) -> tuple[list[tuple[str, str, float]], list[dict[str, Any]]]:
+        """Returns (ranked_passed, all_per_asset_scores); ranked_passed passes the cosine gate."""
         if not assets or not queries:
-            return []
+            return [], []
         if not model:
             raise ValueError("EMBEDDING_MODEL must be configured for semantic search.")
         if ":" not in model:
@@ -104,6 +158,7 @@ class SearchCatalogTool(BaseTool):
         std = variance ** 0.5
 
         logger.info("search_catalog cosine scores (mean=%.4f, std=%.4f):", mean, std)
+        all_scores: list[dict[str, Any]] = []
         passed = []
         for item, score in zip(assets, similarities):
             z_score = (score - mean) / std if std > 0 else 0.0
@@ -117,17 +172,23 @@ class SearchCatalogTool(BaseTool):
                 item["asset_id"],
                 item.get("description", "")[:60],
             )
+            all_scores.append({
+                "asset_id": item["asset_id"],
+                "score": round(score, 4),
+                "z_score": round(z_score, 2),
+                "status": status,
+            })
             if above_gate:
                 passed.append((item, score))
 
         passed.sort(key=lambda x: x[1], reverse=True)
-        return [(item["asset_id"], item.get("description", ""), score) for item, score in passed]
+        return [(item["asset_id"], item.get("description", ""), score) for item, score in passed], all_scores
 
     def _dynamic_cutoff(
         self, ranked: list[tuple[str, str, float]]
-    ) -> list[tuple[str, str, float]]:
+    ) -> tuple[list[tuple[str, str, float]], dict[str, Any]]:
         if len(ranked) <= 1:
-            return ranked
+            return ranked, {"method": "fallback", "position": len(ranked), "relative_gap": 0.0}
 
         scores = [score for _, _, score in ranked]
         score_range = scores[0] - scores[-1]
@@ -135,20 +196,20 @@ class SearchCatalogTool(BaseTool):
         max_gap = max(gaps)
         relative_gap = (max_gap / score_range) if score_range > 0 else 0.0
 
-        if relative_gap >= _MIN_GAP_RATIO:
-            cut = gaps.index(max_gap) + 1
+        cut = gaps.index(max_gap) + 1
+        if relative_gap >= _MIN_GAP_RATIO and max_gap >= _MIN_ABSOLUTE_GAP and cut >= 2:
             logger.info(
                 "search_catalog dynamic cutoff at position %d (gap=%.4f, relative=%.2f)",
                 cut, max_gap, relative_gap,
             )
-            return ranked[:cut]
+            return ranked[:cut], {"method": "elbow", "position": cut, "relative_gap": round(relative_gap, 4)}
 
         cut = min(_FALLBACK_TOP_N, len(ranked))
         logger.info(
             "search_catalog no significant gap (relative=%.2f < %.2f), fallback top-%d",
             relative_gap, _MIN_GAP_RATIO, cut,
         )
-        return ranked[:cut]
+        return ranked[:cut], {"method": "fallback", "position": cut, "relative_gap": round(relative_gap, 4)}
 
     def _encode_with_ollama(
         self, model: str, texts: list[str], is_query: bool
