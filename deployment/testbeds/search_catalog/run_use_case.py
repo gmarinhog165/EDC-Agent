@@ -25,9 +25,9 @@ except ModuleNotFoundError:
     def load_dotenv(*_args, **_kwargs):
         return False
 
-ASSET_PATTERN = re.compile(r"\btb-[a-z]+-\d+\b", re.IGNORECASE)
+ASSET_PATTERN = re.compile(r"\b[a-z][a-z0-9]*(?:-[a-z][a-z0-9]*)*-\d+\b", re.IGNORECASE)
 _LOG_ASSET_RE = re.compile(
-    r"\[(PASS|FAIL|HUB\s*)\]\s+score=([0-9.]+)\s+z=(-?[0-9.]+)\s+(tb-[a-z]+-\d+)",
+    r"\[(PASS|FAIL|HUB\s*)\]\s+score=([0-9.]+)\s+z=(-?[0-9.]+)\s+([a-z][a-z0-9]*(?:-[a-z0-9]+)*-\d+)",
     re.IGNORECASE,
 )
 _LOG_CUTOFF_RE = re.compile(r"dynamic cutoff at position (\d+)")

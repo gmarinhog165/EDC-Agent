@@ -57,14 +57,19 @@ class SearchCatalogArgs(BaseModel):
                 '"ambient temperature observations", "indoor temperature logs"]'
             ),
             min_length=2,
-            max_length=8,
         ),
     ]
 
 
 class SearchCatalogTool(BaseTool):
-    name: str = "search_catalog"
-    description: str = "Search catalog assets by topic + related queries."
+    name: str = "search_catalog_tool"
+    description: str = (
+        "Searches the EDC catalog for assets matching the user's intent.\n\n"
+        "INPUT: a list of 2–8 semantically diverse search queries (see `queries` for construction rules).\n\n"
+        "OUTPUT: a list of {asset_id, description} dicts, ranked by semantic relevance to the queries. "
+        "The list may be empty when no asset is sufficiently relevant — an empty result is a valid "
+        "answer, not an error."
+    )
     args_schema: type[BaseModel] = SearchCatalogArgs
 
     def _run(self, queries: list[str]) -> list[dict[str, str]]:
