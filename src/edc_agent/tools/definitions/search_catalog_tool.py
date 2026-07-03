@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
 
 from edc_agent.cp.lib.transferAsset import get_catalog
+from edc_agent.tools.definitions.embedding_cache import get_cache
 
 logger = logging.getLogger(__name__)
 
@@ -119,8 +120,8 @@ class SearchCatalogTool(BaseTool):
             )
 
         descriptions = [item.get("description", "") for item in assets]
-        query_embeddings = self._encode_with_ollama(model=model, texts=queries, is_query=True)
-        document_embeddings = self._encode_with_ollama(model=model, texts=descriptions, is_query=False)
+        query_embeddings = self._encode_cached(model=model, texts=queries, is_query=True)
+        document_embeddings = self._encode_cached(model=model, texts=descriptions, is_query=False)
         similarities = self._avg_cosine_similarities(query_embeddings, document_embeddings)
 
         mean = sum(similarities) / len(similarities)
@@ -173,6 +174,32 @@ class SearchCatalogTool(BaseTool):
             relative_gap, _MIN_GAP_RATIO, cut,
         )
         return ranked[:cut]
+
+    def _encode_cached(
+        self, model: str, texts: list[str], is_query: bool
+    ) -> list[list[float]]:
+        """Wrap _encode_with_ollama with a persistent cache, embedding only misses."""
+        if not texts:
+            return []
+        cache = get_cache()
+        cached = cache.lookup(model=model, is_query=is_query, texts=texts)
+        missing_indices = [i for i in range(len(texts)) if i not in cached]
+        logger.info(
+            "embedding cache (%s, role=%s): %d hit / %d miss",
+            model, "query" if is_query else "doc",
+            len(cached), len(missing_indices),
+        )
+        if missing_indices:
+            missing_texts = [texts[i] for i in missing_indices]
+            fresh = self._encode_with_ollama(model=model, texts=missing_texts, is_query=is_query)
+            cache.store(
+                model=model,
+                is_query=is_query,
+                items=list(zip(missing_texts, fresh)),
+            )
+            for slot, vec in zip(missing_indices, fresh):
+                cached[slot] = vec
+        return [cached[i] for i in range(len(texts))]
 
     def _encode_with_ollama(
         self, model: str, texts: list[str], is_query: bool

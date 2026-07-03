@@ -1,0 +1,6 @@
+timestamp,git_sha,model,prompt_version,runs,extr_success,extr_precision,extr_recall,extr_single_call,faith_success,json_path
+2026-05-29T12:06:22,4e27f54,qwen3.5:9b,v4,3,1.0000,1.0000,1.0000,1.0000,0.8667,/home/goncalo/Desktop/EDC-Agent/deployment/testbeds/fetch_data/results/fetch_all_qwen3.5-9b_pv4_20260529-120622.json
+2026-05-29T16:20:52,4e27f54,qwen2.5:7b,v4,3,0.8571,0.9722,1.0000,0.9048,0.3333,/home/goncalo/Desktop/EDC-Agent/deployment/testbeds/fetch_data/results/fetch_all_qwen2.5-7b_pv4_20260529-162052.json
+2026-05-29T16:39:06,4e27f54,qwen3:8b,v4,3,0.9524,0.9537,0.9630,0.9683,0.7778,/home/goncalo/Desktop/EDC-Agent/deployment/testbeds/fetch_data/results/fetch_all_qwen3-8b_pv4_20260529-163906.json
+2026-05-29T17:20:17,4e27f54,qwen3.5:9b,v4,3,0.9524,0.9444,0.9444,0.9524,0.8889,/home/goncalo/Desktop/EDC-Agent/deployment/testbeds/fetch_data/results/fetch_all_qwen3.5-9b_pv4_20260529-172017.json
+2026-05-29T17:38:27,4e27f54,qwen3:8b,v4,3,0.9524,0.9537,0.9630,0.9683,0.7778,/home/goncalo/Desktop/EDC-Agent/deployment/testbeds/fetch_data/results/fetch_all_qwen3-8b_pv4_20260529-173827.json

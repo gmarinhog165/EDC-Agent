@@ -1,0 +1,2375 @@
+{
+  "timestamp": "2026-05-29T16:20:52",
+  "git_sha": "4e27f54",
+  "model": "qwen2.5:7b",
+  "temperature": 0,
+  "prompt_version": "v4",
+  "runs_per_test": 3,
+  "summary": {
+    "extraction": {
+      "total": 21,
+      "passed": 18,
+      "success_rate": 0.8571,
+      "run_success_rate": 0.8571,
+      "latency_mean_s": 2.804,
+      "id_precision": 0.9722,
+      "id_recall": 1.0,
+      "single_call_rate": 0.9048
+    },
+    "faithfulness": {
+      "total": 18,
+      "passed": 6,
+      "success_rate": 0.3333,
+      "run_success_rate": 0.4259,
+      "latency_mean_s": 2.016
+    },
+    "by_group": [
+      {
+        "group_id": "extr_single_id",
+        "family": "extraction",
+        "total": 3,
+        "passed": 3,
+        "success_rate": 1.0,
+        "run_success_rate": 1.0,
+        "id_precision": 1.0,
+        "id_recall": 1.0,
+        "single_call_rate": 1.0
+      },
+      {
+        "group_id": "extr_batch",
+        "family": "extraction",
+        "total": 3,
+        "passed": 3,
+        "success_rate": 1.0,
+        "run_success_rate": 1.0,
+        "id_precision": 1.0,
+        "id_recall": 1.0,
+        "single_call_rate": 1.0
+      },
+      {
+        "group_id": "extr_non_normalization",
+        "family": "extraction",
+        "total": 3,
+        "passed": 3,
+        "success_rate": 1.0,
+        "run_success_rate": 1.0,
+        "id_precision": 1.0,
+        "id_recall": 1.0,
+        "single_call_rate": 1.0
+      },
+      {
+        "group_id": "extr_anaphoric",
+        "family": "extraction",
+        "total": 3,
+        "passed": 3,
+        "success_rate": 1.0,
+        "run_success_rate": 1.0,
+        "id_precision": 1.0,
+        "id_recall": 1.0,
+        "single_call_rate": 1.0
+      },
+      {
+        "group_id": "extr_no_fetch",
+        "family": "extraction",
+        "total": 3,
+        "passed": 1,
+        "success_rate": 0.3333,
+        "run_success_rate": 0.3333,
+        "id_precision": 0.0,
+        "id_recall": 0.0,
+        "single_call_rate": 0.3333
+      },
+      {
+        "group_id": "faith_success_reporting",
+        "family": "faithfulness",
+        "total": 3,
+        "passed": 2,
+        "success_rate": 0.6667,
+        "run_success_rate": 0.6667
+      },
+      {
+        "group_id": "faith_error_existence",
+        "family": "faithfulness",
+        "total": 3,
+        "passed": 2,
+        "success_rate": 0.6667,
+        "run_success_rate": 0.6667
+      },
+      {
+        "group_id": "faith_error_protocol",
+        "family": "faithfulness",
+        "total": 3,
+        "passed": 0,
+        "success_rate": 0.0,
+        "run_success_rate": 0.2222
+      },
+      {
+        "group_id": "faith_mixed_outcomes",
+        "family": "faithfulness",
+        "total": 3,
+        "passed": 0,
+        "success_rate": 0.0,
+        "run_success_rate": 0.1111
+      },
+      {
+        "group_id": "faith_language",
+        "family": "faithfulness",
+        "total": 3,
+        "passed": 1,
+        "success_rate": 0.3333,
+        "run_success_rate": 0.3333
+      },
+      {
+        "group_id": "extr_hard_reference",
+        "family": "extraction",
+        "total": 3,
+        "passed": 2,
+        "success_rate": 0.6667,
+        "run_success_rate": 0.6667,
+        "id_precision": 0.8333,
+        "id_recall": 1.0,
+        "single_call_rate": 1.0
+      },
+      {
+        "group_id": "extr_hard_verbatim",
+        "family": "extraction",
+        "total": 3,
+        "passed": 3,
+        "success_rate": 1.0,
+        "run_success_rate": 1.0,
+        "id_precision": 1.0,
+        "id_recall": 1.0,
+        "single_call_rate": 1.0
+      },
+      {
+        "group_id": "faith_hard",
+        "family": "faithfulness",
+        "total": 3,
+        "passed": 1,
+        "success_rate": 0.3333,
+        "run_success_rate": 0.5556
+      }
+    ]
+  },
+  "results": [
+    {
+      "group_id": "extr_single_id",
+      "family": "extraction",
+      "case_id": "single_simple",
+      "query": "Transfere-me o tb-solar-1.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 3.79,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 7.859,
+          "response": "A transfer\u00eancia do asset `tb-solar-1` foi conclu\u00edda com sucesso. O contrato foi realizado com o ID `ctr-tb-solar-1` e a transa\u00e7\u00e3o tem o ID `trf-tb-solar-1`."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.73,
+          "response": "Transferi com sucesso o asset tb-solar-1. O contrato foi realizado com o ID ctr-tb-solar-1 e a transfer\u00eancia tem o ID trf-tb-solar-1.\n\n2 de 1 transfers completed.\nDONE"
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.781,
+          "response": "Transferi com sucesso o asset tb-solar-1. O contrato foi realizado com o ID ctr-tb-solar-1 e a transfer\u00eancia tem o ID trf-tb-solar-1.\n\n2 de 1 transfers completed.\nDONE"
+        }
+      ]
+    },
+    {
+      "group_id": "extr_single_id",
+      "family": "extraction",
+      "case_id": "embedded_in_prose",
+      "query": "Podes buscar aquele dataset solar, o tb-solar-4? Preciso dele para a analise de amanha.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 1.963,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-4"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-4"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.07,
+          "response": "O dataset tb-solar-4 foi buscado com sucesso. O contrato foi realizado com o ID `ctr-tb-solar-4` e a transfer\u00eancia tem o ID `trf-tb-solar-4`.\n\n2 de 1 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-4"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-4"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.985,
+          "response": "O dataset tb-solar-4 foi buscado com sucesso. Seu contrato de transfer\u00eancia \u00e9 ctr-tb-solar-4 e a identifica\u00e7\u00e3o da transfer\u00eancia \u00e9 trf-tb-solar-4.\n\n2 de 1 transfers completed"
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-4"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-4"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.835,
+          "response": "O dataset tb-solar-4 foi buscado com sucesso. Seu contrato de transfer\u00eancia \u00e9 ctr-tb-solar-4 e a identifica\u00e7\u00e3o da transfer\u00eancia \u00e9 trf-tb-solar-4.\n\n2 de 1 transfers completed"
+        }
+      ]
+    },
+    {
+      "group_id": "extr_single_id",
+      "family": "extraction",
+      "case_id": "english_query",
+      "query": "Please fetch the asset tb-hydro-2 for me.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 1.727,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-hydro-2"
+            ]
+          ],
+          "captured_ids": [
+            "tb-hydro-2"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.651,
+          "response": "El recurso tb-hydro-2 ha sido recuperado con \u00e9xito. El contrato utilizado fue ctr-tb-hydro-2 y el identificador de transferencia es trf-tb-hydro-2."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-hydro-2"
+            ]
+          ],
+          "captured_ids": [
+            "tb-hydro-2"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.773,
+          "response": "El recurso tb-hydro-2 ha sido recuperado con \u00e9xito. El contrato se realiz\u00f3 con el ID `ctr-tb-hydro-2` y la transferencia tiene el ID `trf-tb-hydro-2`."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-hydro-2"
+            ]
+          ],
+          "captured_ids": [
+            "tb-hydro-2"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.758,
+          "response": "El recurso tb-hydro-2 ha sido recuperado con \u00e9xito. El contrato se realiz\u00f3 con el ID `ctr-tb-hydro-2` y la transferencia tiene el ID `trf-tb-hydro-2`."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_batch",
+      "family": "extraction",
+      "case_id": "batch_three",
+      "query": "Quero os dados do tb-wind-2, do tb-hydro-1 e do tb-biomass-3.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 3.863,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-wind-2",
+              "tb-hydro-1",
+              "tb-biomass-3"
+            ]
+          ],
+          "captured_ids": [
+            "tb-wind-2",
+            "tb-hydro-1",
+            "tb-biomass-3"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 3.871,
+          "response": "Os dados do tb-wind-2 foram transferidos com sucesso. O contrato foi realizado com o ID `ctr-tb-wind-2` e a transfer\u00eancia tem o ID `trf-tb-wind-2`.\n\nOs dados do tb-hydro-1 tamb\u00e9m foram transferidos com sucesso. O contrato foi realizado com o ID `ctr-tb-hydro-1` e a transfer\u00eancia tem o ID `trf-tb-hydro-1`.\n\nFinalmente, os dados do tb-biomass-3 foram transferidos com sucesso. O contrato foi realizado com o ID `ctr-tb-biomass-3` e a transfer\u00eancia tem o ID `trf-tb-biomass-3`.\n\n2 de 3 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-wind-2",
+              "tb-hydro-1",
+              "tb-biomass-3"
+            ]
+          ],
+          "captured_ids": [
+            "tb-wind-2",
+            "tb-hydro-1",
+            "tb-biomass-3"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 3.856,
+          "response": "Os dados do tb-wind-2 foram transferidos com sucesso. O contrato foi realizado com o ID `ctr-tb-wind-2` e a transfer\u00eancia tem o ID `trf-tb-wind-2`.\n\nOs dados do tb-hydro-1 tamb\u00e9m foram transferidos com sucesso. O contrato foi realizado com o ID `ctr-tb-hydro-1` e a transfer\u00eancia tem o ID `trf-tb-hydro-1`.\n\nFinalmente, os dados do tb-biomass-3 foram transferidos com sucesso. O contrato foi realizado com o ID `ctr-tb-biomass-3` e a transfer\u00eancia tem o ID `trf-tb-biomass-3`.\n\n2 de 3 transfers completadas."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-wind-2",
+              "tb-hydro-1",
+              "tb-biomass-3"
+            ]
+          ],
+          "captured_ids": [
+            "tb-wind-2",
+            "tb-hydro-1",
+            "tb-biomass-3"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 3.861,
+          "response": "Os dados do tb-wind-2 foram transferidos com sucesso. O contrato foi realizado com o ID `ctr-tb-wind-2` e a transfer\u00eancia tem o ID `trf-tb-wind-2`.\n\nOs dados do tb-hydro-1 tamb\u00e9m foram transferidos com sucesso. O contrato foi realizado com o ID `ctr-tb-hydro-1` e a transfer\u00eancia tem o ID `trf-tb-hydro-1`.\n\nFinalmente, os dados do tb-biomass-3 foram transferidos com sucesso. O contrato foi realizado com o ID `ctr-tb-biomass-3` e a transfer\u00eancia tem o ID `trf-tb-biomass-3`.\n\n2 de 3 transfers completadas."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_batch",
+      "family": "extraction",
+      "case_id": "five_in_batch",
+      "query": "Transfere tb-solar-1, tb-solar-2, tb-solar-3, tb-wind-1 e tb-wind-2 de uma vez.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 5.811,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1",
+              "tb-solar-2",
+              "tb-solar-3",
+              "tb-wind-1",
+              "tb-wind-2"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1",
+            "tb-solar-2",
+            "tb-solar-3",
+            "tb-wind-1",
+            "tb-wind-2"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 5.62,
+          "response": "Transfer\u00eancia bem-sucedida para todos os itens solicitados:\n\n- Para `tb-solar-1`, o contrato foi estabelecido com ID `ctr-tb-solar-1` e a transfer\u00eancia tem o ID `trf-tb-solar-1`.\n- Para `tb-solar-2`, o contrato foi estabelecido com ID `ctr-tb-solar-2` e a transfer\u00eancia tem o ID `trf-tb-solar-2`.\n- Para `tb-solar-3`, o contrato foi estabelecido com ID `ctr-tb-solar-3` e a transfer\u00eancia tem o ID `trf-tb-solar-3`.\n- Para `tb-wind-1`, o contrato foi estabelecido com ID `ctr-tb-wind-1` e a transfer\u00eancia tem o ID `trf-tb-wind-1`.\n- Para `tb-wind-2`, o contrato foi estabelecido com ID `ctr-tb-wind-2` e a transfer\u00eancia tem o ID `trf-tb-wind-2`.\n\n2 de 5 transfers completed\nDONE"
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1",
+              "tb-solar-2",
+              "tb-solar-3",
+              "tb-wind-1",
+              "tb-wind-2"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1",
+            "tb-solar-2",
+            "tb-solar-3",
+            "tb-wind-1",
+            "tb-wind-2"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 5.89,
+          "response": "A transfer\u00eancia dos seguintes itens foi realizada com sucesso:\n\n- Para o item `tb-solar-1`, o contrato foi estabelecido com o ID `ctr-tb-solar-1` e a transfer\u00eancia tem o ID `trf-tb-solar-1`.\n- Para o item `tb-solar-2`, o contrato foi estabelecido com o ID `ctr-tb-solar-2` e a transfer\u00eancia tem o ID `trf-tb-solar-2`.\n- Para o item `tb-solar-3`, o contrato foi estabelecido com o ID `ctr-tb-solar-3` e a transfer\u00eancia tem o ID `trf-tb-solar-3`.\n- Para o item `tb-wind-1`, o contrato foi estabelecido com o ID `ctr-tb-wind-1` e a transfer\u00eancia tem o ID `trf-tb-wind-1`.\n- Para o item `tb-wind-2`, o contrato foi estabelecido com o ID `ctr-tb-wind-2` e a transfer\u00eancia tem o ID `trf-tb-wind-2`.\n\n5 de 5 transfers completed.\nDONE"
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1",
+              "tb-solar-2",
+              "tb-solar-3",
+              "tb-wind-1",
+              "tb-wind-2"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1",
+            "tb-solar-2",
+            "tb-solar-3",
+            "tb-wind-1",
+            "tb-wind-2"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 5.922,
+          "response": "A transfer\u00eancia dos seguintes itens foi realizada com sucesso:\n\n- Para o item `tb-solar-1`, o contrato foi estabelecido com o ID `ctr-tb-solar-1` e a transfer\u00eancia tem o ID `trf-tb-solar-1`.\n- Para o item `tb-solar-2`, o contrato foi estabelecido com o ID `ctr-tb-solar-2` e a transfer\u00eancia tem o ID `trf-tb-solar-2`.\n- Para o item `tb-solar-3`, o contrato foi estabelecido com o ID `ctr-tb-solar-3` e a transfer\u00eancia tem o ID `trf-tb-solar-3`.\n- Para o item `tb-wind-1`, o contrato foi estabelecido com o ID `ctr-tb-wind-1` e a transfer\u00eancia tem o ID `trf-tb-wind-1`.\n- Para o item `tb-wind-2`, o contrato foi estabelecido com o ID `ctr-tb-wind-2` e a transfer\u00eancia tem o ID `trf-tb-wind-2`.\n\n5 de 5 transfers completed.\nDONE"
+        }
+      ]
+    },
+    {
+      "group_id": "extr_batch",
+      "family": "extraction",
+      "case_id": "noise_and_distractors",
+      "query": "So me interessam o tb-solar-1 e o tb-wind-5, por favor. O resto e irrelevante.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 2.855,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1",
+              "tb-wind-5"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1",
+            "tb-wind-5"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.619,
+          "response": "Transfer\u00eancia bem-sucedida para o asset `tb-solar-1` com contrato `ctr-tb-solar-1` e transfer\u00eancia ID `trf-tb-solar-1`.\n\nTransfer\u00eancia bem-sucedida para o asset `tb-wind-5` com contrato `ctr-tb-wind-5` e transfer\u00eancia ID `trf-tb-wind-5`.\n\n2 de 2 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1",
+              "tb-wind-5"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1",
+            "tb-wind-5"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.983,
+          "response": "Transfer\u00eancia bem-sucedida para ambos os itens solicitados.\n\nPara o item `tb-solar-1`, o contrato foi estabelecido com o ID `ctr-tb-solar-1` e a transfer\u00eancia tem o ID `trf-tb-solar-1`.\n\nPara o item `tb-wind-5`, o contrato foi estabelecido com o ID `ctr-tb-wind-5` e a transfer\u00eancia tem o ID `trf-tb-wind-5`.\n\n2 de 2 transfers completadas."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1",
+              "tb-wind-5"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1",
+            "tb-wind-5"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.963,
+          "response": "Transfer\u00eancia bem-sucedida para ambos os itens solicitados.\n\nPara o item `tb-solar-1`, o contrato foi estabelecido com o ID `ctr-tb-solar-1` e a transfer\u00eancia tem o ID `trf-tb-solar-1`.\n\nPara o item `tb-wind-5`, o contrato foi estabelecido com o ID `ctr-tb-wind-5` e a transfer\u00eancia tem o ID `trf-tb-wind-5`.\n\n2 de 2 transfers completadas."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_non_normalization",
+      "family": "extraction",
+      "case_id": "underscore",
+      "query": "Transfere o asset com o identificador tb_solar_1, exatamente como o escrevi.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 2.109,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb_solar_1"
+            ]
+          ],
+          "captured_ids": [
+            "tb_solar_1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.111,
+          "response": "O transferimento do asset com o identificador `tb_solar_1` foi realizado com sucesso. O contrato foi aceito e a transfer\u00eancia foi conclu\u00edda com o ID de contrato `ctr-tb_solar_1` e o ID de transfer\u00eancia `trf-tb_solar_1`.\n\n2 de 1 transfers completed.\nDONE"
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb_solar_1"
+            ]
+          ],
+          "captured_ids": [
+            "tb_solar_1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.101,
+          "response": "O transferimento do asset com o identificador `tb_solar_1` foi realizado com sucesso. O contrato foi aceito e a transfer\u00eancia foi conclu\u00edda com o ID de contrato `ctr-tb_solar_1` e o ID de transfer\u00eancia `trf-tb_solar_1`.\n\n2 de 1 transfers completed."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb_solar_1"
+            ]
+          ],
+          "captured_ids": [
+            "tb_solar_1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.114,
+          "response": "O transferimento do asset com o identificador `tb_solar_1` foi realizado com sucesso. O contrato foi aceito e a transfer\u00eancia foi conclu\u00edda com o ID de contrato `ctr-tb_solar_1` e o ID de transfer\u00eancia `trf-tb_solar_1`.\n\n2 de 1 transfers completed."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_non_normalization",
+      "family": "extraction",
+      "case_id": "nonexistent_variant",
+      "query": "Transfere o tb-solar-10.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 2.006,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-10"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-10"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.089,
+          "response": "Transfer\u00eancia bem-sucedida para o asset `tb-solar-10`. O contrato foi realizado com o ID `ctr-tb-solar-10` e a transfer\u00eancia tem o ID `trf-tb-solar-10`.\n\n2 de 1 transfers completed."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-10"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-10"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.968,
+          "response": "A transfer\u00eancia do asset `tb-solar-10` foi conclu\u00edda com sucesso. O contrato foi negociado com o ID `ctr-tb-solar-10` e a transa\u00e7\u00e3o tem o ID `trf-tb-solar-10`.\n\n2 de 1 transfers completed."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-10"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-10"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.962,
+          "response": "A transfer\u00eancia do asset `tb-solar-10` foi conclu\u00edda com sucesso. O contrato foi negociado com o ID `ctr-tb-solar-10` e a transa\u00e7\u00e3o tem o ID `trf-tb-solar-10`.\n\n2 de 1 transfers completed."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_non_normalization",
+      "family": "extraction",
+      "case_id": "zero_padded",
+      "query": "Transfere o tb-solar-01.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 2.054,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-01"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-01"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.176,
+          "response": "La transferencia del asset `tb-solar-01` se realiz\u00f3 con \u00e9xito. El contrato generado tiene el ID `ctr-tb-solar-01` y la transacci\u00f3n se identifica con el ID `trf-tb-solar-01`.\n\n2 de 1 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-01"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-01"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.985,
+          "response": "La transferencia del asset `tb-solar-01` se realiz\u00f3 con \u00e9xito. El contrato generado tiene el ID `ctr-tb-solar-01` y la transacci\u00f3n se identifica con el ID `trf-tb-solar-01`.\n\n2 de 1 transfers completadas."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-01"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-01"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.0,
+          "response": "La transferencia del asset `tb-solar-01` se realiz\u00f3 con \u00e9xito. El contrato generado tiene el ID `ctr-tb-solar-01` y la transacci\u00f3n se identifica con el ID `trf-tb-solar-01`.\n\n2 de 1 transfers completadas."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_anaphoric",
+      "family": "extraction",
+      "case_id": "first_of_list",
+      "query": "Transfere-me o primeiro.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 1.986,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.003,
+          "response": "Seu pedido para transferir o dataset \"tb-solar-1\" foi conclu\u00eddo com sucesso. O contrato foi negociado sob o ID `ctr-tb-solar-1` e a transa\u00e7\u00e3o tem o ID `trf-tb-solar-1`.\n\n2 de 3 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.986,
+          "response": "Seu pedido para transferir o dataset \"tb-solar-1\" foi conclu\u00eddo com sucesso. O contrato foi negociado sob o ID `ctr-tb-solar-1` e a transfer\u00eancia tem o ID `trf-tb-solar-1`.\n\n2 de 3 transfers completadas."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.968,
+          "response": "Seu pedido para transferir o dataset \"tb-solar-1\" foi conclu\u00eddo com sucesso. O contrato foi negociado sob o ID `ctr-tb-solar-1` e a transfer\u00eancia tem o ID `trf-tb-solar-1`.\n\n2 de 3 transfers completadas."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_anaphoric",
+      "family": "extraction",
+      "case_id": "that_one",
+      "query": "Boa, transfere esse entao.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 2.058,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-wind-4"
+            ]
+          ],
+          "captured_ids": [
+            "tb-wind-4"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.064,
+          "response": "O dataset `tb-wind-4` foi transferido com sucesso. Seu contrato de transfer\u00eancia \u00e9 `ctr-tb-wind-4` e o ID da transfer\u00eancia \u00e9 `trf-tb-wind-4`.\n\n2 de 2 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-wind-4"
+            ]
+          ],
+          "captured_ids": [
+            "tb-wind-4"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.02,
+          "response": "O dataset `tb-wind-4` foi transferido com sucesso. O contrato foi identificado como `ctr-tb-wind-4` e o ID da transfer\u00eancia \u00e9 `trf-tb-wind-4`.\n\n2 de 2 transfers completadas."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-wind-4"
+            ]
+          ],
+          "captured_ids": [
+            "tb-wind-4"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.09,
+          "response": "O dataset `tb-wind-4` foi transferido com sucesso. O contrato foi identificado como `ctr-tb-wind-4` e o ID da transfer\u00eancia \u00e9 `trf-tb-wind-4`.\n\n2 de 2 transfers completadas."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_anaphoric",
+      "family": "extraction",
+      "case_id": "last_two",
+      "query": "Transfere os dois ultimos que listaste.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 3.39,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-biomass-2",
+              "tb-biomass-3"
+            ]
+          ],
+          "captured_ids": [
+            "tb-biomass-2",
+            "tb-biomass-3"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 3.409,
+          "response": "A transfer\u00eancia dos datasets foi bem-sucedida:\n\n- Para o dataset \"tb-biomass-2\", o contrato foi aceito com o ID `ctr-tb-biomass-2` e a transfer\u00eancia tem o ID `trf-tb-biomass-2`.\n- Para o dataset \"tb-biomass-3\", o contrato foi aceito com o ID `ctr-tb-biomass-3` e a transfer\u00eancia tem o ID `trf-tb-biomass-3`.\n\n2 de 2 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-biomass-2",
+              "tb-biomass-3"
+            ]
+          ],
+          "captured_ids": [
+            "tb-biomass-2",
+            "tb-biomass-3"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 3.382,
+          "response": "A transfer\u00eancia dos datasets foi bem-sucedida:\n\n- Para o dataset \"tb-biomass-2\", o contrato foi aceito com o ID `ctr-tb-biomass-2` e a transfer\u00eancia tem o ID `trf-tb-biomass-2`.\n- Para o dataset \"tb-biomass-3\", o contrato foi aceito com o ID `ctr-tb-biomass-3` e a transfer\u00eancia tem o ID `trf-tb-biomass-3`.\n\n2 de 2 transfers completadas."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-biomass-2",
+              "tb-biomass-3"
+            ]
+          ],
+          "captured_ids": [
+            "tb-biomass-2",
+            "tb-biomass-3"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 3.377,
+          "response": "A transfer\u00eancia dos datasets foi bem-sucedida:\n\n- Para o dataset \"tb-biomass-2\", o contrato foi aceito com o ID `ctr-tb-biomass-2` e a transfer\u00eancia tem o ID `trf-tb-biomass-2`.\n- Para o dataset \"tb-biomass-3\", o contrato foi aceito com o ID `ctr-tb-biomass-3` e a transfer\u00eancia tem o ID `trf-tb-biomass-3`.\n\n2 de 2 transfers completadas."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_no_fetch",
+      "family": "extraction",
+      "case_id": "solar_generic",
+      "query": "Transfere-me os dados de energia solar.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "latency_mean_s": 4.465,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "call_count expected=0 got=1",
+            "unexpected=energia_solar_001,energia_solar_002"
+          ],
+          "captured_calls": [
+            [
+              "energia_solar_001",
+              "energia_solar_002"
+            ]
+          ],
+          "captured_ids": [
+            "energia_solar_001",
+            "energia_solar_002"
+          ],
+          "call_count": 1,
+          "exact_match": false,
+          "call_count_ok": false,
+          "precision": null,
+          "recall": null,
+          "latency_s": 4.748,
+          "response": "Os dados de energia solar foram transferidos com sucesso. Aqui est\u00e3o os detalhes:\n\n- Para o asset `energia_solar_001`, o contrato foi realizado atrav\u00e9s do ID `ctr-energia_solar_001` e a transfer\u00eancia foi conclu\u00edda com o ID `trf-energia_solar_001`.\n- Para o asset `energia_solar_002`, o contrato foi realizado atrav\u00e9s do ID `ctr-energia_solar_002` e a transfer\u00eancia foi conclu\u00edda com o ID `trf-energia_solar_002`.\n\n2 de 2 transfers foram completadas com sucesso."
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "call_count expected=0 got=1",
+            "unexpected=energia_solar_001,energia_solar_002"
+          ],
+          "captured_calls": [
+            [
+              "energia_solar_001",
+              "energia_solar_002"
+            ]
+          ],
+          "captured_ids": [
+            "energia_solar_001",
+            "energia_solar_002"
+          ],
+          "call_count": 1,
+          "exact_match": false,
+          "call_count_ok": false,
+          "precision": null,
+          "recall": null,
+          "latency_s": 4.295,
+          "response": "Os dados de energia solar foram transferidos com sucesso.\n\nPara o asset `energia_solar_001`, o contrato foi realizado atrav\u00e9s do ID `ctr-energia_solar_001` e a transa\u00e7\u00e3o tem o ID `trf-energia_solar_001`.\n\nPara o asset `energia_solar_002`, o contrato foi realizado atrav\u00e9s do ID `ctr-energia_solar_002` e a transa\u00e7\u00e3o tem o ID `trf-energia_solar_002`.\n\n2 de 2 transfers completadas."
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "call_count expected=0 got=1",
+            "unexpected=energia_solar_001,energia_solar_002"
+          ],
+          "captured_calls": [
+            [
+              "energia_solar_001",
+              "energia_solar_002"
+            ]
+          ],
+          "captured_ids": [
+            "energia_solar_001",
+            "energia_solar_002"
+          ],
+          "call_count": 1,
+          "exact_match": false,
+          "call_count_ok": false,
+          "precision": null,
+          "recall": null,
+          "latency_s": 4.352,
+          "response": "Os dados de energia solar foram transferidos com sucesso.\n\nPara o asset `energia_solar_001`, o contrato foi realizado atrav\u00e9s do ID `ctr-energia_solar_001` e a transa\u00e7\u00e3o tem o ID `trf-energia_solar_001`.\n\nPara o asset `energia_solar_002`, o contrato foi realizado atrav\u00e9s do ID `ctr-energia_solar_002` e a transa\u00e7\u00e3o tem o ID `trf-energia_solar_002`.\n\n2 de 2 transfers completadas."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_no_fetch",
+      "family": "extraction",
+      "case_id": "wind_generic",
+      "query": "Quero descarregar uns datasets de energia eolica.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 0.899,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [],
+          "captured_ids": [],
+          "call_count": 0,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": null,
+          "recall": null,
+          "latency_s": 0.883,
+          "response": "Entendi. Por favor, forne\u00e7a-me os IDs dos datasets que deseja descarregar.\n\n(Se o usu\u00e1rio n\u00e3o fornecer IDs espec\u00edficos, repita a solicita\u00e7\u00e3o.)"
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [],
+          "captured_ids": [],
+          "call_count": 0,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": null,
+          "recall": null,
+          "latency_s": 0.907,
+          "response": "Entendi. Por favor, forne\u00e7a-me os IDs espec\u00edficos dos datasets que deseja descarregar.\n\n(Se o usu\u00e1rio n\u00e3o fornecer IDs espec\u00edficos, eu continuaria esperando por eles.)"
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [],
+          "captured_ids": [],
+          "call_count": 0,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": null,
+          "recall": null,
+          "latency_s": 0.906,
+          "response": "Entendi. Por favor, forne\u00e7a-me os IDs espec\u00edficos dos datasets que deseja descarregar.\n\n(Se o usu\u00e1rio n\u00e3o fornecer IDs espec\u00edficos, eu continuaria esperando por eles.)"
+        }
+      ]
+    },
+    {
+      "group_id": "extr_no_fetch",
+      "family": "extraction",
+      "case_id": "renewables_generic",
+      "query": "Podes-me dar dados renovaveis?",
+      "passed": false,
+      "pass_rate": 0.0,
+      "latency_mean_s": 2.469,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "call_count expected=0 got=1",
+            "unexpected=asset-1234567890"
+          ],
+          "captured_calls": [
+            [
+              "asset-1234567890"
+            ]
+          ],
+          "captured_ids": [
+            "asset-1234567890"
+          ],
+          "call_count": 1,
+          "exact_match": false,
+          "call_count_ok": false,
+          "precision": null,
+          "recall": null,
+          "latency_s": 2.456,
+          "response": "Os dados renov\u00e1veis foram obtidos com sucesso. O contrato foi realizado atrav\u00e9s do ID `ctr-asset-1234567890` e o transferido pelo ID `trf-asset-1234567890`.\n\nResumo: 1 de 1 transfer\u00eancia conclu\u00edda."
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "call_count expected=0 got=1",
+            "unexpected=asset-1234567890"
+          ],
+          "captured_calls": [
+            [
+              "asset-1234567890"
+            ]
+          ],
+          "captured_ids": [
+            "asset-1234567890"
+          ],
+          "call_count": 1,
+          "exact_match": false,
+          "call_count_ok": false,
+          "precision": null,
+          "recall": null,
+          "latency_s": 2.48,
+          "response": "Os dados renov\u00e1veis foram obtidos com sucesso. O contrato foi identificado como `ctr-asset-1234567890` e o ID de transfer\u00eancia \u00e9 `trf-asset-1234567890`.\n\nResumo: 1 de 1 transfer\u00eancias conclu\u00eddas."
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "call_count expected=0 got=1",
+            "unexpected=asset-1234567890"
+          ],
+          "captured_calls": [
+            [
+              "asset-1234567890"
+            ]
+          ],
+          "captured_ids": [
+            "asset-1234567890"
+          ],
+          "call_count": 1,
+          "exact_match": false,
+          "call_count_ok": false,
+          "precision": null,
+          "recall": null,
+          "latency_s": 2.471,
+          "response": "Os dados renov\u00e1veis foram obtidos com sucesso. O contrato foi identificado como `ctr-asset-1234567890` e o ID de transfer\u00eancia \u00e9 `trf-asset-1234567890`.\n\nResumo: 1 de 1 transfer\u00eancias conclu\u00eddas."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_success_reporting",
+      "family": "faithfulness",
+      "case_id": "single",
+      "query": "Transfere o tb-solar-1.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 1.852,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.86,
+          "response": "La transferencia del asset `tb-solar-1` se realiz\u00f3 con \u00e9xito. El contrato generado tiene el ID `ctr-aaa-111` y la transacci\u00f3n se identifica con el ID `trf-bbb-222`."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.82,
+          "response": "La transferencia del asset `tb-solar-1` se realiz\u00f3 con \u00e9xito. El contrato generado tiene el ID `ctr-aaa-111` y la transacci\u00f3n se identifica con el ID `trf-bbb-222`."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.878,
+          "response": "La transferencia del asset `tb-solar-1` se realiz\u00f3 con \u00e9xito. El contrato generado tiene el ID `ctr-aaa-111` y la transacci\u00f3n se identifica con el ID `trf-bbb-222`."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_success_reporting",
+      "family": "faithfulness",
+      "case_id": "batch_two",
+      "query": "Transfere o tb-wind-2 e o tb-hydro-1.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 2.401,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "latency_s": 2.138,
+          "response": "Transferi com sucesso os dados do tb-wind-2 com o contrato ctr-w2 e a transfer\u00eancia trf-w2.\n\nTamb\u00e9m transferi com sucesso os dados do tb-hydro-1 com o contrato ctr-h1 e a transfer\u00eancia trf-h1.\n\n2 de 2 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "latency_s": 2.559,
+          "response": "La transferencia de los assets solicitados se realiz\u00f3 con \u00e9xito.\n\nPara el asset `tb-wind-2`, el contrato fue `ctr-w2` y la transferencia se realiz\u00f3 con `trf-w2`.\n\nPara el asset `tb-hydro-1`, el contrato fue `ctr-h1` y la transferencia se realiz\u00f3 con `trf-h1`.\n\n2 de 2 transfers completadas.\nDONE"
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "latency_s": 2.506,
+          "response": "La transferencia de los assets solicitados se realiz\u00f3 con \u00e9xito.\n\nPara el asset `tb-wind-2`, el contrato fue `ctr-w2` y la transferencia se realiz\u00f3 con `trf-w2`.\n\nPara el asset `tb-hydro-1`, el contrato fue `ctr-h1` y la transferencia se realiz\u00f3 con `trf-h1`.\n\n2 de 2 transfers completadas.\nDONE"
+        }
+      ]
+    },
+    {
+      "group_id": "faith_success_reporting",
+      "family": "faithfulness",
+      "case_id": "batch_three",
+      "query": "Transfere o tb-solar-1, o tb-solar-2 e o tb-solar-3.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "latency_mean_s": 3.229,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "missing_any=3 de 3|3/3|tres|todas"
+          ],
+          "latency_s": 3.171,
+          "response": "La transferencia de los assets solicitados se realiz\u00f3 con \u00e9xito:\n\n- Para el asset `tb-solar-1`, el contrato ID es `ctr-s1` y la transferencia ID es `trf-s1`.\n- Para el asset `tb-solar-2`, el contrato ID es `ctr-s2` y la transferencia ID es `trf-s2`.\n- Para el asset `tb-solar-3`, el contrato ID es `ctr-s3` y la transferencia ID es `trf-s3`.\n\n2 de 3 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "missing_any=3 de 3|3/3|tres|todas"
+          ],
+          "latency_s": 3.246,
+          "response": "La transferencia de los assets solicitados se realiz\u00f3 con \u00e9xito:\n\n- Para el asset `tb-solar-1`, el contrato fue `ctr-s1` y la transferencia se realiz\u00f3 con `trf-s1`.\n- Para el asset `tb-solar-2`, el contrato fue `ctr-s2` y la transferencia se realiz\u00f3 con `trf-s2`.\n- Para el asset `tb-solar-3`, el contrato fue `ctr-s3` y la transferencia se realiz\u00f3 con `trf-s3`.\n\n2 de 3 transfers completadas.\nDONE"
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "missing_any=3 de 3|3/3|tres|todas"
+          ],
+          "latency_s": 3.271,
+          "response": "La transferencia de los assets solicitados se realiz\u00f3 con \u00e9xito:\n\n- Para el asset `tb-solar-1`, el contrato fue `ctr-s1` y la transferencia se realiz\u00f3 con `trf-s1`.\n- Para el asset `tb-solar-2`, el contrato fue `ctr-s2` y la transferencia se realiz\u00f3 con `trf-s2`.\n- Para el asset `tb-solar-3`, el contrato fue `ctr-s3` y la transferencia se realiz\u00f3 con `trf-s3`.\n\n2 de 3 transfers completadas.\nDONE"
+        }
+      ]
+    },
+    {
+      "group_id": "faith_error_existence",
+      "family": "faithfulness",
+      "case_id": "unknown_asset",
+      "query": "Transfere o tb-solar-99.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 1.511,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.52,
+          "response": "O asset com o ID `tb-solar-99` n\u00e3o foi encontrado no provedor. Por favor, verifique o ID e tente novamente."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.497,
+          "response": "O asset com o ID `tb-solar-99` n\u00e3o foi encontrado no provedor. Por favor, verifique o ID e tente novamente."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.516,
+          "response": "O asset com o ID `tb-solar-99` n\u00e3o foi encontrado no provedor. Por favor, verifique o ID e tente novamente."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_error_existence",
+      "family": "faithfulness",
+      "case_id": "asset_not_in_catalog",
+      "query": "Transfere o tb-wind-1.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 1.779,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.785,
+          "response": "El recurso con el ID `tb-wind-1` existe en el proveedor pero no est\u00e1 publicado en el cat\u00e1logo del consumidor. Por favor, verifica si el recurso ha sido agregado al cat\u00e1logo."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.761,
+          "response": "El recurso con el ID `tb-wind-1` existe en el proveedor pero no est\u00e1 publicado en el cat\u00e1logo del consumidor. Por favor, verifica si el recurso ha sido agregado al cat\u00e1logo."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.791,
+          "response": "El recurso con el ID `tb-wind-1` existe en el proveedor pero no est\u00e1 publicado en el cat\u00e1logo del consumidor. Por favor, verifica si el recurso ha sido agregado al cat\u00e1logo."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_error_existence",
+      "family": "faithfulness",
+      "case_id": "catalog_metadata_missing",
+      "query": "Transfere o tb-hydro-3.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "latency_mean_s": 0.754,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "missing_any=incomplet|metadad|contact|provider|fornecedor"
+          ],
+          "latency_s": 0.756,
+          "response": "No se encontr\u00f3 ning\u00fan asset con el ID 'tb-hydro-3'. Por favor, verifica el ID e int\u00e9ntalo de nuevo."
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "missing_any=incomplet|metadad|contact|provider|fornecedor"
+          ],
+          "latency_s": 0.758,
+          "response": "No se encontr\u00f3 ning\u00fan asset con el ID 'tb-hydro-3'. Por favor, verifica el ID e int\u00e9ntalo de nuevo."
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "missing_any=incomplet|metadad|contact|provider|fornecedor"
+          ],
+          "latency_s": 0.748,
+          "response": "No se encontr\u00f3 ning\u00fan asset con el ID 'tb-hydro-3'. Por favor, verifica el ID e int\u00e9ntalo de nuevo."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_error_protocol",
+      "family": "faithfulness",
+      "case_id": "policy_denied",
+      "query": "Transfere o tb-wind-3.",
+      "passed": false,
+      "pass_rate": 0.6666666666666666,
+      "latency_mean_s": 1.61,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "missing_id=tb-wind-3"
+          ],
+          "latency_s": 1.61,
+          "response": "O fornecedor rejeitou a negocia\u00e7\u00e3o do contrato. Verifique as pol\u00edticas de compartilhamento para este recurso.\n\n1 de 1 transfer\u00eancias falhou."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.594,
+          "response": "O fornecedor rejeitou a negocia\u00e7\u00e3o do contrato. Verifique as pol\u00edticas de compartilhamento para o asset tb-wind-3.\n\n1 de 1 transfer\u00eancia falhou."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.627,
+          "response": "O fornecedor rejeitou a negocia\u00e7\u00e3o do contrato. Verifique as pol\u00edticas de compartilhamento para o asset tb-wind-3.\n\n1 de 1 transfer\u00eancia falhou."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_error_protocol",
+      "family": "faithfulness",
+      "case_id": "negotiation_timeout",
+      "query": "Transfere o tb-biomass-2.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "latency_mean_s": 1.407,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "missing_id=tb-biomass-2",
+            "missing_any=tentar novamente|tente novamente|mais tarde|repetir|voltar a tentar"
+          ],
+          "latency_s": 1.437,
+          "response": "La negociaci\u00f3n no pudo concluirse dentro del l\u00edmite de tiempo.\n\nResumen: 0 de 1 transferencias completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "missing_id=tb-biomass-2",
+            "missing_any=tentar novamente|tente novamente|mais tarde|repetir|voltar a tentar"
+          ],
+          "latency_s": 1.398,
+          "response": "La negociaci\u00f3n no pudo concluirse dentro del l\u00edmite de tiempo.\n\nResumen: 0 de 1 transferencias completadas."
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "missing_id=tb-biomass-2",
+            "missing_any=tentar novamente|tente novamente|mais tarde|repetir|voltar a tentar"
+          ],
+          "latency_s": 1.386,
+          "response": "La negociaci\u00f3n no pudo concluirse dentro del l\u00edmite de tiempo.\n\nResumen: 0 de 1 transferencias completadas."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_error_protocol",
+      "family": "faithfulness",
+      "case_id": "transfer_failed",
+      "query": "Transfere o tb-hydro-4.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "latency_mean_s": 1.564,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "missing_id=tb-hydro-4"
+          ],
+          "latency_s": 1.614,
+          "response": "O contrato foi acordado, mas a transfer\u00eancia de dados falhou. O ID do contrato \u00e9 ctr-h4.\n\n1 de 1 transfer\u00eancias n\u00e3o foram conclu\u00eddas."
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "missing_id=tb-hydro-4"
+          ],
+          "latency_s": 1.54,
+          "response": "O contrato foi acordado, mas a transfer\u00eancia de dados falhou. O ID do contrato \u00e9 ctr-h4.\n\n1 de 1 transfer\u00eancias falharam."
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "missing_id=tb-hydro-4"
+          ],
+          "latency_s": 1.539,
+          "response": "O contrato foi acordado, mas a transfer\u00eancia de dados falhou. O ID do contrato \u00e9 ctr-h4.\n\n1 de 1 transfer\u00eancias falharam."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_mixed_outcomes",
+      "family": "faithfulness",
+      "case_id": "success_and_two_errors",
+      "query": "Transfere o tb-solar-1, o tb-wind-3 e o tb-solar-99.",
+      "passed": false,
+      "pass_rate": 0.3333333333333333,
+      "latency_mean_s": 3.082,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "latency_s": 3.112,
+          "response": "La transferencia del asset `tb-solar-1` se realiz\u00f3 con \u00e9xito. El contrato fue `ctr-s1` y la transacci\u00f3n se identific\u00f3 como `trf-s1`.\n\nNo pudimos transferir el asset `tb-wind-3` porque el proveedor rechaz\u00f3 la negociaci\u00f3n de contratos.\n\nAdem\u00e1s, el asset `tb-solar-99` no existe en el proveedor; por favor verifica el ID proporcionado.\n\nEn resumen, 1 de 3 transfers se completaron."
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "missing_any=1 de 3|1/3"
+          ],
+          "latency_s": 3.073,
+          "response": "Transferi com sucesso o asset `tb-solar-1`. O contrato foi aceite e a transfer\u00eancia tem o ID `trf-s1` e o contrato tem o ID `ctr-s1`.\n\nN\u00e3o consegui transferir o `tb-wind-3`, pois o provedor rejeitou a negocia\u00e7\u00e3o do contrato.\n\nTamb\u00e9m n\u00e3o consegui encontrar o `tb-solar-99`. Verifique se o asset existe no provedor.\n\nNo total, 2 de 3 transfers foram conclu\u00eddas."
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "missing_any=1 de 3|1/3"
+          ],
+          "latency_s": 3.06,
+          "response": "Transferi com sucesso o asset `tb-solar-1`. O contrato foi aceite e a transfer\u00eancia tem o ID `trf-s1` e o contrato tem o ID `ctr-s1`.\n\nN\u00e3o consegui transferir o `tb-wind-3`, pois o provedor rejeitou a negocia\u00e7\u00e3o do contrato.\n\nTamb\u00e9m n\u00e3o consegui encontrar o `tb-solar-99`. Verifique se o asset existe no provedor.\n\nNo total, 2 de 3 transfers foram conclu\u00eddas."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_mixed_outcomes",
+      "family": "faithfulness",
+      "case_id": "success_and_one_error",
+      "query": "Transfere o tb-wind-2 e o tb-hydro-4.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "latency_mean_s": 2.474,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "missing='ctr-w2'"
+          ],
+          "latency_s": 2.439,
+          "response": "La transferencia del tb-wind-2 se realiz\u00f3 con \u00e9xito. El contrato fue aceptado y el identificador de transferencia es trf-w2.\n\nNo se pudo completar la transferencia del tb-hydro-4. Aunque el contrato se acord\u00f3, hubo un fallo en la transferencia de datos.\n\nEn resumen, 1 de 2 transfers fueron exitosos."
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "missing='ctr-w2'"
+          ],
+          "latency_s": 2.488,
+          "response": "La transferencia del tb-wind-2 se realiz\u00f3 con \u00e9xito. El contrato fue aceptado y el identificador de transferencia es trf-w2.\n\nNo se pudo completar la transferencia del tb-hydro-4. Aunque el contrato se acord\u00f3, hubo un fallo en la transferencia de datos.\n\nEn resumen, 1 de 2 transfers fueron exitosos."
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "missing='ctr-w2'"
+          ],
+          "latency_s": 2.495,
+          "response": "La transferencia del tb-wind-2 se realiz\u00f3 con \u00e9xito. El contrato fue aceptado y el identificador de transferencia es trf-w2.\n\nNo se pudo completar la transferencia del tb-hydro-4. Aunque el contrato se acord\u00f3, hubo un fallo en la transferencia de datos.\n\nEn resumen, 1 de 2 transfers fueron exitosos."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_mixed_outcomes",
+      "family": "faithfulness",
+      "case_id": "all_failed",
+      "query": "Transfere o tb-solar-99 e o tb-wind-3.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "latency_mean_s": 2.178,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "missing_any=0 de 2|0/2|nenhuma|ambas falhar"
+          ],
+          "latency_s": 2.128,
+          "response": "El asset `tb-solar-99` no fue encontrado en el proveedor; por favor, verifica la ID proporcionada.\n\nEl asset `tb-wind-3` no pudo ser transferido porque el proveedor rechaz\u00f3 la negociaci\u00f3n del contrato.\n\n2 de 2 transfers fallaron."
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "missing_any=0 de 2|0/2|nenhuma|ambas falhar"
+          ],
+          "latency_s": 2.199,
+          "response": "El asset `tb-solar-99` no fue encontrado en el proveedor; por favor, verifica la identificaci\u00f3n del asset.\n\nLa transferencia de `tb-wind-3` fue rechazada por el proveedor debido a una pol\u00edtica no permitiva.\n\n2 de 2 transfers fallaron."
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "missing_any=0 de 2|0/2|nenhuma|ambas falhar"
+          ],
+          "latency_s": 2.209,
+          "response": "El asset `tb-solar-99` no fue encontrado en el proveedor; por favor, verifica la identificaci\u00f3n del asset.\n\nLa transferencia de `tb-wind-3` fue rechazada por el proveedor debido a una pol\u00edtica no permitiva.\n\n2 de 2 transfers fallaron."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_language",
+      "family": "faithfulness",
+      "case_id": "spanish_success",
+      "query": "Por favor, transfiere el asset tb-solar-3.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 1.666,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.86,
+          "response": "El asset tb-solar-3 ha sido transferido con \u00e9xito. El contrato utilizado para esta transacci\u00f3n tiene el ID `ctr-s3` y la transferencia se realiz\u00f3 con el ID `trf-s3`.\n\n2 de 1 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.586,
+          "response": "El asset tb-solar-3 ha sido transferido con \u00e9xito. El contrato utilizado fue ctr-s3 y la transacci\u00f3n se identifica como trf-s3."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.553,
+          "response": "El asset tb-solar-3 ha sido transferido con \u00e9xito. El contrato utilizado fue ctr-s3 y la transacci\u00f3n se identifica como trf-s3."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_language",
+      "family": "faithfulness",
+      "case_id": "english_success",
+      "query": "Please transfer tb-wind-2.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "latency_mean_s": 1.717,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "missing_id=tb-wind-2",
+            "missing_any=success|completed|transferred|done|has been"
+          ],
+          "latency_s": 1.916,
+          "response": "El traspaso del recurso ha sido exitoso. El contrato se realiz\u00f3 con el ID `ctr-w2` y el tr\u00e1fico se inici\u00f3 con el ID `trf-w2`.\n\nResumen: 1 de 1 transferencias completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "missing_id=tb-wind-2",
+            "missing_any=success|completed|transferred|done|has been"
+          ],
+          "latency_s": 1.603,
+          "response": "El traspaso del recurso ha sido exitoso. El contrato se realiz\u00f3 con el ID `ctr-w2` y la transferencia tiene el ID `trf-w2`."
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "missing_id=tb-wind-2",
+            "missing_any=success|completed|transferred|done|has been"
+          ],
+          "latency_s": 1.631,
+          "response": "El traspaso del recurso ha sido exitoso. El contrato se realiz\u00f3 con el ID `ctr-w2` y la transferencia tiene el ID `trf-w2`."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_language",
+      "family": "faithfulness",
+      "case_id": "english_error",
+      "query": "Please transfer tb-solar-99.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "latency_mean_s": 1.534,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "missing_any=does not exist|not found|doesn't exist|could not be found|verify"
+          ],
+          "latency_s": 1.521,
+          "response": "El recurso con el ID tb-solar-99 no se encontr\u00f3 en el proveedor. Por favor, verifica el ID y vuelve a intentarlo."
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "missing_any=does not exist|not found|doesn't exist|could not be found|verify"
+          ],
+          "latency_s": 1.535,
+          "response": "El recurso con el ID \"tb-solar-99\" no se encontr\u00f3 en el proveedor. Por favor, verifica el ID y vuelve a intentarlo."
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "missing_any=does not exist|not found|doesn't exist|could not be found|verify"
+          ],
+          "latency_s": 1.546,
+          "response": "El recurso con el ID \"tb-solar-99\" no se encontr\u00f3 en el proveedor. Por favor, verifica el ID y vuelve a intentarlo."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_hard_reference",
+      "family": "extraction",
+      "case_id": "out_of_range",
+      "query": "Transfere-me o primeiro e o setimo.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "latency_mean_s": 3.641,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "unexpected=tb-solar-7"
+          ],
+          "captured_calls": [
+            [
+              "tb-solar-1",
+              "tb-solar-7"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1",
+            "tb-solar-7"
+          ],
+          "call_count": 1,
+          "exact_match": false,
+          "call_count_ok": true,
+          "precision": 0.5,
+          "recall": 1.0,
+          "latency_s": 3.538,
+          "response": "Transferi com sucesso os datasets solicitados:\n\n- Para o dataset \"tb-solar-1\", o contrato foi aceite com o ID de contrato `ctr-tb-solar-1` e a transfer\u00eancia tem o ID `trf-tb-solar-1`.\n- Para o dataset \"tb-solar-7\", o contrato foi aceite com o ID de contrato `ctr-tb-solar-7` e a transfer\u00eancia tem o ID `trf-tb-solar-7`.\n\n2 de 2 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "unexpected=tb-solar-7"
+          ],
+          "captured_calls": [
+            [
+              "tb-solar-1",
+              "tb-solar-7"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1",
+            "tb-solar-7"
+          ],
+          "call_count": 1,
+          "exact_match": false,
+          "call_count_ok": true,
+          "precision": 0.5,
+          "recall": 1.0,
+          "latency_s": 3.658,
+          "response": "Transferi com sucesso os datasets solicitados:\n\n- Para o dataset \"tb-solar-1\", o contrato foi aceite e a transfer\u00eancia tem o ID de transfer\u00eancia `trf-tb-solar-1`. O contrato usado tem o ID `ctr-tb-solar-1`.\n- Para o dataset \"tb-solar-7\", o contrato foi aceite e a transfer\u00eancia tem o ID de transfer\u00eancia `trf-tb-solar-7`. O contrato usado tem o ID `ctr-tb-solar-7`.\n\n2 de 2 transfers completed."
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "unexpected=tb-solar-7"
+          ],
+          "captured_calls": [
+            [
+              "tb-solar-1",
+              "tb-solar-7"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1",
+            "tb-solar-7"
+          ],
+          "call_count": 1,
+          "exact_match": false,
+          "call_count_ok": true,
+          "precision": 0.5,
+          "recall": 1.0,
+          "latency_s": 3.727,
+          "response": "Transferi com sucesso os datasets solicitados:\n\n- Para o dataset \"tb-solar-1\", o contrato foi aceite e a transfer\u00eancia tem o ID de transfer\u00eancia `trf-tb-solar-1`. O contrato usado tem o ID `ctr-tb-solar-1`.\n- Para o dataset \"tb-solar-7\", o contrato foi aceite e a transfer\u00eancia tem o ID de transfer\u00eancia `trf-tb-solar-7`. O contrato usado tem o ID `ctr-tb-solar-7`.\n\n2 de 2 transfers completed."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_hard_reference",
+      "family": "extraction",
+      "case_id": "exclusion",
+      "query": "Transfere todos menos o segundo.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 2.701,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1",
+              "tb-solar-4"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1",
+            "tb-solar-4"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.689,
+          "response": "Transferi com sucesso os seguintes datasets:\n- tb-solar-1 - producao fotovoltaica diaria (Contrato: ctr-tb-solar-1, Transfer\u00eancia: trf-tb-solar-1)\n- tb-solar-4 - previsao de geracao solar (Contrato: ctr-tb-solar-4, Transfer\u00eancia: trf-tb-solar-4)\n\n2 de 2 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1",
+              "tb-solar-4"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1",
+            "tb-solar-4"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.727,
+          "response": "Transferi com sucesso os seguintes datasets:\n- tb-solar-1 - produ\u00e7\u00e3o fotovoltaica di\u00e1ria (Contrato ID: ctr-tb-solar-1, Transfer\u00eancia ID: trf-tb-solar-1)\n- tb-solar-4 - previs\u00e3o de gera\u00e7\u00e3o solar (Contrato ID: ctr-tb-solar-4, Transfer\u00eancia ID: trf-tb-solar-4)\n\n2 de 2 transfers completadas."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solar-1",
+              "tb-solar-4"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solar-1",
+            "tb-solar-4"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 2.688,
+          "response": "Transferi com sucesso os seguintes datasets:\n- tb-solar-1 - produ\u00e7\u00e3o fotovoltaica di\u00e1ria (Contrato ID: ctr-tb-solar-1, Transfer\u00eancia ID: trf-tb-solar-1)\n- tb-solar-4 - previs\u00e3o de gera\u00e7\u00e3o solar (Contrato ID: ctr-tb-solar-4, Transfer\u00eancia ID: trf-tb-solar-4)\n\n2 de 2 transfers completadas."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_hard_reference",
+      "family": "extraction",
+      "case_id": "all_of_them",
+      "query": "Boa, transfere todos esses.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 5.622,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-biomass-1",
+              "tb-biomass-2",
+              "tb-biomass-3"
+            ]
+          ],
+          "captured_ids": [
+            "tb-biomass-1",
+            "tb-biomass-2",
+            "tb-biomass-3"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 5.572,
+          "response": "A transfer\u00eancia dos datasets foi bem-sucedida:\n\n1. Para o dataset **tb-biomass-1 - residuos florestais**, o contrato foi aceito com o ID `ctr-tb-biomass-1` e a transfer\u00eancia tem o ID `trf-tb-biomass-1`.\n2. Para o dataset **tb-biomass-2 - biogas agricola**, o contrato foi aceito com o ID `ctr-tb-biomass-2` e a transfer\u00eancia tem o ID `trf-tb-biomass-2`.\n3. Para o dataset **tb-biomass-3 - culturas energeticas**, o contrato foi aceito com o ID `ctr-tb-biomass-3` e a transfer\u00eancia tem o ID `trf-tb-biomass-3`.\n\n**3 de 3 transfers completed.**\nDONE"
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-biomass-1",
+              "tb-biomass-2",
+              "tb-biomass-3"
+            ]
+          ],
+          "captured_ids": [
+            "tb-biomass-1",
+            "tb-biomass-2",
+            "tb-biomass-3"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 5.65,
+          "response": "A transfer\u00eancia dos datasets de biomassa foi bem-sucedida:\n\n1. Para o dataset **residuos florestais** (tb-biomass-1), o contrato foi aceito com o ID `ctr-tb-biomass-1` e a transfer\u00eancia tem o ID `trf-tb-biomass-1`.\n2. Para o dataset **biogas agricola** (tb-biomass-2), o contrato foi aceito com o ID `ctr-tb-biomass-2` e a transfer\u00eancia tem o ID `trf-tb-biomass-2`.\n3. Para o dataset **culturas energeticas** (tb-biomass-3), o contrato foi aceito com o ID `ctr-tb-biomass-3` e a transfer\u00eancia tem o ID `trf-tb-biomass-3`.\n\n2 de 3 transfers completadas."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-biomass-1",
+              "tb-biomass-2",
+              "tb-biomass-3"
+            ]
+          ],
+          "captured_ids": [
+            "tb-biomass-1",
+            "tb-biomass-2",
+            "tb-biomass-3"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 5.645,
+          "response": "A transfer\u00eancia dos datasets de biomassa foi bem-sucedida:\n\n1. Para o dataset **residuos florestais** (tb-biomass-1), o contrato foi aceito com o ID `ctr-tb-biomass-1` e a transfer\u00eancia tem o ID `trf-tb-biomass-1`.\n2. Para o dataset **biogas agricola** (tb-biomass-2), o contrato foi aceito com o ID `ctr-tb-biomass-2` e a transfer\u00eancia tem o ID `trf-tb-biomass-2`.\n3. Para o dataset **culturas energeticas** (tb-biomass-3), o contrato foi aceito com o ID `ctr-tb-biomass-3` e a transfer\u00eancia tem o ID `trf-tb-biomass-3`.\n\n2 de 3 transfers completadas."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_hard_verbatim",
+      "family": "extraction",
+      "case_id": "uppercase",
+      "query": "Transfere o TB-SOLAR-1.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 1.864,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "TB-SOLAR-1"
+            ]
+          ],
+          "captured_ids": [
+            "TB-SOLAR-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.868,
+          "response": "A transfer\u00eancia do asset TB-SOLAR-1 foi realizada com sucesso. O contrato foi identificado como ctr-TB-SOLAR-1 e o ID da transfer\u00eancia \u00e9 trf-TB-SOLAR-1.\n\n2 de 1 transfers completed.\nDONE"
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "TB-SOLAR-1"
+            ]
+          ],
+          "captured_ids": [
+            "TB-SOLAR-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.854,
+          "response": "A transfer\u00eancia do asset TB-SOLAR-1 foi realizada com sucesso. O contrato foi identificado como ctr-TB-SOLAR-1 e o ID da transfer\u00eancia \u00e9 trf-TB-SOLAR-1.\n\n2 de 1 transfers completed.\nDONE"
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "TB-SOLAR-1"
+            ]
+          ],
+          "captured_ids": [
+            "TB-SOLAR-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.869,
+          "response": "A transfer\u00eancia do asset TB-SOLAR-1 foi realizada com sucesso. O contrato foi identificado como ctr-TB-SOLAR-1 e o ID da transfer\u00eancia \u00e9 trf-TB-SOLAR-1.\n\n2 de 1 transfers completed.\nDONE"
+        }
+      ]
+    },
+    {
+      "group_id": "extr_hard_verbatim",
+      "family": "extraction",
+      "case_id": "mixed_case",
+      "query": "Quero o Tb-Wind-2, por favor.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 1.68,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "Tb-Wind-2"
+            ]
+          ],
+          "captured_ids": [
+            "Tb-Wind-2"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.698,
+          "response": "O download do Tb-Wind-2 foi conclu\u00eddo com sucesso. O contrato foi identificado como ctr-Tb-Wind-2 e o ID de transfer\u00eancia \u00e9 trf-Tb-Wind-2."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "Tb-Wind-2"
+            ]
+          ],
+          "captured_ids": [
+            "Tb-Wind-2"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.691,
+          "response": "O download do Tb-Wind-2 foi conclu\u00eddo com sucesso. O contrato foi identificado como ctr-Tb-Wind-2 e o transfer_id \u00e9 trf-Tb-Wind-2."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "Tb-Wind-2"
+            ]
+          ],
+          "captured_ids": [
+            "Tb-Wind-2"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.652,
+          "response": "O download do Tb-Wind-2 foi conclu\u00eddo com sucesso. O contrato foi identificado como ctr-Tb-Wind-2 e o transfer_id \u00e9 trf-Tb-Wind-2."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_hard_verbatim",
+      "family": "extraction",
+      "case_id": "typo_no_autocorrect",
+      "query": "Transfere o tb-solr-1.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 1.941,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solr-1"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solr-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.949,
+          "response": "La transferencia del asset `tb-solr-1` se realiz\u00f3 con \u00e9xito. El contrato utilizado fue `ctr-tb-solr-1` y la transacci\u00f3n tiene el identificador `trf-tb-solr-1`.\n\n2 de 1 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solr-1"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solr-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.929,
+          "response": "La transferencia del asset `tb-solr-1` se realiz\u00f3 con \u00e9xito. El contrato utilizado fue `ctr-tb-solr-1` y el identificador de transferencia es `trf-tb-solr-1`.\n\n2 de 1 transfers completadas."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solr-1"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solr-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 1.944,
+          "response": "La transferencia del asset `tb-solr-1` se realiz\u00f3 con \u00e9xito. El contrato utilizado fue `ctr-tb-solr-1` y el identificador de transferencia es `trf-tb-solr-1`.\n\n2 de 1 transfers completadas."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_hard",
+      "family": "faithfulness",
+      "case_id": "large_mixed_batch",
+      "query": "Transfere tb-solar-1, tb-solar-2, tb-solar-3, tb-wind-3 e tb-solar-99.",
+      "passed": false,
+      "pass_rate": 0.0,
+      "latency_mean_s": 4.213,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "missing_any=3 de 5|3/5"
+          ],
+          "latency_s": 4.626,
+          "response": "La transferencia de los datos para `tb-solar-1`, `tb-solar-2` y `tb-solar-3` se realiz\u00f3 con \u00e9xito. Los detalles de las transferencias son:\n\n- Para `tb-solar-1`: Contrato ID: `ctr-s1`, Transferencia ID: `trf-s1`.\n- Para `tb-solar-2`: Contrato ID: `ctr-s2`, Transferencia ID: `trf-s2`.\n- Para `tb-solar-3`: Contrato ID: `ctr-s3`, Transferencia ID: `trf-s3`.\n\nNo se pudo transferir los datos para `tb-wind-3` porque el proveedor rechaz\u00f3 la negociaci\u00f3n del contrato.\n\nAdem\u00e1s, no se encontr\u00f3 ning\u00fan dato para `tb-solar-99`.\n\n2 de 5 transfers completadas.\nDONE"
+        },
+        {
+          "run_index": 1,
+          "passed": false,
+          "failures": [
+            "missing_any=3 de 5|3/5"
+          ],
+          "latency_s": 4.005,
+          "response": "Transferiu com sucesso os seguintes ativos:\n\n- **tb-solar-1**: Contrato ID: `ctr-s1`, Transfer\u00eancia ID: `trf-s1`\n- **tb-solar-2**: Contrato ID: `ctr-s2`, Transfer\u00eancia ID: `trf-s2`\n- **tb-solar-3**: Contrato ID: `ctr-s3`, Transfer\u00eancia ID: `trf-s3`\n\nNo entanto, houve alguns problemas:\n\n- **tb-wind-3**: O fornecedor rejeitou a negocia\u00e7\u00e3o do contrato.\n- **tb-solar-99**: O ativo n\u00e3o foi encontrado no fornecedor.\n\n2 de 5 transfers completed."
+        },
+        {
+          "run_index": 2,
+          "passed": false,
+          "failures": [
+            "missing_any=3 de 5|3/5"
+          ],
+          "latency_s": 4.009,
+          "response": "Transferiu com sucesso os seguintes ativos:\n\n- **tb-solar-1**: Contrato ID: `ctr-s1`, Transfer\u00eancia ID: `trf-s1`\n- **tb-solar-2**: Contrato ID: `ctr-s2`, Transfer\u00eancia ID: `trf-s2`\n- **tb-solar-3**: Contrato ID: `ctr-s3`, Transfer\u00eancia ID: `trf-s3`\n\nNo entanto, houve alguns problemas:\n\n- **tb-wind-3**: O fornecedor rejeitou a negocia\u00e7\u00e3o do contrato.\n- **tb-solar-99**: O ativo n\u00e3o foi encontrado no fornecedor.\n\n2 de 5 transfers completed."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_hard",
+      "family": "faithfulness",
+      "case_id": "system_error_generic",
+      "query": "Transfere o tb-hydro-2.",
+      "passed": false,
+      "pass_rate": 0.6666666666666666,
+      "latency_mean_s": 1.531,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": false,
+          "failures": [
+            "missing_id=tb-hydro-2"
+          ],
+          "latency_s": 1.495,
+          "response": "Lo sentimos, hubo un error inesperado durante la negociaci\u00f3n para el recurso solicitado. Por favor, int\u00e9ntalo de nuevo m\u00e1s tarde."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.548,
+          "response": "Lo sentimos, hubo un error inesperado durante la negociaci\u00f3n para el asset \"tb-hydro-2\". Por favor, int\u00e9ntalo de nuevo m\u00e1s tarde."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.549,
+          "response": "Lo sentimos, hubo un error inesperado durante la negociaci\u00f3n para el asset \"tb-hydro-2\". Por favor, int\u00e9ntalo de nuevo m\u00e1s tarde."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_hard",
+      "family": "faithfulness",
+      "case_id": "misleading_success_message",
+      "query": "Transfere o tb-wind-5.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 1.783,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.788,
+          "response": "A transfer do asset `tb-wind-5` foi conclu\u00edda com sucesso. O contrato foi identificado como `ctr-w5` e a transa\u00e7\u00e3o tem o ID `trf-w5`.\n\n2 de 1 transfers completadas."
+        },
+        {
+          "run_index": 1,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.784,
+          "response": "A transfer do asset `tb-wind-5` foi conclu\u00edda com sucesso. O contrato foi identificado como `ctr-w5` e a transa\u00e7\u00e3o tem o ID `trf-w5`.\n\n2 de 1 transfers completadas."
+        },
+        {
+          "run_index": 2,
+          "passed": true,
+          "failures": [],
+          "latency_s": 1.777,
+          "response": "A transfer do asset `tb-wind-5` foi conclu\u00edda com sucesso. O contrato foi identificado como `ctr-w5` e a transa\u00e7\u00e3o tem o ID `trf-w5`.\n\n2 de 1 transfers completadas."
+        }
+      ]
+    }
+  ]
+}

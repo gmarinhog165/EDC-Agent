@@ -1,0 +1,540 @@
+{
+  "groups": [
+    {
+      "id": "extr_single_id",
+      "family": "extraction",
+      "focus": "Pedido de um unico asset_id em frasagens diferentes.",
+      "tests": [
+        {
+          "id": "single_simple",
+          "query": "Transfere-me o tb-solar-1.",
+          "expected_item_ids": ["tb-solar-1"],
+          "expected_call_count": 1
+        },
+        {
+          "id": "embedded_in_prose",
+          "query": "Podes buscar aquele dataset solar, o tb-solar-4? Preciso dele para a analise de amanha.",
+          "expected_item_ids": ["tb-solar-4"],
+          "expected_call_count": 1
+        },
+        {
+          "id": "english_query",
+          "query": "Please fetch the asset tb-hydro-2 for me.",
+          "expected_item_ids": ["tb-hydro-2"],
+          "expected_call_count": 1
+        }
+      ]
+    },
+    {
+      "id": "extr_batch",
+      "family": "extraction",
+      "focus": "Multiplos ids num unico tool call (regra 'single call', prompt linha 20).",
+      "tests": [
+        {
+          "id": "batch_three",
+          "query": "Quero os dados do tb-wind-2, do tb-hydro-1 e do tb-biomass-3.",
+          "expected_item_ids": ["tb-wind-2", "tb-hydro-1", "tb-biomass-3"],
+          "expected_call_count": 1
+        },
+        {
+          "id": "five_in_batch",
+          "query": "Transfere tb-solar-1, tb-solar-2, tb-solar-3, tb-wind-1 e tb-wind-2 de uma vez.",
+          "expected_item_ids": ["tb-solar-1", "tb-solar-2", "tb-solar-3", "tb-wind-1", "tb-wind-2"],
+          "expected_call_count": 1
+        },
+        {
+          "id": "noise_and_distractors",
+          "query": "So me interessam o tb-solar-1 e o tb-wind-5, por favor. O resto e irrelevante.",
+          "expected_item_ids": ["tb-solar-1", "tb-wind-5"],
+          "expected_call_count": 1
+        }
+      ]
+    },
+    {
+      "id": "extr_non_normalization",
+      "family": "extraction",
+      "focus": "IDs passados verbatim, sem normalizar/corrigir (prompt linha 22).",
+      "tests": [
+        {
+          "id": "underscore",
+          "query": "Transfere o asset com o identificador tb_solar_1, exatamente como o escrevi.",
+          "expected_item_ids": ["tb_solar_1"],
+          "expected_call_count": 1,
+          "note": "Underscore em vez de hifen; nao deve normalizar para tb-solar-1."
+        },
+        {
+          "id": "nonexistent_variant",
+          "query": "Transfere o tb-solar-10.",
+          "expected_item_ids": ["tb-solar-10"],
+          "expected_call_count": 1,
+          "note": "tb-solar-10 nao existe; o agente nao deve 'corrigir' para tb-solar-1 — passa verbatim, erro e reportado downstream."
+        },
+        {
+          "id": "zero_padded",
+          "query": "Transfere o tb-solar-01.",
+          "expected_item_ids": ["tb-solar-01"],
+          "expected_call_count": 1,
+          "note": "Zero a mais; nao deve normalizar para tb-solar-1."
+        }
+      ]
+    },
+    {
+      "id": "extr_anaphoric",
+      "family": "extraction",
+      "focus": "Resolucao de referencias que vivem num turno anterior (chat_history).",
+      "tests": [
+        {
+          "id": "first_of_list",
+          "query": "Transfere-me o primeiro.",
+          "chat_history": [
+            {"role": "human", "content": "Que datasets de energia solar tens?"},
+            {"role": "ai", "content": "Encontrei 3 datasets de energia solar:\n1. tb-solar-1 - producao fotovoltaica diaria\n2. tb-solar-2 - irradiancia horaria\n3. tb-solar-4 - previsao de geracao solar"}
+          ],
+          "expected_item_ids": ["tb-solar-1"],
+          "expected_call_count": 1
+        },
+        {
+          "id": "that_one",
+          "query": "Boa, transfere esse entao.",
+          "chat_history": [
+            {"role": "human", "content": "Tens algum dataset de producao eolica offshore?"},
+            {"role": "ai", "content": "Sim, o tb-wind-4 corresponde a producao eolica offshore."}
+          ],
+          "expected_item_ids": ["tb-wind-4"],
+          "expected_call_count": 1
+        },
+        {
+          "id": "last_two",
+          "query": "Transfere os dois ultimos que listaste.",
+          "chat_history": [
+            {"role": "human", "content": "Mostra-me os datasets de biomassa."},
+            {"role": "ai", "content": "Datasets de biomassa disponiveis:\n1. tb-biomass-1 - residuos florestais\n2. tb-biomass-2 - biogas agricola\n3. tb-biomass-3 - culturas energeticas"}
+          ],
+          "expected_item_ids": ["tb-biomass-2", "tb-biomass-3"],
+          "expected_call_count": 1
+        }
+      ]
+    },
+    {
+      "id": "extr_no_fetch",
+      "family": "extraction",
+      "focus": "Sem asset_id explicito; o agente nao deve inventar ids nem chamar a tool.",
+      "tests": [
+        {
+          "id": "solar_generic",
+          "query": "Transfere-me os dados de energia solar.",
+          "expected_item_ids": [],
+          "expected_call_count": 0
+        },
+        {
+          "id": "wind_generic",
+          "query": "Quero descarregar uns datasets de energia eolica.",
+          "expected_item_ids": [],
+          "expected_call_count": 0
+        },
+        {
+          "id": "renewables_generic",
+          "query": "Podes-me dar dados renovaveis?",
+          "expected_item_ids": [],
+          "expected_call_count": 0
+        }
+      ]
+    },
+    {
+      "id": "faith_success_reporting",
+      "family": "faithfulness",
+      "focus": "Reporta sucessos com contract_id/transfer_id e sumario correto.",
+      "tests": [
+        {
+          "id": "single",
+          "query": "Transfere o tb-solar-1.",
+          "tool_output": {
+            "results": [
+              {"status": "success", "item_id": "tb-solar-1", "contract_id": "ctr-aaa-111", "transfer_id": "trf-bbb-222", "message": "ok"}
+            ],
+            "summary": {"total": 1, "succeeded": 1, "failed": 0}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-solar-1"],
+            "must_contain": ["ctr-aaa-111", "trf-bbb-222"],
+            "must_not_contain": ["erro", "falh"]
+          }
+        },
+        {
+          "id": "batch_two",
+          "query": "Transfere o tb-wind-2 e o tb-hydro-1.",
+          "tool_output": {
+            "results": [
+              {"status": "success", "item_id": "tb-wind-2", "contract_id": "ctr-w2", "transfer_id": "trf-w2", "message": "ok"},
+              {"status": "success", "item_id": "tb-hydro-1", "contract_id": "ctr-h1", "transfer_id": "trf-h1", "message": "ok"}
+            ],
+            "summary": {"total": 2, "succeeded": 2, "failed": 0}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-wind-2", "tb-hydro-1"],
+            "must_contain": ["ctr-w2", "trf-w2", "ctr-h1", "trf-h1"],
+            "must_contain_any": [["2 de 2", "2/2", "ambas", "duas"]]
+          }
+        },
+        {
+          "id": "batch_three",
+          "query": "Transfere o tb-solar-1, o tb-solar-2 e o tb-solar-3.",
+          "tool_output": {
+            "results": [
+              {"status": "success", "item_id": "tb-solar-1", "contract_id": "ctr-s1", "transfer_id": "trf-s1", "message": "ok"},
+              {"status": "success", "item_id": "tb-solar-2", "contract_id": "ctr-s2", "transfer_id": "trf-s2", "message": "ok"},
+              {"status": "success", "item_id": "tb-solar-3", "contract_id": "ctr-s3", "transfer_id": "trf-s3", "message": "ok"}
+            ],
+            "summary": {"total": 3, "succeeded": 3, "failed": 0}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-solar-1", "tb-solar-2", "tb-solar-3"],
+            "must_contain_any": [["3 de 3", "3/3", "tres", "todas"]],
+            "must_not_contain": ["erro", "falh"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "faith_error_existence",
+      "family": "faithfulness",
+      "focus": "Mapeia error_codes de existencia/catalogo para explicacao correta.",
+      "tests": [
+        {
+          "id": "unknown_asset",
+          "query": "Transfere o tb-solar-99.",
+          "tool_output": {
+            "results": [
+              {"status": "error", "item_id": "tb-solar-99", "error_code": "unknown_asset", "message": "Asset not found on provider."}
+            ],
+            "summary": {"total": 1, "succeeded": 0, "failed": 1}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-solar-99"],
+            "must_contain_any": [["nao existe", "nao foi encontrado", "inexistente", "verific"]],
+            "must_not_contain": ["sucesso", "trf-"]
+          }
+        },
+        {
+          "id": "asset_not_in_catalog",
+          "query": "Transfere o tb-wind-1.",
+          "tool_output": {
+            "results": [
+              {"status": "error", "item_id": "tb-wind-1", "error_code": "asset_not_in_catalog", "message": "Asset exists on provider but is not published to the consumer catalog."}
+            ],
+            "summary": {"total": 1, "succeeded": 0, "failed": 1}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-wind-1"],
+            "must_contain_any": [["catalog", "nao esta publicad", "nao foi publicad", "nao aparece", "indisponivel no catalog"]],
+            "must_not_contain": ["sucesso"]
+          }
+        },
+        {
+          "id": "catalog_metadata_missing",
+          "query": "Transfere o tb-hydro-3.",
+          "tool_output": {
+            "results": [
+              {"status": "error", "item_id": "tb-hydro-3", "error_code": "catalog_metadata_missing", "message": "Catalog entry is incomplete."}
+            ],
+            "summary": {"total": 1, "succeeded": 0, "failed": 1}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-hydro-3"],
+            "must_contain_any": [["incomplet", "metadad", "contact", "provider", "fornecedor"]],
+            "must_not_contain": ["sucesso"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "faith_error_protocol",
+      "family": "faithfulness",
+      "focus": "Mapeia error_codes de negociacao/transferencia para explicacao correta.",
+      "tests": [
+        {
+          "id": "policy_denied",
+          "query": "Transfere o tb-wind-3.",
+          "tool_output": {
+            "results": [
+              {"status": "error", "item_id": "tb-wind-3", "error_code": "policy_denied", "message": "Provider rejected the contract negotiation."}
+            ],
+            "summary": {"total": 1, "succeeded": 0, "failed": 1}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-wind-3"],
+            "must_contain_any": [["politic", "nao permit", "rejeit", "negociac"]],
+            "must_not_contain": ["sucesso"]
+          }
+        },
+        {
+          "id": "negotiation_timeout",
+          "query": "Transfere o tb-biomass-2.",
+          "tool_output": {
+            "results": [
+              {"status": "error", "item_id": "tb-biomass-2", "error_code": "negotiation_timeout", "message": "Negotiation did not finalize within the time limit."}
+            ],
+            "summary": {"total": 1, "succeeded": 0, "failed": 1}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-biomass-2"],
+            "must_contain_any": [["tentar novamente", "tente novamente", "mais tarde", "repetir", "voltar a tentar"]],
+            "must_not_contain": ["sucesso"]
+          }
+        },
+        {
+          "id": "transfer_failed",
+          "query": "Transfere o tb-hydro-4.",
+          "tool_output": {
+            "results": [
+              {"status": "error", "item_id": "tb-hydro-4", "error_code": "transfer_failed", "message": "Contract agreed but data transfer failed.", "contract_id": "ctr-h4"}
+            ],
+            "summary": {"total": 1, "succeeded": 0, "failed": 1}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-hydro-4"],
+            "must_contain_any": [["transferenc", "falh", "nao foi concluida"]],
+            "must_not_contain": ["sucesso"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "faith_mixed_outcomes",
+      "family": "faithfulness",
+      "focus": "Lotes com resultados mistos; reporta cada asset e o sumario certo.",
+      "tests": [
+        {
+          "id": "success_and_two_errors",
+          "query": "Transfere o tb-solar-1, o tb-wind-3 e o tb-solar-99.",
+          "tool_output": {
+            "results": [
+              {"status": "success", "item_id": "tb-solar-1", "contract_id": "ctr-s1", "transfer_id": "trf-s1", "message": "ok"},
+              {"status": "error", "item_id": "tb-wind-3", "error_code": "policy_denied", "message": "Provider rejected the contract negotiation."},
+              {"status": "error", "item_id": "tb-solar-99", "error_code": "unknown_asset", "message": "Asset not found on provider."}
+            ],
+            "summary": {"total": 3, "succeeded": 1, "failed": 2}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-solar-1", "tb-wind-3", "tb-solar-99"],
+            "must_contain": ["ctr-s1", "trf-s1"],
+            "must_contain_any": [["1 de 3", "1/3"]]
+          }
+        },
+        {
+          "id": "success_and_one_error",
+          "query": "Transfere o tb-wind-2 e o tb-hydro-4.",
+          "tool_output": {
+            "results": [
+              {"status": "success", "item_id": "tb-wind-2", "contract_id": "ctr-w2", "transfer_id": "trf-w2", "message": "ok"},
+              {"status": "error", "item_id": "tb-hydro-4", "error_code": "transfer_failed", "message": "Contract agreed but data transfer failed.", "contract_id": "ctr-h4"}
+            ],
+            "summary": {"total": 2, "succeeded": 1, "failed": 1}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-wind-2", "tb-hydro-4"],
+            "must_contain": ["ctr-w2", "trf-w2"],
+            "must_contain_any": [["1 de 2", "1/2"]]
+          }
+        },
+        {
+          "id": "all_failed",
+          "query": "Transfere o tb-solar-99 e o tb-wind-3.",
+          "tool_output": {
+            "results": [
+              {"status": "error", "item_id": "tb-solar-99", "error_code": "unknown_asset", "message": "Asset not found on provider."},
+              {"status": "error", "item_id": "tb-wind-3", "error_code": "policy_denied", "message": "Provider rejected the contract negotiation."}
+            ],
+            "summary": {"total": 2, "succeeded": 0, "failed": 2}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-solar-99", "tb-wind-3"],
+            "must_contain_any": [["0 de 2", "0/2", "nenhuma", "ambas falhar"]],
+            "must_not_contain": ["sucesso", "trf-"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "faith_language",
+      "family": "faithfulness",
+      "focus": "Resposta no idioma da query (politica de idioma).",
+      "tests": [
+        {
+          "id": "spanish_success",
+          "query": "Por favor, transfiere el asset tb-solar-3.",
+          "tool_output": {
+            "results": [
+              {"status": "success", "item_id": "tb-solar-3", "contract_id": "ctr-s3", "transfer_id": "trf-s3", "message": "ok"}
+            ],
+            "summary": {"total": 1, "succeeded": 1, "failed": 0}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-solar-3"],
+            "must_contain": ["ctr-s3", "trf-s3"],
+            "must_contain_any": [["transferencia", "transferido", "completado", "exito", "realizado", "se ha"]]
+          }
+        },
+        {
+          "id": "english_success",
+          "query": "Please transfer tb-wind-2.",
+          "tool_output": {
+            "results": [
+              {"status": "success", "item_id": "tb-wind-2", "contract_id": "ctr-w2", "transfer_id": "trf-w2", "message": "ok"}
+            ],
+            "summary": {"total": 1, "succeeded": 1, "failed": 0}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-wind-2"],
+            "must_contain": ["ctr-w2", "trf-w2"],
+            "must_contain_any": [["success", "completed", "transferred", "done", "has been"]],
+            "must_not_contain": ["sucesso", "concluida"]
+          }
+        },
+        {
+          "id": "english_error",
+          "query": "Please transfer tb-solar-99.",
+          "tool_output": {
+            "results": [
+              {"status": "error", "item_id": "tb-solar-99", "error_code": "unknown_asset", "message": "Asset not found on provider."}
+            ],
+            "summary": {"total": 1, "succeeded": 0, "failed": 1}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-solar-99"],
+            "must_contain_any": [["does not exist", "not found", "doesn't exist", "could not be found", "verify"]],
+            "must_not_contain": ["sucesso", "nao existe", "nao foi encontrado"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "extr_hard_reference",
+      "family": "extraction",
+      "focus": "Anafora dificil: posicao fora do intervalo, exclusao/negacao, 'todos'.",
+      "tests": [
+        {
+          "id": "out_of_range",
+          "query": "Transfere-me o primeiro e o setimo.",
+          "chat_history": [
+            {"role": "human", "content": "Que datasets de energia solar tens?"},
+            {"role": "ai", "content": "Encontrei 3 datasets de energia solar:\n1. tb-solar-1 - producao fotovoltaica diaria\n2. tb-solar-2 - irradiancia horaria\n3. tb-solar-4 - previsao de geracao solar"}
+          ],
+          "expected_item_ids": ["tb-solar-1"],
+          "expected_call_count": 1,
+          "note": "So existem 3 assets; 'o setimo' nao tem referente. O agente deve transferir o primeiro e NAO inventar um setimo id."
+        },
+        {
+          "id": "exclusion",
+          "query": "Transfere todos menos o segundo.",
+          "chat_history": [
+            {"role": "human", "content": "Que datasets de energia solar tens?"},
+            {"role": "ai", "content": "Encontrei 3 datasets de energia solar:\n1. tb-solar-1 - producao fotovoltaica diaria\n2. tb-solar-2 - irradiancia horaria\n3. tb-solar-4 - previsao de geracao solar"}
+          ],
+          "expected_item_ids": ["tb-solar-1", "tb-solar-4"],
+          "expected_call_count": 1,
+          "note": "Negacao: 'todos menos o segundo' = posicoes 1 e 3, exclui tb-solar-2. Requer raciocinio de diferenca de conjuntos."
+        },
+        {
+          "id": "all_of_them",
+          "query": "Boa, transfere todos esses.",
+          "chat_history": [
+            {"role": "human", "content": "Mostra-me os datasets de biomassa."},
+            {"role": "ai", "content": "Datasets de biomassa disponiveis:\n1. tb-biomass-1 - residuos florestais\n2. tb-biomass-2 - biogas agricola\n3. tb-biomass-3 - culturas energeticas"}
+          ],
+          "expected_item_ids": ["tb-biomass-1", "tb-biomass-2", "tb-biomass-3"],
+          "expected_call_count": 1,
+          "note": "'todos esses' resolve para os 3 assets do turno anterior, num unico call."
+        }
+      ]
+    },
+    {
+      "id": "extr_hard_verbatim",
+      "family": "extraction",
+      "focus": "Verbatim sob stress: maiusculas e typos nao devem ser normalizados/corrigidos.",
+      "tests": [
+        {
+          "id": "uppercase",
+          "query": "Transfere o TB-SOLAR-1.",
+          "expected_item_ids": ["TB-SOLAR-1"],
+          "expected_call_count": 1,
+          "case_sensitive": true,
+          "note": "Maiusculas; deve passar TB-SOLAR-1 verbatim, sem baixar para minusculas."
+        },
+        {
+          "id": "mixed_case",
+          "query": "Quero o Tb-Wind-2, por favor.",
+          "expected_item_ids": ["Tb-Wind-2"],
+          "expected_call_count": 1,
+          "case_sensitive": true,
+          "note": "Caixa mista; deve preservar Tb-Wind-2 exatamente."
+        },
+        {
+          "id": "typo_no_autocorrect",
+          "query": "Transfere o tb-solr-1.",
+          "expected_item_ids": ["tb-solr-1"],
+          "expected_call_count": 1,
+          "note": "Typo (solr); o agente nao deve 'corrigir' para tb-solar-1 — passa verbatim, erro reportado downstream."
+        }
+      ]
+    },
+    {
+      "id": "faith_hard",
+      "family": "faithfulness",
+      "focus": "Reporting dificil: contagem sob carga, error_code generico, mensagem enganadora.",
+      "tests": [
+        {
+          "id": "large_mixed_batch",
+          "query": "Transfere tb-solar-1, tb-solar-2, tb-solar-3, tb-wind-3 e tb-solar-99.",
+          "tool_output": {
+            "results": [
+              {"status": "success", "item_id": "tb-solar-1", "contract_id": "ctr-s1", "transfer_id": "trf-s1", "message": "ok"},
+              {"status": "success", "item_id": "tb-solar-2", "contract_id": "ctr-s2", "transfer_id": "trf-s2", "message": "ok"},
+              {"status": "success", "item_id": "tb-solar-3", "contract_id": "ctr-s3", "transfer_id": "trf-s3", "message": "ok"},
+              {"status": "error", "item_id": "tb-wind-3", "error_code": "policy_denied", "message": "Provider rejected the contract negotiation."},
+              {"status": "error", "item_id": "tb-solar-99", "error_code": "unknown_asset", "message": "Asset not found on provider."}
+            ],
+            "summary": {"total": 5, "succeeded": 3, "failed": 2}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-solar-1", "tb-solar-2", "tb-solar-3", "tb-wind-3", "tb-solar-99"],
+            "must_contain": ["ctr-s1", "ctr-s2", "ctr-s3", "trf-s1", "trf-s2", "trf-s3"],
+            "must_contain_any": [["3 de 5", "3/5"]]
+          }
+        },
+        {
+          "id": "system_error_generic",
+          "query": "Transfere o tb-hydro-2.",
+          "tool_output": {
+            "results": [
+              {"status": "error", "item_id": "tb-hydro-2", "error_code": "system_error", "message": "Unexpected internal error.", "details": "NullPointer at negotiation step"}
+            ],
+            "summary": {"total": 1, "succeeded": 0, "failed": 1}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-hydro-2"],
+            "must_contain_any": [["erro interno", "problema", "inesperad", "erro de sistema", "falh"]],
+            "must_not_contain": ["sucesso", "trf-"]
+          }
+        },
+        {
+          "id": "misleading_success_message",
+          "query": "Transfere o tb-wind-5.",
+          "tool_output": {
+            "results": [
+              {"status": "success", "item_id": "tb-wind-5", "contract_id": "ctr-w5", "transfer_id": "trf-w5", "message": "Transfer completed; no errors encountered."}
+            ],
+            "summary": {"total": 1, "succeeded": 1, "failed": 0}
+          },
+          "assertions": {
+            "must_mention_ids": ["tb-wind-5"],
+            "must_contain": ["ctr-w5", "trf-w5"],
+            "must_contain_any": [["sucesso", "concluida", "transferido", "com exito", "realizada"]],
+            "must_not_contain": ["nao foi possivel", "falhou", "nao pode ser"],
+            "note": "status=success mas a message contem a palavra 'errors'; o agente deve reportar SUCESSO, lendo o status e nao a string."
+          }
+        }
+      ]
+    }
+  ]
+}

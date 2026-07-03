@@ -330,6 +330,19 @@ def compute_precision_recall(
     return precision, recall
 
 
+# TEMP: clear embedding cache before each test repetition (cold-start benchmark)
+def _clear_embedding_cache() -> None:
+    try:
+        import sqlite3
+        from edc_agent.tools.definitions.embedding_cache import get_cache
+        cache = get_cache()
+        with sqlite3.connect(cache.path, timeout=10) as conn:
+            conn.execute("DELETE FROM embeddings")
+            conn.commit()
+    except Exception as exc:
+        logging.getLogger(__name__).warning("Could not clear embedding cache: %s", exc)
+
+
 def run_single(
     manager,
     _use_case_id: str,
@@ -337,6 +350,7 @@ def run_single(
     capturing_handler: _CapturingHandler,
     run_index: int,
 ) -> RunResult:
+    _clear_embedding_cache()  # TEMP
     capturing_handler.flush_records()
     manager.reset_history()
     greeting, _ = manager.start_conversation()
@@ -436,6 +450,7 @@ def run_single_retrieval_only(
     run_index: int,
 ) -> RunResult:
     """Run a single test using the search tool directly, bypassing the LLM."""
+    _clear_embedding_cache()  # TEMP
     capturing_handler.flush_records()
     t0 = time.perf_counter()
     results = search_tool._run(queries=[test["query"]])

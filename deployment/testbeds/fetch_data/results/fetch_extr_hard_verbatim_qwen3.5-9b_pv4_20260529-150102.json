@@ -1,0 +1,128 @@
+{
+  "timestamp": "2026-05-29T15:01:02",
+  "git_sha": "4e27f54",
+  "model": "qwen3.5:9b",
+  "temperature": 0,
+  "prompt_version": "v4",
+  "runs_per_test": 1,
+  "summary": {
+    "extraction": {
+      "total": 3,
+      "passed": 3,
+      "success_rate": 1.0,
+      "run_success_rate": 1.0,
+      "latency_mean_s": 4.403,
+      "id_precision": 1.0,
+      "id_recall": 1.0,
+      "single_call_rate": 1.0
+    },
+    "by_group": [
+      {
+        "group_id": "extr_hard_verbatim",
+        "family": "extraction",
+        "total": 3,
+        "passed": 3,
+        "success_rate": 1.0,
+        "run_success_rate": 1.0,
+        "id_precision": 1.0,
+        "id_recall": 1.0,
+        "single_call_rate": 1.0
+      }
+    ]
+  },
+  "results": [
+    {
+      "group_id": "extr_hard_verbatim",
+      "family": "extraction",
+      "case_id": "uppercase",
+      "query": "Transfere o TB-SOLAR-1.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 4.488,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "TB-SOLAR-1"
+            ]
+          ],
+          "captured_ids": [
+            "TB-SOLAR-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 4.488,
+          "response": "A transfer\u00eancia do ativo TB-SOLAR-1 foi conclu\u00edda com sucesso. O contrato foi negociado com o ID `ctr-TB-SOLAR-1` e a transfer\u00eancia foi realizada com o ID `trf-TB-SOLAR-1`."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_hard_verbatim",
+      "family": "extraction",
+      "case_id": "mixed_case",
+      "query": "Quero o Tb-Wind-2, por favor.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 4.522,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "Tb-Wind-2"
+            ]
+          ],
+          "captured_ids": [
+            "Tb-Wind-2"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 4.522,
+          "response": "A transfer\u00eancia do ativo **Tb-Wind-2** foi conclu\u00edda com sucesso.\n\n- **ID do contrato:** ctr-Tb-Wind-2\n- **ID da transfer\u00eancia:** trf-Tb-Wind-2\n\n1 de 1 transfer\u00eancias completadas."
+        }
+      ]
+    },
+    {
+      "group_id": "extr_hard_verbatim",
+      "family": "extraction",
+      "case_id": "typo_no_autocorrect",
+      "query": "Transfere o tb-solr-1.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 4.198,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "captured_calls": [
+            [
+              "tb-solr-1"
+            ]
+          ],
+          "captured_ids": [
+            "tb-solr-1"
+          ],
+          "call_count": 1,
+          "exact_match": true,
+          "call_count_ok": true,
+          "precision": 1.0,
+          "recall": 1.0,
+          "latency_s": 4.198,
+          "response": "A transfer\u00eancia do ativo tb-solr-1 foi conclu\u00edda com sucesso. O contrato foi negociado com o ID ctr-tb-solr-1 e a transfer\u00eancia foi identificada como trf-tb-solr-1."
+        }
+      ]
+    }
+  ]
+}

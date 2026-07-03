@@ -1,0 +1,83 @@
+{
+  "timestamp": "2026-05-29T15:01:25",
+  "git_sha": "4e27f54",
+  "model": "qwen3.5:9b",
+  "temperature": 0,
+  "prompt_version": "v4",
+  "runs_per_test": 1,
+  "summary": {
+    "faithfulness": {
+      "total": 3,
+      "passed": 3,
+      "success_rate": 1.0,
+      "run_success_rate": 1.0,
+      "latency_mean_s": 6.88
+    },
+    "by_group": [
+      {
+        "group_id": "faith_hard",
+        "family": "faithfulness",
+        "total": 3,
+        "passed": 3,
+        "success_rate": 1.0,
+        "run_success_rate": 1.0
+      }
+    ]
+  },
+  "results": [
+    {
+      "group_id": "faith_hard",
+      "family": "faithfulness",
+      "case_id": "large_mixed_batch",
+      "query": "Transfere tb-solar-1, tb-solar-2, tb-solar-3, tb-wind-3 e tb-solar-99.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 13.046,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "latency_s": 13.046,
+          "response": "Aqui est\u00e3o os resultados da transfer\u00eancia:\n\n- **tb-solar-1**: Transfer\u00eancia conclu\u00edda com sucesso (contract_id: ctr-s1, transfer_id: trf-s1)\n- **tb-solar-2**: Transfer\u00eancia conclu\u00edda com sucesso (contract_id: ctr-s2, transfer_id: trf-s2)\n- **tb-solar-3**: Transfer\u00eancia conclu\u00edda com sucesso (contract_id: ctr-s3, transfer_id: trf-s3)\n- **tb-wind-3**: Erro - O provedor rejeitou a negocia\u00e7\u00e3o do contrato (policy_denied)\n- **tb-solar-99**: Erro - Ativo n\u00e3o encontrado no provedor (unknown_asset)\n\n3 de 5 transfer\u00eancias conclu\u00eddas"
+        }
+      ]
+    },
+    {
+      "group_id": "faith_hard",
+      "family": "faithfulness",
+      "case_id": "system_error_generic",
+      "query": "Transfere o tb-hydro-2.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 3.573,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "latency_s": 3.573,
+          "response": "A transfer\u00eancia do ativo \"tb-hydro-2\" falhou devido a um erro interno inesperado durante a negocia\u00e7\u00e3o."
+        }
+      ]
+    },
+    {
+      "group_id": "faith_hard",
+      "family": "faithfulness",
+      "case_id": "misleading_success_message",
+      "query": "Transfere o tb-wind-5.",
+      "passed": true,
+      "pass_rate": 1.0,
+      "latency_mean_s": 4.022,
+      "runs": [
+        {
+          "run_index": 0,
+          "passed": true,
+          "failures": [],
+          "latency_s": 4.022,
+          "response": "A transfer\u00eancia do ativo tb-wind-5 foi conclu\u00edda com sucesso. O contrato foi identificado como ctr-w5 e a transfer\u00eancia como trf-w5.\n\n1 de 1 transfer\u00eancias conclu\u00eddas"
+        }
+      ]
+    }
+  ]
+}
