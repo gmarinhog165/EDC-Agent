@@ -26,6 +26,7 @@ class OllamaClient(LLMClient):
             model=model_name,
             temperature=temperature,
             base_url=self.base_url,
+            num_ctx=8192,
         )
 
         logger.info("Initialized OllamaClient model=%s base_url=%s temperature=%s", self.model_name, self.base_url, self.temperature,)
@@ -40,12 +41,13 @@ class OllamaClient(LLMClient):
     def generate_response_with_tools(
         self,
         messages: list[BaseMessage],
-        tools: list[BaseTool]
+        tools: list[BaseTool],
+        tool_choice: str | None = None,
     ) -> tuple[str, list[BaseMessage]]:
         if not tools:
             return self.generate_response(messages), []
 
-        tool_model = self.client.bind_tools(tools)
+        tool_model = self.client.bind_tools(tools, tool_choice=tool_choice) if tool_choice else self.client.bind_tools(tools)
         tool_map = {tool.name: tool for tool in tools}
         running_messages: list[BaseMessage] = list(messages)
         generated_messages: list[BaseMessage] = []

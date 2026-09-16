@@ -18,19 +18,21 @@ def build_manager(model_name: str, temperature: int) -> PipelineManager:
     router_agent = Agent(
         name="router",
         llm_client=llm_client,
-        system_prompt=get_prompt(agent_name="router", model_name=model_name),
+        system_prompt=get_prompt(agent_name="router"),
     )
     search_catalog_agent = Agent(
         name="search-catalog",
         llm_client=llm_client,
-        system_prompt=get_prompt(agent_name="search-catalog", model_name=model_name),
+        system_prompt=get_prompt(agent_name="search-catalog"),
         tools=[search_catalog_tool],
+        forced_tool_choice="required",
     )
     fetch_data_agent = Agent(
         name="fetch-data",
         llm_client=llm_client,
-        system_prompt=get_prompt(agent_name="fetch-data", model_name=model_name),
+        system_prompt=get_prompt(agent_name="fetch-data"),
         tools=[fetch_item_data_tool],
+        forced_tool_choice="required",
     )
     return PipelineManager(
         router_agent=router_agent,

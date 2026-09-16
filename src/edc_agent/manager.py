@@ -32,7 +32,15 @@ class PipelineManager:
             return "fetch-data"
         if "search-catalog" in normalized or "search_catalog" in normalized:
             return "search-catalog"
+        if "out-of-scope" in normalized or "out_of_scope" in normalized:
+            return "out-of-scope"
         return "retry"
+
+    _OUT_OF_SCOPE_REPLY = (
+        "O teu pedido não se enquadra nas minhas capacidades. "
+        "Sou um agente especializado em procurar e transferir assets de um catálogo EDC. "
+        "Como posso ajudar?"
+    )
 
     def process(self, user_message: str) -> tuple[str, bool]:
         logger.debug("Processing user message len=%d", len(user_message))
@@ -44,9 +52,16 @@ class PipelineManager:
         # Resposta do router que aponta para o agente adequado
         route = self._select_route(router_output)
 
-        # Caso não consiga identificar o Agente correto (TODO por testar)
+        # Mensagem fora do âmbito (saudação, off-topic, etc.) — não invocar agente nenhum
+        if route == "out-of-scope":
+            logger.info("Routing: out-of-scope, replying with capability hint")
+            self.chat_history.append(HumanMessage(content=user_message))
+            self.chat_history.append(AIMessage(content=self._OUT_OF_SCOPE_REPLY))
+            return self._OUT_OF_SCOPE_REPLY, False
+
+        # Caso não consiga identificar o Agente correto (router devolveu algo inesperado)
         if route == "retry":
-            logger.warning("Router could not determine route for message")
+            logger.warning("Router could not determine route for message: %s", router_output.strip()[:200])
             return "Sorry, I couldn't determine the right action. Could you please rephrase?", False
 
         # Escolher o agente

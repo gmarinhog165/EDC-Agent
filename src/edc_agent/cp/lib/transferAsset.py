@@ -4,7 +4,8 @@ import os
 from edc_agent.cp.env_loader import load_cp_env
 from time import sleep
 from typing import Dict, Optional, List, Union, Any
-from edc_agent.cp.lib.sendRequests import send_post_request, send_get_request, send_get_request_auth
+import requests
+from edc_agent.cp.lib.sendRequests import send_post_request, send_get_request, send_get_request_auth, API_KEY
 from edc_agent.cp.reqCatalog.RequestCatalogBuilder import RequestCatalogBuilder
 from edc_agent.cp.negotiation.NegotiationBuilder import NegotiationBuilder
 from edc_agent.cp.transfer.TransferBuilder import TransferBuilder
@@ -13,6 +14,36 @@ from edc_agent.cp.transfer.MongoDataDestinationBuilder import MongoDataDestinati
 from edc_agent.cp.transfer.AmazonS3DataDestinationBuilder import AmazonS3DataDestinationBuilder
 
 load_cp_env()
+
+def check_asset_exists(asset_id: str) -> Dict[str, Any]:
+    """
+    Verifica se o asset existe no provider antes de iniciar negociação.
+
+    Returns dict with:
+      - "exists": bool | None  (None se não foi possível determinar)
+      - "error_code": "unknown_asset" | "system_error" | None
+      - "message": str
+    """
+    host_provider = os.getenv("HOST_PROVIDER", "")
+    if not host_provider:
+        return {"exists": None, "error_code": "system_error", "message": "HOST_PROVIDER não configurado."}
+
+    url = f"{host_provider}/api/management/v3/assets/{asset_id}"
+    headers = {"X-Api-Key": API_KEY}
+    try:
+        resp = requests.get(url, headers=headers, verify=False, timeout=10)
+        if resp.status_code == 200:
+            return {"exists": True, "error_code": None, "message": "Asset encontrado."}
+        if resp.status_code == 404:
+            return {"exists": False, "error_code": "unknown_asset", "message": f"Asset '{asset_id}' não existe no provider."}
+        return {
+            "exists": None,
+            "error_code": "system_error",
+            "message": f"Resposta inesperada do provider (status {resp.status_code}).",
+        }
+    except requests.exceptions.RequestException as e:
+        return {"exists": None, "error_code": "system_error", "message": f"Falha ao contactar provider: {e}"}
+
 
 def get_catalog() -> Dict[str, str]: # retorna um dicionário com asset_id e policy_id
     query_spec = {
@@ -35,68 +66,69 @@ def negotiate_contract(
     counter_party_id: str,
     max_retries: int = 10,
     retry_interval: int = 2,
-) -> Optional[str]:
+) -> Dict[str, Any]:
+    """
+    Negocia um contrato. Devolve dict com:
+      - "contract_id": str | None
+      - "error_code": None | "policy_denied" | "negotiation_timeout" | "negotiation_failed" | "system_error"
+      - "message": str
+    """
 
-    # Create negotiation object
     nego = NegotiationBuilder()\
         .with_policy(policy)\
         .with_counter_party_address(counter_party_address)\
         .with_counter_party_id(counter_party_id)\
         .with_asset_id(asset_id)\
         .build()
-    
+
     print(nego.to_json())
-    
-    # Send negotiation request
+
     host_consumer = os.getenv("HOST_CONSUMER", "")
     response = send_post_request(
         host_consumer,
-        "/api/management/v3/contractnegotiations", 
+        "/api/management/v3/contractnegotiations",
         nego.to_json()
     )
-    
 
-    # Verificar se a resposta contém o ID da negociação
+    if not isinstance(response, dict):
+        return {"contract_id": None, "error_code": "system_error",
+                "message": "Sem resposta do consumer ao iniciar negociação."}
+
     negotiation_id = response.get('@id')
     if not negotiation_id:
-        print("Falha ao obter ID de negociação.")
-        return None
-    
+        return {"contract_id": None, "error_code": "negotiation_failed",
+                "message": "Resposta do consumer não contém ID de negociação."}
+
     print(f"Iniciada negociação com ID: {negotiation_id}")
-    
-    # Poll for negotiation completion
-    contract_agreement_id = None
+
+    last_state = None
     for attempt in range(max_retries):
         print(f"Verificando estado da negociação (tentativa {attempt+1}/{max_retries})...")
-        
-        # Aqui está a correção: use negotiation_id, não contract_agreement_id
+
         endpoint = f"/api/management/v3/contractnegotiations/{negotiation_id}"
         ret = send_get_request(host_consumer, endpoint)
-        
-        # Verificar se o request retornou dados válidos
+
         if not ret:
             print(f"Falha ao obter status da negociação na tentativa {attempt+1}.")
             sleep(retry_interval)
             continue
-        
-        state = ret.get('state')
-        print(f"Estado atual: {state}")
-        
-        if state == "FINALIZED":
+
+        last_state = ret.get('state')
+        print(f"Estado atual: {last_state}")
+
+        if last_state == "FINALIZED":
             contract_agreement_id = ret.get('contractAgreementId')
             if contract_agreement_id:
-                print(f"Negociação finalizada com sucesso. Contract ID: {contract_agreement_id}")
-                break
-        elif state in ["ERROR", "TERMINATED"]:
-            print(f"Negociação falhou com estado: {state}")
-            return None
-            
+                return {"contract_id": contract_agreement_id, "error_code": None,
+                        "message": "Negociação finalizada com sucesso."}
+        elif last_state in ["ERROR", "TERMINATED"]:
+            return {"contract_id": None, "error_code": "policy_denied",
+                    "message": f"Negociação rejeitada pelo provider (estado: {last_state})."}
+
         sleep(retry_interval)
-    
-    if not contract_agreement_id:
-        print("Tempo limite excedido para finalização da negociação.")
-    
-    return contract_agreement_id
+
+    return {"contract_id": None, "error_code": "negotiation_timeout",
+            "message": f"Negociação não finalizou em {max_retries * retry_interval}s (último estado: {last_state})."}
 
 
 def transfer_to_http(
@@ -131,9 +163,9 @@ def transfer_to_http(
         return False
     
     print(f"Iniciada transferência HTTP com ID: {transfer_id}")
-    
-    # Esperar pela conclusão da transferência
-    return wait_for_transfer_completion(transfer_id, max_retries, retry_interval)
+
+    # HTTP non-finite nunca avança além de STARTED — aceitamos STARTED como sucesso
+    return wait_for_transfer_completion(transfer_id, max_retries, retry_interval, accept_started=True)
 
 def http_download_data(transfer_id):
     print(f"Download de dados para Transfer ID: {transfer_id}")
@@ -189,7 +221,13 @@ def transfer_to_mongo(asset_id: str, contract_id: str, filename: str,
 def transfer_to_s3(asset_id: str, contract_id: str, filename: str,
                   region: str, bucket_name: str, counter_party_address: str,
                   connector_id: str, endpoint_override: str = None,
-                  max_retries: int = 10, retry_interval: int = 2):
+                  max_retries: int = None, retry_interval: int = None):
+    # S3 PUSH precisa de janela mais ampla — o dataplane pode demorar minutos
+    # sob carga. Defaults: 60 tentativas × 3 s = 180 s. Override via env.
+    if max_retries is None:
+        max_retries = int(os.getenv("S3_TRANSFER_MAX_RETRIES", "60"))
+    if retry_interval is None:
+        retry_interval = int(os.getenv("S3_TRANSFER_RETRY_INTERVAL", "3"))
     s3_builder = AmazonS3DataDestinationBuilder()\
         .with_region(region)\
         .with_bucket_name(bucket_name)\
@@ -227,34 +265,42 @@ def transfer_to_s3(asset_id: str, contract_id: str, filename: str,
     # Esperar pela conclusão da transferência
     return wait_for_transfer_completion(transfer_id, max_retries, retry_interval)
 
-def wait_for_transfer_completion(transfer_id: str, max_retries: int = 10, retry_interval: int = 2):
+def wait_for_transfer_completion(transfer_id: str, max_retries: int = 10, retry_interval: int = 2,
+                                  accept_started: bool = False):
+    """
+    Aguarda conclusão de uma transferência.
 
+    accept_started=True  → STARTED conta como sucesso (HTTP non-finite, que nunca avança além de STARTED).
+    accept_started=False → só COMPLETED/FINALIZED contam como sucesso (push transfers como S3/Mongo).
+    """
     host_consumer = os.getenv("HOST_CONSUMER", "")
-    
+    success_states = {"COMPLETED", "FINALIZED"}
+    if accept_started:
+        success_states.add("STARTED")
+
     for attempt in range(max_retries):
         print(f"Verificando estado da transferência (tentativa {attempt+1}/{max_retries})...")
-        
+
         endpoint = f"/api/management/v3/transferprocesses/{transfer_id}"
         ret = send_get_request(host_consumer, endpoint)
-        
+
         if not ret:
             print(f"Falha ao obter status da transferência na tentativa {attempt+1}.")
             sleep(retry_interval)
             continue
-        
+
         state = ret.get('state')
         print(f"Estado atual da transferência: {state}")
-        
-        if state in ["COMPLETED", "FINALIZED", "STARTED"]:
+
+        if state in success_states:
             print(f"Transferência concluída com sucesso. Transfer ID: {transfer_id}")
-            
             return ret
         elif state in ["ERROR", "TERMINATED", "FAILED"]:
             print(f"Transferência falhou com estado: {state}")
             return None
-            
+
         sleep(retry_interval)
-    
+
     print("Tempo limite excedido para conclusão da transferência.")
     return None
 

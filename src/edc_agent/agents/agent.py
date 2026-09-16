@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class LLMClient(Protocol):
     def generate_response(self, messages: list[BaseMessage]) -> str: ...
     def generate_response_with_tools(
-        self, messages: list[BaseMessage], tools: list[BaseTool]
+        self, messages: list[BaseMessage], tools: list[BaseTool], tool_choice: str | None = None
     ) -> tuple[str, list[BaseMessage]]: ...
 
 
@@ -20,11 +20,13 @@ class Agent:
         llm_client: LLMClient,
         system_prompt: str,
         tools: list[BaseTool] | None = None,
+        forced_tool_choice: str | None = None,
     ):
         self.name = name
         self.llm_client = llm_client
         self.system_prompt = system_prompt
         self.tools = tools or []
+        self._tool_choice = forced_tool_choice
         self._done_markers = ("<DONE>",)
     
     # Retorna a resposta do agente e um booleano indicando se a conversa deve ser encerrada
@@ -48,7 +50,7 @@ class Agent:
         # Chama o modelo para gerar a resposta, infere se a conversa deve ser encerrada e limpa os marcadores de done da resposta
         if self.tools:
             raw_response, execution_messages = self.llm_client.generate_response_with_tools(
-                messages, self.tools
+                messages, self.tools, self._tool_choice
             )
         else:
             raw_response = self.llm_client.generate_response(messages)

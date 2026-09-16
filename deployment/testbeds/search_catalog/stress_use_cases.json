@@ -1,0 +1,22 @@
+{
+  "use_cases": [
+    {
+      "id": "stress_dr",
+      "title": "Stress 1000 assets — industrial demand response",
+      "tests": [
+        {
+          "id": "stress_dr_1",
+          "query": "I need datasets about industrial demand response programmes — specifically load curtailment activation records and flexibility bids from large electricity consumers or industrial sites.",
+          "expected_present": [
+            "stress-smartgrid-dr-0001",
+            "stress-smartgrid-dr-0002",
+            "stress-smartgrid-dr-0003",
+            "stress-smartgrid-dr-0004",
+            "stress-smartgrid-dr-0005"
+          ],
+          "expected_count": 5
+        }
+      ]
+    }
+  ]
+}

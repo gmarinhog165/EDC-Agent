@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import logging
 import os
@@ -24,14 +25,15 @@ except ModuleNotFoundError:
     def load_dotenv(*_args, **_kwargs):
         return False
 
-ASSET_PATTERN = re.compile(r"\btb-[a-z]+-\d+\b", re.IGNORECASE)
+ASSET_PATTERN = re.compile(r"\b[a-z][a-z0-9]*(?:-[a-z][a-z0-9]*)*-\d+\b", re.IGNORECASE)
 _LOG_ASSET_RE = re.compile(
-    r"\[(PASS|FAIL|HUB\s*)\]\s+score=([0-9.]+)\s+z=(-?[0-9.]+)\s+(tb-[a-z]+-\d+)",
+    r"\[(PASS|FAIL|HUB\s*)\]\s+score=([0-9.]+)\s+z=(-?[0-9.]+)\s+([a-z][a-z0-9]*(?:-[a-z0-9]+)*-\d+)",
     re.IGNORECASE,
 )
 _LOG_CUTOFF_RE = re.compile(r"dynamic cutoff at position (\d+)")
 _LOG_FALLBACK_RE = re.compile(r"fallback top-(\d+)")
 _LOG_DIAGNOSTICS_RE = re.compile(r"search_catalog_diagnostics (\{.+\})\s*$")
+_LOG_LINES_LIMIT = 100
 
 DEFAULT_CASE_FILE = Path(__file__).with_name("use_cases.json")
 DEFAULT_RESULTS_DIR = Path(__file__).with_name("results")
@@ -58,13 +60,13 @@ class RunResult:
     response: str
     found_assets: list[str]
     passed: bool
-    failures: list[str]
+    failures: list[dict[str, Any]]
     latency_s: float = 0.0
     search_tool_logs: list[str] = field(default_factory=list)
     reciprocal_rank: float | None = None
     tool_returned_assets: list[str] = field(default_factory=list)
     retrieval_passed: bool = False
-    retrieval_failures: list[str] = field(default_factory=list)
+    retrieval_failures: list[dict[str, Any]] = field(default_factory=list)
     retrieval_reciprocal_rank: float | None = None
     presentation_precision: float | None = None
     presentation_recall: float | None = None
@@ -251,7 +253,7 @@ def evaluate_assets(
     test: dict[str, Any],
     assets: list[str],
     response: str | None = None,
-) -> tuple[bool, list[str]]:
+) -> tuple[bool, list[dict[str, Any]]]:
     """Evaluate an ordered asset list against test expectations.
 
     Rules:
@@ -263,7 +265,7 @@ def evaluate_assets(
     ``response`` only applies to the presentation layer (LLM output); pass None
     when evaluating the retrieval layer.
     """
-    failures: list[str] = []
+    failures: list[dict[str, Any]] = []
     found_set = set(assets)
 
     expected_present = [str(a).lower() for a in test.get("expected_present", [])]
@@ -271,28 +273,37 @@ def evaluate_assets(
     expected_count = test.get("expected_count")
 
     if expected_count is not None and len(assets) != int(expected_count):
-        failures.append(f"expected_count={expected_count}, found_count={len(assets)}")
+        failures.append({"type": "expected_count", "expected": int(expected_count), "found": len(assets)})
 
     if response is not None and expected_count == 0 and "asset_id" in response.lower():
-        failures.append("hallucinated_assets_in_response")
+        failures.append({"type": "hallucinated_assets_in_response"})
 
     for asset_id in expected_present:
         if asset_id not in found_set:
-            failures.append(f"missing={asset_id}")
+            failures.append({"type": "missing", "asset_id": asset_id})
 
     if expected_present:
         expected_set = set(expected_present)
         for asset_id in assets:
             if asset_id not in expected_set:
-                failures.append(f"unexpected={asset_id}")
+                failures.append({"type": "unexpected", "asset_id": asset_id})
 
     if expected_pool:
         pool_set = set(expected_pool)
         for asset_id in assets:
             if asset_id not in pool_set:
-                failures.append(f"out_of_pool={asset_id}")
+                failures.append({"type": "out_of_pool", "asset_id": asset_id})
 
     return len(failures) == 0, failures
+
+
+def _fmt_failure(f: dict[str, Any]) -> str:
+    t = f.get("type", "?")
+    if t == "expected_count":
+        return f"expected_count={f['expected']},found={f['found']}"
+    if t in ("missing", "unexpected", "out_of_pool"):
+        return f"{t}={f.get('asset_id', '?')}"
+    return t
 
 
 def compute_reciprocal_rank(found_assets: list[str], relevant: list[str]) -> float | None:
@@ -319,6 +330,19 @@ def compute_precision_recall(
     return precision, recall
 
 
+# TEMP: clear embedding cache before each test repetition (cold-start benchmark)
+def _clear_embedding_cache() -> None:
+    try:
+        import sqlite3
+        from edc_agent.tools.definitions.embedding_cache import get_cache
+        cache = get_cache()
+        with sqlite3.connect(cache.path, timeout=10) as conn:
+            conn.execute("DELETE FROM embeddings")
+            conn.commit()
+    except Exception as exc:
+        logging.getLogger(__name__).warning("Could not clear embedding cache: %s", exc)
+
+
 def run_single(
     manager,
     _use_case_id: str,
@@ -326,6 +350,7 @@ def run_single(
     capturing_handler: _CapturingHandler,
     run_index: int,
 ) -> RunResult:
+    _clear_embedding_cache()  # TEMP
     capturing_handler.flush_records()
     manager.reset_history()
     greeting, _ = manager.start_conversation()
@@ -425,6 +450,7 @@ def run_single_retrieval_only(
     run_index: int,
 ) -> RunResult:
     """Run a single test using the search tool directly, bypassing the LLM."""
+    _clear_embedding_cache()  # TEMP
     capturing_handler.flush_records()
     t0 = time.perf_counter()
     results = search_tool._run(queries=[test["query"]])
@@ -587,6 +613,24 @@ def render_text_report(results: list[TestResult], model: str, selected_id: str, 
             f"retrieval:    passed={retrieval_passed} failed={total - retrieval_passed} total={total} success_rate={retrieval_success_rate:.1%}{retrieval_mrr_str}{retr_pr_str}"
         )
     header_lines.append(f"latency: mean={lat_mean:.2f}s min={lat_min:.2f}s max={lat_max:.2f}s")
+
+    groups: dict[str, list[TestResult]] = {}
+    for r in results:
+        groups.setdefault(r.use_case_id, []).append(r)
+    header_lines.append("by_group:")
+    for gid, grp in groups.items():
+        gtotal = len(grp)
+        gpassed = sum(1 for r in grp if r.passed)
+        gretr = sum(1 for r in grp if r.retrieval_passed)
+        gmrr = [r.retrieval_mrr for r in grp if r.retrieval_mrr is not None]
+        gmrr_str = f"  retr_mrr={sum(gmrr)/len(gmrr):.3f}" if gmrr else ""
+        if retrieval_only:
+            header_lines.append(f"  {gid:<28} retr={gretr}/{gtotal}={gretr/gtotal:.0%}{gmrr_str}")
+        else:
+            gpres_mrr = [r.mrr for r in grp if r.mrr is not None]
+            gpres_mrr_str = f"  pres_mrr={sum(gpres_mrr)/len(gpres_mrr):.3f}" if gpres_mrr else ""
+            header_lines.append(f"  {gid:<28} pres={gpassed}/{gtotal}={gpassed/gtotal:.0%}  retr={gretr}/{gtotal}={gretr/gtotal:.0%}{gpres_mrr_str}{gmrr_str}")
+
     header_lines.append("")
     lines = header_lines
 
@@ -616,8 +660,8 @@ def render_text_report(results: list[TestResult], model: str, selected_id: str, 
         lines.append(f"  input: {result.query}")
 
         for run in result.runs:
-            tag = "PASS" if run.passed else f"FAIL[{','.join(run.failures)}]"
-            retrieval_tag = "PASS" if run.retrieval_passed else f"FAIL[{','.join(run.retrieval_failures)}]"
+            tag = "PASS" if run.passed else f"FAIL[{','.join(_fmt_failure(f) for f in run.failures)}]"
+            retrieval_tag = "PASS" if run.retrieval_passed else f"FAIL[{','.join(_fmt_failure(f) for f in run.retrieval_failures)}]"
             rr_tag = f"  rr={run.reciprocal_rank:.4f}" if run.reciprocal_rank is not None else ""
             retrieval_rr_tag = (
                 f"  rr={run.retrieval_reciprocal_rank:.4f}"
@@ -674,13 +718,49 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
         tool_config = None
 
     catalog_size: int | None = None
+    catalog_fingerprint: str | None = None
     for tr in results:
         for run in tr.runs:
             if run.tool_diagnostics and "catalog_size" in run.tool_diagnostics:
                 catalog_size = run.tool_diagnostics["catalog_size"]
+                scores = run.tool_diagnostics.get("per_asset_scores", [])
+                if scores:
+                    sorted_ids = sorted(s["asset_id"] for s in scores)
+                    catalog_fingerprint = hashlib.sha256(",".join(sorted_ids).encode()).hexdigest()[:12]
                 break
         if catalog_size is not None:
             break
+
+    groups: dict[str, list[TestResult]] = {}
+    for r in results:
+        groups.setdefault(r.use_case_id, []).append(r)
+    by_group = []
+    for gid, grp in groups.items():
+        gtotal = len(grp)
+        gpassed = sum(1 for r in grp if r.passed)
+        gretr_passed = sum(1 for r in grp if r.retrieval_passed)
+        gpres_mrr_vals = [r.mrr for r in grp if r.mrr is not None]
+        gretr_mrr_vals = [r.retrieval_mrr for r in grp if r.retrieval_mrr is not None]
+        entry: dict[str, Any] = {
+            "use_case_id": gid,
+            "total": gtotal,
+            "retrieval": {
+                "passed": gretr_passed,
+                "success_rate": round(gretr_passed / gtotal, 4) if gtotal else 0.0,
+                "mrr": round(sum(gretr_mrr_vals) / len(gretr_mrr_vals), 4) if gretr_mrr_vals else None,
+                "precision": _mean_r([r.retrieval_precision for r in grp]),
+                "recall": _mean_r([r.retrieval_recall for r in grp]),
+            },
+        }
+        if not retrieval_only:
+            entry["presentation"] = {
+                "passed": gpassed,
+                "success_rate": round(gpassed / gtotal, 4) if gtotal else 0.0,
+                "mrr": round(sum(gpres_mrr_vals) / len(gpres_mrr_vals), 4) if gpres_mrr_vals else None,
+                "precision": _mean_r([r.presentation_precision for r in grp]),
+                "recall": _mean_r([r.presentation_recall for r in grp]),
+            }
+        by_group.append(entry)
 
     payload = {
         "timestamp": datetime.now().isoformat(timespec="seconds"),
@@ -691,6 +771,7 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
         "prompt_version": prompt_version or "flat",
         "tool_config": tool_config,
         "catalog_size": catalog_size,
+        "catalog_fingerprint": catalog_fingerprint,
         "selection": selected_id,
         "runs_per_test": n_runs,
         "retrieval_only": retrieval_only,
@@ -730,6 +811,7 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
             "latency_mean_s": round(lat_mean, 3),
             "latency_min_s": round(min(all_latencies), 3) if all_latencies else 0.0,
             "latency_max_s": round(max(all_latencies), 3) if all_latencies else 0.0,
+            "by_group": by_group,
         },
         "results": [
             {
@@ -768,8 +850,10 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
                         "retrieval_precision": round(run.retrieval_precision, 4) if run.retrieval_precision is not None else None,
                         "retrieval_recall": round(run.retrieval_recall, 4) if run.retrieval_recall is not None else None,
                         "latency_s": round(run.latency_s, 3),
+                        "phase_latency_s": run.tool_diagnostics.get("phase_latency_s") if run.tool_diagnostics else None,
                         "tool_diagnostics": run.tool_diagnostics,
-                        "search_tool_logs": run.search_tool_logs,
+                        "search_tool_logs": run.search_tool_logs[:_LOG_LINES_LIMIT],
+                        "search_tool_logs_truncated": len(run.search_tool_logs) > _LOG_LINES_LIMIT,
                     }
                     for run in result.runs
                 ],
@@ -780,9 +864,23 @@ def render_json_report(results: list[TestResult], model: str, selected_id: str, 
     return json.dumps(payload, ensure_ascii=True, indent=2) + "\n"
 
 
-def build_output_path(results_dir: Path, selection: str, extension: str) -> Path:
+def build_output_path(
+    results_dir: Path,
+    selection: str,
+    extension: str,
+    model: str = "",
+    prompt_version: str | None = None,
+    embedding_model: str = "",
+) -> Path:
+    def _slug(s: str) -> str:
+        return re.sub(r"[^a-zA-Z0-9._-]", "-", s).strip("-") if s else ""
+
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    return results_dir / f"{selection}_{timestamp}.{extension}"
+    model_slug = _slug(model) or "retrieval-only"
+    pv_slug = f"p{_slug(prompt_version)}" if prompt_version else "pflat"
+    emb_slug = f"e{_slug(embedding_model)}" if embedding_model else "enone"
+    name = f"{selection}_{model_slug}_{pv_slug}_{emb_slug}_{timestamp}.{extension}"
+    return results_dir / name
 
 
 def parse_args() -> argparse.Namespace:
@@ -876,8 +974,15 @@ def main() -> int:
     text_report = render_text_report(results, args.model, selection, args.runs, retrieval_only=retrieval_only, prompt_version=prompt_version, temperature=args.temperature)
     json_report = render_json_report(results, args.model, selection, args.runs, retrieval_only=retrieval_only, prompt_version=prompt_version, temperature=args.temperature)
 
-    text_output = Path(args.output).resolve() if args.output else build_output_path(results_dir, selection, "log")
-    json_output = Path(args.json_output).resolve() if args.json_output else build_output_path(results_dir, selection, "json")
+    embedding_model = os.getenv("EMBEDDING_MODEL", "")
+    text_output = Path(args.output).resolve() if args.output else build_output_path(
+        results_dir, selection, "log",
+        model=args.model, prompt_version=prompt_version, embedding_model=embedding_model,
+    )
+    json_output = Path(args.json_output).resolve() if args.json_output else build_output_path(
+        results_dir, selection, "json",
+        model=args.model, prompt_version=prompt_version, embedding_model=embedding_model,
+    )
 
     text_output.write_text(text_report, encoding="utf-8")
     json_output.write_text(json_report, encoding="utf-8")
